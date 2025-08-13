@@ -5,6 +5,16 @@ const path = require('path');
 const multer = require('multer');
 
 const app = express();
+
+const cors = require('cors');
+
+app.use(cors({
+  origin: 'https://studyhub-luana.netlify.app', // Your Netlify site
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
+
 const PORT = process.env.PORT || 3000;
 
 // Middleware
