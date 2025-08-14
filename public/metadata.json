@@ -1,0 +1,221 @@
+{
+  "files": [
+    {
+      "name": "communication define",
+      "subject": "Communication",
+      "program": "basics",
+      "semester": "Semester 1",
+      "url": "files/1754805862196-1-_COMMUNICATION_DEFINITION_074911.pptx"
+    },
+    {
+      "name": "physics module",
+      "subject": "physics",
+      "program": "basics",
+      "semester": "Semester 1",
+      "url": "files/1754805980969--PHYSICS_MODULE_1.pdf"
+    },
+    {
+      "name": "periodic table",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754806150183-PeriodicTable.pdf"
+    },
+    {
+      "name": "chemistry module",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754806210958-CHE_121_Module_2_First_Draft.pdf"
+    },
+    {
+      "name": "lecture1 intro to organic chemistry",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754806383410-LECTURE_1_Introduction_to_Organic_Chemistry.pdf"
+    },
+    {
+      "name": "LECTURE 1 organic chemistry",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754868593883-LECTURE_1-INTRODUCTION_TO_ORGANIC_CHEMISTRY.pdf"
+    },
+    {
+      "name": "LECTURE 2 alkenes intro",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754868893973-LECTURE_3_alkenes_intro.pdf"
+    },
+    {
+      "name": "LECTURE 3 isomarism",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754869058297-LECTURE_3_ISOMERISM.pdf"
+    },
+    {
+      "name": "LECTURE 4 alkenes part 1",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754869201214-LECTURE_4_Part_1_reactions_of_alkenes.pdf"
+    },
+    {
+      "name": "LECTURE 5 alkenes part 2",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754869307782-LECTURE_5_Part_2_reactions_of_alkenes.pdf"
+    },
+    {
+      "name": "LECTURE 6 Haloalkenes",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754869502043-LECTURE_6_Haloalkanes.pdf"
+    },
+    {
+      "name": "LECTURE 7 alcohols and ethers",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754869593769-LECTURE_7_Alcohols_and_Ethers.pdf"
+    },
+    {
+      "name": "LECTURE 8 Aldehydes and ketones",
+      "subject": "chemistry",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754869718523-LECTURE_8_Aldehydes_and_Ketones.pdf"
+    },
+    {
+      "name": "Biology II Module",
+      "subject": "Biology",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754869867067-Biology_II_Module.pdf"
+    },
+    {
+      "name": "botany plant morphology",
+      "subject": "Biology",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754869977911-Botany_Plant-morphology.pdf"
+    },
+    {
+      "name": "Bio questions and answers",
+      "subject": "Biology",
+      "program": "basics",
+      "semester": "Semester 1",
+      "url": "files/1754870143549-Bio_Q_solution_.pdf"
+    },
+    {
+      "name": "Bio module 2",
+      "subject": "Biology",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754870245757-BIO_MODULE_2.pdf"
+    },
+    {
+      "name": "mendelian genetics",
+      "subject": "Biology",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754870384984-BIO_3121_Mendelian_genetics.pdf"
+    },
+    {
+      "name": "Bio course outline + notes",
+      "subject": "Biology",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754870834544-Biology_2_PPT.pdf"
+    },
+    {
+      "name": "data types SQL",
+      "subject": "Computer",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754871006635-database_types_SQL.pdf"
+    },
+    {
+      "name": "using database",
+      "subject": "Computer",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754871467236-3_Databases_TYPES_MODELS_STRUCTURE___Introduction.pdf"
+    },
+    {
+      "name": "Reading skills",
+      "subject": "Communication",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754871591672-reading_skills_2.pdf"
+    },
+    {
+      "name": "listening skills",
+      "subject": "Communication",
+      "program": "basics",
+      "semester": "Semester 1",
+      "url": "files/1754871674392-listening_skills.pdf"
+    },
+    {
+      "name": "Reading skills",
+      "subject": "Communication",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754871778411-1-_READING_SKILLS_072253.pptx"
+    },
+    {
+      "name": "physics module II",
+      "subject": "Physics",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754872047148-PHYSICS_II_-_Module.pdf"
+    },
+    {
+      "name": "Physics II course outline",
+      "subject": "Physics",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754872148348-PHYSICS_II_COURSE_OUTLINE.pdf"
+    },
+    {
+      "name": "Database key terms",
+      "subject": "Computer",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754872304036-4_Databases_KEY_TERMS.pdf"
+    },
+    {
+      "name": "introduction to objects",
+      "subject": "Computer",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754872381097-6_Access_2010__Introduction_to_Objects.pdf"
+    },
+    {
+      "name": "Creating database",
+      "subject": "Computer",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754872439883-8_CREATING_DATABASE_Access_2007.pdf"
+    },
+    {
+      "name": "Excel application",
+      "subject": "Computer",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754872526196-EXCEL_APPLICATIONS_1.pdf"
+    },
+    {
+      "name": "Trig and calculus",
+      "subject": "Mathematics",
+      "program": "basics",
+      "semester": "Semester 2",
+      "url": "files/1754872606822-Trig_and_Calculus_Module.pdf"
+    }
+  ]
+}
