@@ -61,6 +61,18 @@
             background: #1d4ed8;
         }
     </style>
+
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "a03b4cc3-c5cd-4f4d-bf9e-9bf27e722e07",
+    });
+  });
+</script>
+
+
 </head>
 
 <!-- Google tag (gtag.js) -->
