@@ -1,0 +1,273 @@
+{
+  "files": [
+    {
+      "basics": {
+        "Semester 1": {
+          "Communication": [
+            {
+              "name": "communication define",
+              "url": "files/1754805862196-1-_COMMUNICATION_DEFINITION_074911.pptx"
+            },
+            {
+              "name": "listening skills",
+              "url": "files/1754871674392-listening_skills.pdf"
+            }
+          ],
+          "Biology": [
+            {
+              "name": "Bio questions and answers",
+              "url": "files/1754870143549-Bio_Q_solution_.pdf"
+            }
+          ],
+          "Physics": [
+            {
+              "name": "physics module",
+              "url": "files/1754805980969--PHYSICS_MODULE_1.pdf"
+            }
+          ]
+        },
+        "Semester 2": {
+          "Chemistry": [
+            {
+              "name": "periodic table",
+              "url": "files/1754806150183-PeriodicTable.pdf"
+            },
+            {
+              "name": "chemistry module",
+              "url": "files/1754806210958-CHE_121_Module_2_First_Draft.pdf"
+            },
+            {
+              "name": "lecture1 intro to organic chemistry",
+              "url": "files/1754806383410-LECTURE_1_Introduction_to_Organic_Chemistry.pdf"
+            },
+            {
+              "name": "LECTURE 1 organic chemistry",
+              "url": "files/1754868593883-LECTURE_1-INTRODUCTION_TO_ORGANIC_CHEMISTRY.pdf"
+            },
+            {
+              "name": "LECTURE 2 alkenes intro",
+              "url": "files/1754868893973-LECTURE_3_alkenes_intro.pdf"
+            },
+            {
+              "name": "LECTURE 3 isomarism",
+              "url": "files/1754869058297-LECTURE_3_ISOMERISM.pdf"
+            },
+            {
+              "name": "LECTURE 4 alkenes part 1",
+              "url": "files/1754869201214-LECTURE_4_Part_1_reactions_of_alkenes.pdf"
+            },
+            {
+              "name": "LECTURE 5 alkenes part 2",
+              "url": "files/1754869307782-LECTURE_5_Part_2_reactions_of_alkenes.pdf"
+            },
+            {
+              "name": "LECTURE 6 Haloalkenes",
+              "url": "files/1754869502043-LECTURE_6_Haloalkanes.pdf"
+            },
+            {
+              "name": "LECTURE 7 alcohols and ethers",
+              "url": "files/1754869593769-LECTURE_7_Alcohols_and_Ethers.pdf"
+            },
+            {
+              "name": "LECTURE 8 Aldehydes and ketones",
+              "url": "files/1754869718523-LECTURE_8_Aldehydes_and_Ketones.pdf"
+            }
+          ],
+          "Biology": [
+            {
+              "name": "Biology II Module",
+              "url": "files/1754869867067-Biology_II_Module.pdf"
+            },
+            {
+              "name": "botany plant morphology",
+              "url": "files/1754869977911-Botany_Plant-morphology.pdf"
+            },
+            {
+              "name": "Bio module 2",
+              "url": "files/1754870245757-BIO_MODULE_2.pdf"
+            },
+            {
+              "name": "mendelian genetics",
+              "url": "files/1754870384984-BIO_3121_Mendelian_genetics.pdf"
+            },
+            {
+              "name": "Bio course outline + notes",
+              "url": "files/1754870834544-Biology_2_PPT.pdf"
+            }
+          ],
+          "Computer": [
+            {
+              "name": "data types SQL",
+              "url": "files/1754871006635-database_types_SQL.pdf"
+            },
+            {
+              "name": "using database",
+              "url": "files/1754871467236-3_Databases_TYPES_MODELS_STRUCTURE___Introduction.pdf"
+            },
+            {
+              "name": "Database key terms",
+              "url": "files/1754872304036-4_Databases_KEY_TERMS.pdf"
+            },
+            {
+              "name": "introduction to objects",
+              "url": "files/1754872381097-6_Access_2010__Introduction_to_Objects.pdf"
+            },
+            {
+              "name": "Creating database",
+              "url": "files/1754872439883-8_CREATING_DATABASE_Access_2007.pdf"
+            },
+            {
+              "name": "Excel application",
+              "url": "files/1754872526196-EXCEL_APPLICATIONS_1.pdf"
+            }
+          ],
+          "Communication": [
+            {
+              "name": "Reading skills",
+              "url": "files/1754871591672-reading_skills_2.pdf"
+            },
+            {
+              "name": "Reading skills",
+              "url": "files/1754871778411-1-_READING_SKILLS_072253.pptx"
+            }
+          ],
+          "Physics": [
+            {
+              "name": "physics module II",
+              "url": "files/1754872047148-PHYSICS_II_-_Module.pdf"
+            },
+            {
+              "name": "Physics II course outline",
+              "url": "files/1754872148348-PHYSICS_II_COURSE_OUTLINE.pdf"
+            }
+          ],
+          "Mathematics": [
+            {
+              "name": "Trig and calculus",
+              "url": "files/1754872606822-Trig_and_Calculus_Module.pdf"
+            }
+          ]
+        }
+      },
+      "programs": {}
+    },
+    {
+      "name": "2 Introduction to databases.pdf",
+      "subject": "chemistry 2",
+      "program": "basics",
+      "semester": "5",
+      "url": "files/1755551208179-2_Introduction_to_databases.pdf"
+    }
+  ],
+  "basics": {
+    "5": {
+      "chemistry 2": [
+        {
+          "name": "2 Introduction to databases.pdf",
+          "subject": "chemistry 2",
+          "program": "basics",
+          "semester": "5",
+          "url": "files/1755551851401-2_Introduction_to_databases.pdf"
+        }
+      ]
+    }
+  },
+  "programs": {
+    "agriculture": [
+      {
+        "name": "2 Introduction to databases.pdf",
+        "subject": "chemistry 2",
+        "program": "agriculture",
+        "semester": "5",
+        "url": "files/1755607946718-2_Introduction_to_databases.pdf"
+      }
+    ],
+    "bachelor of agriculture": [
+      {
+        "name": "2 Introduction to databases.pdf",
+        "subject": "chemistry 2",
+        "program": "bachelor of agriculture",
+        "semester": "5",
+        "url": "files/1755608089878-2_Introduction_to_databases.pdf"
+      },
+      {
+        "name": "2 Introduction to databases.pdf",
+        "subject": "chemistry 2",
+        "program": "bachelor of agriculture",
+        "semester": "5",
+        "url": "files/1755611385994-2_Introduction_to_databases.pdf"
+      },
+      {
+        "name": "2 Introduction to databases.pdf",
+        "subject": "chemistry 2",
+        "program": "bachelor of agriculture",
+        "semester": "5",
+        "url": "files/1755612069308-2_Introduction_to_databases.pdf"
+      }
+    ],
+    "Bachelor of Agriculture": [
+      {
+        "name": "2 Introduction to databases.pdf",
+        "subject": "chemistry 2",
+        "program": "Bachelor of Agriculture",
+        "semester": "5",
+        "url": "files/1755612117934-2_Introduction_to_databases.pdf"
+      }
+    ],
+    "Irrigation Technology": [
+      {
+        "name": "Soil Moisture Management",
+        "subject": "Irrigation Basics",
+        "program": "Irrigation Technology",
+        "semester": "1",
+        "url": "files/irrigation_technology/soil_moisture_management.pdf"
+      },
+      {
+        "name": "Surface Irrigation",
+        "subject": "Surface Methods",
+        "program": "Irrigation Technology",
+        "semester": "1",
+        "url": "files/irrigation_technology/surface_irrigation.pdf"
+      },
+      {
+        "name": "Sprinkler Irrigation",
+        "subject": "Sprinkler Systems",
+        "program": "Irrigation Technology",
+        "semester": "1",
+        "url": "files/irrigation_technology/sprinkler_irrigation.pdf"
+      },
+      {
+        "name": "Drip Irrigation",
+        "subject": "Drip Systems",
+        "program": "Irrigation Technology",
+        "semester": "1",
+        "url": "files/irrigation_technology/drip_irrigation.pdf"
+      }
+    ],
+    "Diploma Agriculture General": [
+      {
+        "name": "Crop protection.pdf",
+        "subject": "Crop protection",
+        "program": "Diploma Agriculture General",
+        "semester": "6",
+        "url": "files/1755719765690-Crop_protection.pdf"
+      },
+      {
+        "name": "Field Crops Tutorial (NRC).pdf",
+        "subject": "Field Crops Tutorial (NRC)",
+        "program": "Diploma Agriculture General",
+        "semester": "6",
+        "url": "files/1755722213715-Field_Crops_Tutorial_NRC.pdf"
+      }
+    ],
+    "Diploma in Agriculture General": [
+      {
+        "name": "Crop protection.pdf",
+        "subject": "Crop protection",
+        "program": "Diploma  Agriculture General",
+        "semester": "6",
+        "url": "files/1755720469624-Crop_protection.pdf"
+      }
+    ]
+  }
+}

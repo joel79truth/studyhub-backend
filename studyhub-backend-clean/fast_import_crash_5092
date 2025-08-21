@@ -1,0 +1,163 @@
+fast-import crash report:
+    fast-import process: 5092
+    parent process     : 1
+    at 2025-08-21 03:19:19 +0000
+
+fatal: invalid path 'OneSignalSDKWorker.js.'
+
+Most Recent Commands Before Crash
+---------------------------------
+  M 100644 8da0f203690ced49f9be7a2cd0a3479ad2f8fd97 public/index.html
+  
+  get-mark :19
+  commit refs/heads/main
+  mark :20
+  author joel79truth <joeltruth165@gmail.com> 1755490709 -0700
+  committer joel79truth <joeltruth165@gmail.com> 1755490709 -0700
+  data 40
+  from :19
+  M 100644 a5ffb6d339d3b59e54e7701ffccc02df10d151c5 public/index.html
+  
+  get-mark :20
+  commit refs/heads/main
+  mark :21
+  author joel79truth <joeltruth165@gmail.com> 1755491257 -0700
+  committer joel79truth <joeltruth165@gmail.com> 1755491257 -0700
+  data 47
+  from :20
+  M 100644 067008786dceed257babdade8ebc1e98f8d7c079 public/index.html
+  
+  get-mark :21
+  commit refs/heads/main
+  mark :22
+  author joel79truth <joeltruth165@gmail.com> 1755491822 -0700
+  committer joel79truth <joeltruth165@gmail.com> 1755491822 -0700
+  data 48
+  from :21
+  M 100644 2bfd6faa1f2f273ffb544abd9d48b5fe809e17f5 public/index.html
+  
+  get-mark :22
+  commit refs/heads/main
+  mark :23
+  author joel79truth <joeltruth165@gmail.com> 1755492477 -0700
+  committer joel79truth <joeltruth165@gmail.com> 1755492477 -0700
+  data 44
+  from :22
+  M 100644 4f38f215fb27f0fe50c1f00da2f829d64311f1ed public/index.html
+  
+  get-mark :23
+  commit refs/heads/main
+  mark :24
+  author joel79truth <joeltruth165@gmail.com> 1755494127 -0700
+  committer joel79truth <joeltruth165@gmail.com> 1755494127 -0700
+  data 50
+  from :23
+  M 100644 7b5b0f7bb152a397d6756b948ff9f9f9fdd3f1fd public/index.html
+  
+  get-mark :24
+  commit refs/heads/main
+  mark :25
+  author joel79truth <joeltruth165@gmail.com> 1755531374 -0700
+  committer joel79truth <joeltruth165@gmail.com> 1755531374 -0700
+  data 67
+  from :24
+  M 100644 5900a7ef312663cd0ff58ead3b108e331dd52750 public/index.html
+  
+  get-mark :25
+  commit refs/heads/main
+  mark :26
+  author joel79truth <truthjoel165@gmail.com> 1755500870 +0200
+  committer GitHub <noreply@github.com> 1755500870 +0200
+  data 46
+  from :25
+  M 100644 10cccfc01ae0c4af4d4297d5502cf4af38af4e18 public/index.html
+  
+  get-mark :26
+  commit refs/heads/main
+  mark :27
+  author joel79truth <truthjoel165@gmail.com> 1755501520 +0200
+  committer GitHub <noreply@github.com> 1755501520 +0200
+  data 17
+  from :26
+  M 100644 315555ffdb412d27a1a923a611f166ffc3decd34 public/index.html
+  
+  get-mark :27
+  commit refs/heads/main
+  mark :28
+  author joel79truth <truthjoel165@gmail.com> 1755501792 +0200
+  committer GitHub <noreply@github.com> 1755501792 +0200
+  data 35
+  from :27
+  M 100644 720b1d787f931c3d34413ad04d62e40ed1a31ecb OneSignalSDKUpdaterWorker.js
+  
+  get-mark :28
+  commit refs/heads/main
+  mark :29
+  author joel79truth <truthjoel165@gmail.com> 1755501854 +0200
+  committer GitHub <noreply@github.com> 1755501854 +0200
+  data 35
+  from :28
+  M 100644 3c71d6ef4f0e7e255ebf20b015ec248875569db4 OneSignalSDKUpdaterWorker.js
+  
+  get-mark :29
+  commit refs/heads/main
+  mark :30
+  author joel79truth <truthjoel165@gmail.com> 1755501981 +0200
+  committer GitHub <noreply@github.com> 1755501981 +0200
+  data 29
+  from :29
+* M 100644 720b1d787f931c3d34413ad04d62e40ed1a31ecb OneSignalSDKWorker.js.
+
+Active Branch LRU
+-----------------
+    active_branches = 1 cur, 5 max
+
+  pos  clock name
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1)      4 refs/heads/main
+
+Inactive Branches
+-----------------
+refs/heads/main:
+  status      : active loaded
+  tip commit  : b2d2fbc043291386e13e99882aa98570462dd77b
+  old tree    : a441275348dba6397123e3b65c9751f2b912df0e
+  cur tree    : a441275348dba6397123e3b65c9751f2b912df0e
+  commit clock: 4
+  last pack   : 0
+
+
+Marks
+-----
+:1 c72ae80647423d370830e2960b421086c8b1fa14
+:2 5a60558216f17f76b1295ede65f26c0fc206e141
+:3 32d0864a4e934c51a064a7dc55b402ce437fc47d
+:4 e4c8d84e779408549052a3d450c7cb681146071c
+:5 47ba3cc81ce1ca39a39b0ee440e62df755a1c5be
+:6 5bddd9532918b9856edc6bfbb83338abfac0706e
+:7 5997588cc5499d6d3c67f8860b950790a19dc6c4
+:8 613f16eae0ffda945b839067a549ddf3d42d662d
+:9 df4eb91a69648ab9025a4d6d650bd1dc4ec2c314
+:10 f5db1db223a71c40b67dfc28b4b27a0c8f5ee9ff
+:11 2efb2c347e3e5c1006783646ecc313771e0d0ed6
+:12 f08dbcc11cc8f99829db021a897a3c4115880c50
+:13 170dd4ba07122aa38be33283175ea3aba3a374a6
+:14 aef8d7d8fe2c66babe48e3f135b00e858a047e46
+:15 a2ab334c0e02084577e27e622138603484cc8b49
+:16 6634f808b1e51a3710b03d76b0b5656015ed02db
+:17 569aa2af2e3d5acd5ab06b8b60aba624329cd358
+:18 1eb89a60ecb6ec9d17015610b751e5879af39083
+:19 a899b921ee953e19a2dc26d1efe314088ef7fbb5
+:20 94416861f6c401cfb76be58b2d296c8adece3419
+:21 b2705ec0b68d17445b5d925bc1e67cc13c03916d
+:22 5fc441d46e2aa41f269d2238c690868845c135b2
+:23 8ab77163e87c1e907b5b4353370e2fe086b54c76
+:24 46dfaf35cfb5f085c0c5d48227272b65625cbd5e
+:25 3c480e312e4cad0d14c50c85f80af4e940d85766
+:26 23f2626a1348a898c2c920c4d920ac8e3a4a0925
+:27 49f461cdc799244eb7413e4495a3b36d27bb2a34
+:28 c85f33befe363a57f628cd2fae7e48719da1db37
+:29 b2d2fbc043291386e13e99882aa98570462dd77b
+
+-------------------
+END OF CRASH REPORT

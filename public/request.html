@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Request Notes | StudyHub LUANAR</title>
+
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 12px 0 6px;
+      color: white;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      box-sizing: border-box;
+      background: rgba(255,255,255,0.85);
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #217dbb;
+    }
+
+    .success {
+      color: #00ff90;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 20px;
+      }
+    }
+
+    
+  </style>
+
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0LTZS1S9W6');
+</script>
+
+<body>
+
+
+
+  <div class="overlay"></div>
+  <div class="container">
+    <h1>Request Notes</h1>
+
+    <form id="requestForm" aria-label="Request notes form">
+      <label for="topic">Topic</label>
+      <input type="text" id="topic" name="topic" required aria-required="true" />
+
+      <label for="course">Course / Subject</label>
+      <input type="text" id="course" name="course" required aria-required="true" />
+
+      <label for="program">Your Program</label>
+      <input type="text" id="program" name="program" required aria-required="true" />
+
+      <label for="semester">Semester</label>
+      <input type="text" id="semester" name="semester" required aria-required="true" />
+
+      <button type="submit" aria-label="Submit note request">Submit Request</button>
+      <p class="success" id="successMsg" role="alert" aria-live="polite">✅ Request sent successfully!</p>
+    </form>
+
+    <a href="index.html" class="back-link" aria-label="Back to Home">← Back to Home</a>
+  </div>
+
+  <script>
+    document.getElementById("requestForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const topic = document.getElementById("topic").value.trim();
+      const course = document.getElementById("course").value.trim();
+      const program = document.getElementById("program").value.trim();
+      const semester = document.getElementById("semester").value.trim();
+
+      if (!topic || !course || !program || !semester) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      try {
+        const res = await fetch("/submit-request", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topic, course, program, semester })
+        });
+
+        if (res.ok) {
+          document.getElementById("successMsg").style.display = "block";
+          document.getElementById("requestForm").reset();
+        } else {
+          alert("❌ Failed to submit. Please try again.");
+        }
+      } catch {
+        alert("❌ Failed to submit. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>

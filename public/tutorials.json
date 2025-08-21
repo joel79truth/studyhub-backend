@@ -1,0 +1,93 @@
+[
+  {
+    "subject": "chemistry 2",
+    "videos": [
+      {
+        "title": "Isomerism - Organic Chemistry",
+        "url": "https://www.youtube.com/watch?v=VwZ4b9_1ACM"
+      },
+      {
+        "title": "Structural Isomerism Explained",
+        "url": "https://www.youtube.com/watch?v=Ex3QvbDvZGE"
+      }
+    ]
+  },
+  {
+    "subject": "physics",
+    "videos": [
+      {
+        "title": "Basic Physics Concepts",
+        "url": "https://www.youtube.com/watch?v=V8R3iZC_bYI"
+      },
+      {
+        "title": "Kinematics and Dynamics",
+        "url": "https://www.youtube.com/watch?v=yJ0y7Z3Dd_k"
+      }
+    ]
+  },
+  {
+    "subject": "biology",
+    "videos": [
+      {
+        "title": "Cell Structure and Function",
+        "url": "https://www.youtube.com/watch?v=URUJD5NEXC8"
+      },
+      {
+        "title": "Genetics & Evolution - Crash Course",
+        "url": "https://www.youtube.com/watch?v=FjD6Yq6yDEw"
+      }
+    ]
+  },
+  {
+    "subject": "computer",
+    "videos": [
+      {
+        "title": "Database Management Systems Tutorial",
+        "url": "https://www.youtube.com/watch?v=ztHopE5Wnpc"
+      },
+      {
+        "title": "Introduction to Databases",
+        "url": "https://www.youtube.com/watch?v=HXV3zeQKqGY"
+      }
+    ]
+  },
+  {
+    "subject": "communication",
+    "videos": [
+      {
+        "title": "Effective Writing Skills",
+        "url": "https://www.youtube.com/watch?v=fpmNfJ2hAao"
+      },
+      {
+        "title": "Business Communication",
+        "url": "https://www.youtube.com/watch?v=5aJbOU9R4a4"
+      }
+    ]
+  },
+  {
+    "subject": "success",
+    "videos": [
+      {
+        "title": "Web Development for Beginners",
+        "url": "https://www.youtube.com/watch?v=3JluqTojuME"
+      },
+      {
+        "title": "Introduction to Web Design",
+        "url": "https://www.youtube.com/watch?v=pQN-pnXPaVg"
+      }
+    ]
+  },
+  {
+    "subject": "basics",
+    "videos": [
+      {
+        "title": "Study Tips for University Students",
+        "url": "https://www.youtube.com/watch?v=IlU-zDU6aQ0"
+      },
+      {
+        "title": "Time Management for Students",
+        "url": "https://www.youtube.com/watch?v=O-4ithG_07Q"
+      }
+    ]
+  }
+]

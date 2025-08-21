@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Panel - Manage Requests</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+    background: #f9f9f9;
+  }
+  h1 {
+    color: #333;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+  }
+  th {
+    background: #3498db;
+    color: white;
+  }
+  button.delete-btn {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button.delete-btn:hover {
+    background: #c0392b;
+  }
+  #message {
+    margin-top: 15px;
+    color: green;
+  }
+</style>
+
+
+
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0LTZS1S9W6');
+</script>
+
+<body>
+
+<h1>Admin Panel — Manage Note Requests</h1>
+
+<table id="requestsTable" aria-label="List of note requests">
+  <thead>
+    <tr>
+      <th>topic</th>
+      <th>course</th>
+      <th>Program</th>
+      <th>Semester</th>
+      <th>Message</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="requestsBody">
+    <!-- Requests loaded here -->
+  </tbody>
+</table>
+
+<div id="message" role="alert" aria-live="polite"></div>
+
+<script>
+  // Escape HTML to prevent XSS attacks
+  function escapeHtml(text) {
+    text = text || '';  // fallback if undefined or null
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  async function fetchRequests() {
+    try {
+      const res = await fetch('/api/requests');
+      if (!res.ok) throw new Error('Failed to load requests');
+      const data = await res.json();
+      renderRequests(data.requests);
+    } catch (err) {
+      alert('Error loading requests: ' + err.message);
+    }
+  }
+
+  function renderRequests(requests) {
+    const tbody = document.getElementById('requestsBody');
+    tbody.innerHTML = '';
+
+    if (!requests || requests.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No requests found</td></tr>';
+      return;
+    }
+
+    requests.forEach((req, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(req.topic)}</td>
+        <td>${escapeHtml(req.course)}</td>
+        <td>${escapeHtml(req.program)}</td>
+        <td>${escapeHtml(req.semester)}</td>
+        <td>${escapeHtml(req.message)}</td>
+        <td>
+          <button class="delete-btn" data-index="${index}" aria-label="Delete request from ${escapeHtml(req.name)}">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Attach delete handlers
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => deleteRequest(btn.dataset.index));
+    });
+  }
+
+  async function deleteRequest(index) {
+    if (!confirm('Are you sure you want to delete this request?')) return;
+
+    try {
+      const res = await fetch('/api/requests/' + encodeURIComponent(index), { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete request');
+      document.getElementById('message').textContent = 'Request deleted successfully.';
+      fetchRequests(); // Refresh the list after deletion
+    } catch (err) {
+      alert('Error deleting request: ' + err.message);
+    }
+  }
+
+  // Load requests when page loads
+  fetchRequests();
+</script>
+
+</body>
+</html>

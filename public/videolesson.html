@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video Lessons</title>
+
+  
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+      text-align: center;
+    }
+    header {
+      background: #0066da;
+      color: white;
+      padding: 10px;
+      font-size: 20px;
+    }
+    #searchBar {
+      width: 80%;
+      max-width: 500px;
+      padding: 10px;
+      margin: 15px auto;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    .video-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 40px;
+    }
+    .video-card {
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    iframe {
+      width: 100%;
+      height: 250px;
+      border-radius: 8px;
+    }
+    .topic {
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-align: left;
+      font-size: 18px;
+    }
+    .back-btn {
+      background: red;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+.luanar-logo {
+  width: 120px; /* Adjust size as needed */
+  height: auto;
+  display: block;
+  margin: 20px auto; /* Centers the logo */
+}
+
+.logo-container {
+  text-align: center;
+}
+
+    .back-btn:hover {
+      background: darkred;
+    }
+  </style>
+
+  
+
+
+
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0LTZS1S9W6');
+</script>
+
+
+
+<body>
+
+<header>📚 Video Lessons</header>
+<button class="back-btn" onclick="window.location.href='index.html'">⬅ Back</button>
+
+
+<!-- Place this where you want the logo to appear -->
+<div class="logo-container">
+  <img src="images/luanar logo.png" alt="LUANAR Logo" class="luanar-logo">
+</div>
+
+<input type="text" id="searchBar" placeholder="Search videos..." onkeyup="filterVideos()" />
+
+<div class="video-container" id="videoList"></div>
+
+<script>
+  let videos = [];
+
+  // Load videos from JSON file
+  fetch('videos.json')
+    .then(response => response.json())
+    .then(data => {
+      videos = data.videos;
+      renderVideos(videos);
+    })
+    .catch(err => {
+      document.getElementById('videoList').innerHTML = '<p>Failed to load videos.</p>';
+      console.error('Error loading videos.json:', err);
+    });
+
+  function renderVideos(videoArray) {
+    const container = document.getElementById('videoList');
+    container.innerHTML = '';
+
+    if (videoArray.length === 0) {
+      container.innerHTML = '<p>No videos found.</p>';
+      return;
+    }
+
+    videoArray.forEach(video => {
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.setAttribute('data-title', video.title.toLowerCase());
+
+      card.innerHTML = `
+        <div class="topic">${video.title}</div>
+        <iframe src="https://www.youtube.com/embed/${video.youtubeId}" allowfullscreen></iframe>
+      `;
+
+      container.appendChild(card);
+    });
+  }
+
+  function filterVideos() {
+    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+    const filtered = videos.filter(v => v.title.toLowerCase().includes(searchTerm));
+    renderVideos(filtered);
+  }
+</script>
+
+</body>
+</html>

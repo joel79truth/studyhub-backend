@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Support Me - Buy Me Coffee</title>
+  <style>
+    /* Reset some defaults */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fefefe;
+      color: #333;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      color: #ff813f;
+      margin: 0;
+      font-weight: 700;
+    }
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      flex-grow: 1;
+    }
+    .payment-method {
+      background: white;
+      border-radius: 12px;
+      padding: 25px 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(255, 129, 63, 0.25);
+      transition: box-shadow 0.3s ease;
+      cursor: default;
+      user-select: text;
+    }
+    .payment-method:hover {
+      box-shadow: 0 8px 25px rgba(255, 129, 63, 0.4);
+    }
+    .payment-method h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #ff813f;
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+    .payment-method p {
+      font-size: 1.1rem;
+      margin: 6px 0;
+    }
+    footer {
+      text-align: center;
+      padding: 20px 0 10px;
+      font-style: italic;
+      color: #666;
+      font-size: 0.95rem;
+      user-select: none;
+    }
+    /* Responsive */
+    @media (max-width: 480px) {
+      body {
+        padding: 15px 10px;
+      }
+      .payment-method {
+        padding: 20px;
+      }
+      header h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .back-home-btn {
+  display: inline-block;
+  margin: 20px 0;
+  padding: 10px 20px;
+  background-color: #4f46e5; /* a nice blue */
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+.back-home-btn:hover,
+.back-home-btn:focus {
+  background-color: #4338ca;
+  outline: none;
+}
+
+  </style>
+
+
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0LTZS1S9W6');
+
+
+
+</script>
+
+
+<body>
+  <header>
+    <h1>Support Me ☕</h1>
+    <p style="font-size:1.1rem; color:#555;">Your support means the world! 🙏</p>
+  </header>
+
+  <main>
+    <section class="payment-method" tabindex="0" aria-label="Airtel Money payment details">
+      <h2>Airtel Money</h2>
+      <p>Send your support to:</p>
+      <p><strong>Phone Number:</strong> +265 98 6742 072</p>
+    </section>
+
+   
+
+  <footer>
+    Thank you for your generosity! 💖
+  </footer>
+  <a href="index.html" class="back-home-btn" aria-label="Back to Home">← Back to Home</a>
+
+</body>
+</html>

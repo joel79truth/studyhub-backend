@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom & Encouragement</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom right, #fef3c7, #fde68a);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .back-btn {
+            margin: 20px;
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        .verse-card {
+            max-width: 600px;
+            background: white;
+            padding: 24px;
+            margin-top: 40px;
+            border-radius: 16px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .verse-card h2 {
+            color: #b45309;
+        }
+        .verse-card p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #374151;
+        }
+        .next-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #b45309;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        .next-btn:hover {
+            background: #92400e;
+        }
+    </style>
+
+
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0LTZS1S9W6');
+</script>
+
+
+<body>
+    <a href="index.html" class="back-btn">← Back</a>
+
+    <div class="verse-card">
+        <h2>Proverbs of Wisdom</h2>
+        <p id="verse">"The fear of the Lord is the beginning of wisdom, and knowledge of the Holy One is understanding." – Proverbs 9:10</p>
+        <button class="next-btn" onclick="newVerse()">Next Verse</button>
+    </div>
+
+    <script>
+        const verses = [
+            '"The fear of the Lord is the beginning of wisdom, and knowledge of the Holy One is understanding." – Proverbs 9:10',
+            '"Trust in the Lord with all your heart and lean not on your own understanding." – Proverbs 3:5',
+            '"Above all else, guard your heart, for everything you do flows from it." – Proverbs 4:23',
+            '"A gentle answer turns away wrath, but a harsh word stirs up anger." – Proverbs 15:1',
+            '"Commit to the Lord whatever you do, and he will establish your plans." – Proverbs 16:3'
+        ];
+
+        function newVerse() {
+            const randomIndex = Math.floor(Math.random() * verses.length);
+            document.getElementById('verse').innerText = verses[randomIndex];
+        }
+    </script>
+</body>
+</html>

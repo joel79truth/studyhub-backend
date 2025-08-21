@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    #toolbar {
+      background: #007BFF;
+      padding: 10px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    button {
+      background: white;
+      color: #007BFF;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #e2e6ea;
+    }
+    #pdf-container {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+  </style>
+
+
+
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0LTZS1S9W6');
+</script>
+
+
+<body>
+
+<div id="toolbar">
+  <button onclick="zoomIn()">Zoom In</button>
+  <button onclick="zoomOut()">Zoom Out</button>
+  <button onclick="goHome()">Back to Home</button>
+</div>
+
+<div id="pdf-container"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const file = urlParams.get('file');
+const pdfUrl = decodeURIComponent(file);
+
+let pdfDoc = null;
+let scale = 1.0; // initial zoom
+const container = document.getElementById('pdf-container');
+
+if (!pdfUrl) {
+  container.innerHTML = '<p>No PDF file specified.</p>';
+} else {
+  pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+    pdfDoc = pdf;
+    renderAllPages();
+  }).catch(err => {
+    container.innerHTML = `<p>Error loading PDF: ${err.message}</p>`;
+  });
+}
+
+function renderAllPages() {
+  container.innerHTML = ''; // clear old pages
+  // Render pages sequentially to avoid overlapping
+  let renderPagePromises = [];
+  for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+    renderPagePromises.push(renderPage(pageNum));
+  }
+  return Promise.all(renderPagePromises);
+}
+
+function renderPage(pageNum) {
+  return pdfDoc.getPage(pageNum).then(page => {
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    container.appendChild(canvas);
+    return page.render({
+      canvasContext: context,
+      viewport: viewport
+    }).promise;
+  });
+}
+
+function zoomIn() {
+  scale += 0.2;
+  renderAllPages();
+}
+
+function zoomOut() {
+  if (scale > 0.4) { // prevent too small
+    scale -= 0.2;
+    renderAllPages();
+  }
+}
+
+function goHome() {
+  window.location.href = 'index.html';
+}
+</script>
+
+</body>
+</html>

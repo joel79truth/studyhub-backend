@@ -1,0 +1,647 @@
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+body {
+ 
+ background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80');
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #333;
+  animation: bgMove 20s infinite alternate ease-in-out;
+}
+
+
+/* Header */
+header {
+
+  background-color: rgba(47, 168, 10, 0.7);
+  color: white; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+header h1 {
+  text-align: center;
+  width: 100%;
+}
+
+
+.menu-btn {
+  width: 30px;
+  height: 25px;
+  position: relative;
+  border: none;
+  background: black;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  
+}
+
+.menu-btn .bar {
+  height: 3px;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+  border-radius: 2px;
+  transition: 0.3s ease;
+  transform-origin: left;
+}
+
+/* Animate to X */
+.menu-btn.open .bar:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.menu-btn.open .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-btn.open .bar:nth-child(3) {
+  transform: rotate(-45deg);
+}
+
+
+/* Sidebar */
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+/* Search */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+ 
+}
+
+#searchInput {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 60%;
+  min-width: 250px;
+}
+
+#searchBtn {
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#searchBtn:hover {
+  background-color: #005fa3;
+}
+
+/* Semesters & Subjects */
+.semesters, .subjects {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.semesters button, .subject-btn {
+  background-color: #000000;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.semesters button:hover, .subject-btn:hover {
+  background-color: #374151;
+}
+
+
+
+/* File list container */
+.file-list > div {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 10px auto;
+  max-width: 600px;
+}
+
+/* Each file entry */
+.file-entry {
+  background: #28292b;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .file-card {
+    width: 95%;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #searchInput {
+    width: 90%;
+  }
+
+  .container {
+    margin: 20px 10px;
+    padding: 16px;
+  }
+}
+
+
+.container {
+  background: rgba(255, 255, 255, 0.88); /* Light glass effect */
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: auto;
+  margin-top: 40px;
+}
+.container {
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.menu-btn {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+
+.subject-btn, .file-card {
+  transition: transform 0.2s ease, box-shadow 0.3s;
+}
+
+.subject-btn:hover, .file-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.subject-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin: 20px auto;
+  max-width: 900px;
+}
+
+
+
+
+
+@media (max-width: 600px) {
+  .subject-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .subject-btn {
+    width: 80%;
+    font-size: 18px;
+  }
+}
+#menuIcon {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: rgb(0, 0, 0);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: background 0.3s ease;
+}
+
+#menuIcon:hover {
+  background-color: #000000;
+}
+@media (max-width: 768px) {
+  .file-card {
+    width: 95% !important;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #searchInput {
+    width: 90%;
+  }
+}
+.tutorials {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #ccc;
+}
+
+.tutorials h4 {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #0077cc;
+}
+
+.tutorials a {
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+}
+
+.tutorials a:hover {
+  text-decoration: underline;
+}
+
+h2{
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;}
+.welcome-message {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 20px;
+}.theme-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #ffffff55;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+body.dark-mode {
+  background-color: #121212;
+  color: #f0f0f0;
+}
+
+body.dark-mode .container {
+  background-color: rgba(40, 40, 40, 0.8);
+}
+
+body.dark-mode .file-card {
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+body.dark-mode a {
+  color: #90caf9;
+}
+
+/* Sidebar */
+.menu-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.menu-btn .bar {
+  width: 30px;
+  height: 4px;
+  background-color: #f3f5f7;
+  margin: 6px 0;
+  transition: 0.4s;
+}
+
+.sidebar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px;
+  background-color: #111;
+  color: white;
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+}
+
+.sidebar a,
+.sidebar button {
+  display: block;
+  margin: 12px 0;
+  color: white;
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sidebar .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* Subject section container */
+#subjectsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+   display: flex;
+  flex-direction: column; /* Places buttons in a row */
+  gap: 10px;
+  flex-wrap: wrap; /* Wraps to next line if needed */
+
+}
+
+/* Subject buttons */
+#subjectsContainer button {
+   background: #4A90E2; 
+  color:#FFFFFF; 
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+}
+
+#subjectsContainer button:hover {
+  background-color: #0d6efd; /* Slightly darker blue */
+  transform: scale(1.05);
+}
+
+/* Resizable YouTube tutorial box */
+.youtube-box {
+  resize: both;
+  overflow: auto;
+  border: 2px dashed #ccc;
+  padding: 10px;
+  margin: 10px auto;
+  width: 100%;
+  max-width: 600px;
+  min-width: 300px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.youtube-box iframe {
+  width: 100%;
+  height: 315px;
+  border: none;
+  border-radius: 8px;
+}
+.subject-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.subject-section button {
+  background: #dbdbdb;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.subject-section button:hover {
+  background: #0d47a1;
+}
+
+.file-card {
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+.note-button {
+  padding: 8px 14px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.file-list button {
+  background-color: #0078D4; /* A nice Microsoft blue */
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 9px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.file-list button:hover {
+  background-color: #005A9E; /* Darker blue on hover */
+}
+
+
+.search-bar button {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #0078D4; /* Microsoft blue */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+  background-color: #005A9E;
+}
+
+
+
+#closeSubjectBtn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #030213; /* red tone for 'close' */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+#closeSubjectBtn:hover {
+  background-color: #c0392b; /* darker red on hover */
+}
+
+
+.file-entry hr {
+  margin-top: 15px;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+.file-card h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.file-card p {
+  margin: 6px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+
+
+
+
+
+
+
+.button-group {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.view-btn {
+  background-color: #3498db;
+  color: white;
+}
+.view-btn:hover {
+  background-color: #2980b9;
+}
+
+.download-btn {
+  background-color: #2ecc71;
+  color: white;
+}
+.download-btn:hover {
+  background-color: #27ae60;
+}
+.button {
+    display: block; 
+    margin: 10px auto; /* centers and adds space */
+    width: 200px; /* adjust button width */
+    padding: 10px; /* adjust button height */
+    text-align: center;
+    background-color: #007bff; 
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+.button:hover {
+    background-color: #0056b3;
+}
