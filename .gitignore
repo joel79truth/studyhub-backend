@@ -4,3 +4,4 @@ node_modules/
 .env
 public/files/*.pdf
 public/files/*.pptx
+.env
