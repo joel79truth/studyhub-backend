@@ -4,42 +4,65 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Program Topics – StudyHub LUANAR</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   body {
-    font-family: 'Segoe UI', sans-serif;
     margin: 0;
-    background: #f9f9f9;
-    color: #333;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   header {
     text-align: center;
-    padding: 20px;
-    background: #4f46e5;
-    color: white;
+    padding: 25px 15px;
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
 
   .container {
-    max-width: 800px;
+    flex: 1;
+    max-width: 900px;
     margin: 20px auto;
     padding: 15px;
   }
 
   .back-btn {
     display: inline-block;
-    padding: 10px 15px;
+    padding: 10px 18px;
     margin-bottom: 15px;
-    background: #3b82f6;
+    background: #ff6b6b;
     color: white;
-    border-radius: 6px;
+    border-radius: 10px;
     text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  .back-btn:hover { background: #ff4757; transform: scale(1.05); }
+
+  #searchBar {
+    width: 80%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: none;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   }
 
   .action-buttons {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    margin-bottom: 20px;
+    gap: 50px;
+    margin-bottom: 30px;
   }
 
   .action-btn {
@@ -47,74 +70,91 @@
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    color: #333;
+    color: #fff;
     font-weight: bold;
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    width: 90px;
+    backdrop-filter: blur(10px);
+    text-align: center;
   }
-
   .action-btn i {
-    font-size: 36px;
-    color: #4f46e5;
-    margin-bottom: 6px;
+    font-size: 25px;
+    margin-bottom: 8px;
+  }
+  .action-btn:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
 
-  #searchBar {
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 20px;
+  .subject-group {
+    margin-bottom: 30px;
+  }
+  .subject-group h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    border-bottom: 2px dashed rgba(255,255,255,0.5);
+    padding-bottom: 5px;
+    color: #ffe66d;
   }
 
   .topic-card {
-    background: white;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid #e0e0e0;
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s, background 0.3s;
+  }
+  .topic-card:hover {
+    transform: scale(1.02);
+    background: rgba(255,255,255,0.1);
   }
 
   .topic-card h3 {
     margin: 0;
-    color: #4f46e5;
     font-size: 1rem;
     flex: 1;
+    color: #fff;
   }
 
   .topic-card button, .topic-card a {
-    padding: 6px 10px;
+    padding: 8px 12px;
     border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
     cursor: pointer;
-    color: white;
+    color: #fff;
     text-decoration: none;
+    margin-left: 8px;
+    transition: all 0.2s;
   }
 
-  .view-btn { background: #3b82f6; }
-  .download-btn { background: #10b981; }
-
+  .view-btn { background: #1dd1a1; }
+  .view-btn:hover { background: #10ac84; }
+  .download-btn { background: #54a0ff; }
+  .download-btn:hover { background: #2e86de; }
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-0LTZS1S9W6');
-</script>
-
+<!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-0LTZS1S9W6');
+  </script>
 
 <body>
 
-<header>
-  <h1 id="programTitle">Program Topics</h1>
-</header>
+<header id="programTitle">Program Topics</header>
 
 <div class="container">
   <a href="program.html" class="back-btn">&larr; Back to Programs</a>
@@ -140,90 +180,74 @@ const urlParams = new URLSearchParams(window.location.search);
 const programName = urlParams.get('program') || '';
 document.getElementById('programTitle').innerText = programName;
 
-// Sample subjects if no uploaded files exist
-const sampleSubjects = {
-  "Bachelor of Science in Agriculture": ["Crop Production", "Soil Science", "Animal Science"],
-  "Diploma Agriculture General": ["Crop Protection", "Soil Science", "Farm Practices"]
-};
-
+// Fetch and display topics
 async function loadTopics() {
   try {
     const response = await fetch('metadata.json');
     const data = await response.json();
+
+    let uploadedTopics = [];
     const programs = data.programs || {};
     const basics = data.basics || {};
 
-    // Case-insensitive lookup for program
     const programKey = Object.keys(programs).find(
       key => key.toLowerCase().trim() === programName.toLowerCase().trim()
     );
 
-    let uploadedTopics = [];
-
     if (programKey) {
-      const filesArray = programs[programKey];
-      filesArray.forEach(file => {
-        uploadedTopics.push({
-          title: `${file.name} (${file.subject || file.semester})`,
-          url: file.url
-        });
-      });
-    } else if (programName.toLowerCase() === "basics") {
+      uploadedTopics = programs[programKey];
+    } else if (programName.toLowerCase() === 'basics') {
       Object.values(basics).forEach(semester => {
         Object.values(semester).forEach(subjectFiles => {
-          subjectFiles.forEach(file => {
-            uploadedTopics.push({
-              title: `${file.name} (${file.subject || file.semester})`,
-              url: file.url
-            });
-          });
+          uploadedTopics.push(...subjectFiles);
         });
       });
     }
 
-    if (uploadedTopics.length > 0) {
-      displayUploaded(uploadedTopics);
-    } else {
-      const defaultTopics = sampleSubjects[programName] || [];
-      displaySample(defaultTopics);
-    }
-
-  } catch (error) {
-    console.error("Error loading topics:", error);
+    displayGrouped(uploadedTopics);
+  } catch (err) {
+    console.error(err);
     document.getElementById('topicsList').innerHTML = '<p>No topics found.</p>';
   }
 }
 
-function displayUploaded(list) {
-  const searchInput = document.getElementById('searchBar');
-  const filteredList = list.filter(t => t.title.toLowerCase().includes(searchInput.value.toLowerCase()));
+function displayGrouped(files) {
+  const searchInput = document.getElementById('searchBar').value.toLowerCase();
 
-  document.getElementById('topicsList').innerHTML =
-    filteredList.map(t => `
-      <div class="topic-card">
-        <h3>${t.title}</h3>
-        <div>
-          <button class="view-btn" onclick="window.open('${t.url}', '_blank')">📖 View</button>
-          <a class="download-btn" href="${t.url}" download>⬇️ Download</a>
-        </div>
-      </div>`).join('');
-}
+  const grouped = {};
+  files.forEach(file => {
+    if (!grouped[file.subject]) grouped[file.subject] = [];
+    grouped[file.subject].push(file);
+  });
 
-function displaySample(list) {
-  const searchInput = document.getElementById('searchBar');
-  const filteredList = list.filter(sub => sub.toLowerCase().includes(searchInput.value.toLowerCase()));
+  let html = '';
+  for (const subject in grouped) {
+    const subjectFiles = grouped[subject].filter(f => 
+      f.name.toLowerCase().includes(searchInput) || subject.toLowerCase().includes(searchInput)
+    );
+    if (!subjectFiles.length) continue;
 
-  document.getElementById('topicsList').innerHTML =
-    filteredList.map(sub => `
-      <div class="topic-card">
-        <h3>${sub}</h3>
-        <p style="color:gray;">No file uploaded yet</p>
-      </div>`).join('');
+    html += `<div class="subject-group">
+               <h2>${subject}</h2>
+               ${subjectFiles.map(f => `
+                 <div class="topic-card">
+                   <h3>${f.name}</h3>
+                   <div>
+                     <button class="view-btn" onclick="window.open('${f.url}', '_blank')">📖 View</button>
+                     <a class="download-btn" href="${f.url}" download>⬇️ Download</a>
+                   </div>
+                 </div>
+               `).join('')}
+             </div>`;
+  }
+
+  document.getElementById('topicsList').innerHTML = html || "<p>No topics match your search.</p>";
 }
 
 // Search filter
-document.getElementById('searchBar').addEventListener('input', () => loadTopics());
+document.getElementById('searchBar').addEventListener('input', loadTopics);
 
+// Initial load
 loadTopics();
 </script>
 
