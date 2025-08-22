@@ -2,135 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>View Document | StudyHub LUANAR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Viewer</title>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      text-align: center;
       margin: 0;
-      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4ff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
-    #toolbar {
-      background: #007BFF;
-      padding: 10px;
+
+    header {
+      background: #2a4d9b;
       color: white;
       display: flex;
-      justify-content: center;
-      gap: 10px;
+      align-items: center;
+      padding: 10px 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-    button {
+
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .back-btn {
       background: white;
-      color: #007BFF;
+      color: #2a4d9b;
       border: none;
-      padding: 8px 12px;
+      padding: 6px 12px;
       border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
+      transition: 0.2s;
     }
-    button:hover {
-      background: #e2e6ea;
+
+    .back-btn:hover {
+      background: #dce4ff;
     }
-    #pdf-container {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    canvas {
-      border: 1px solid #ccc;
-      margin-bottom: 20px;
+
+    iframe {
+      flex-grow: 1;
+      width: 100%;
+      border: none;
     }
   </style>
-
-
-
 </head>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0LTZS1S9W6');
-</script>
-
-
 <body>
 
-<div id="toolbar">
-  <button onclick="zoomIn()">Zoom In</button>
-  <button onclick="zoomOut()">Zoom Out</button>
-  <button onclick="goHome()">Back to Home</button>
-</div>
+  <header>
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <h1 id="fileName">Viewing Document</h1>
+  </header>
 
-<div id="pdf-container"></div>
+  <!-- PDF Viewer -->
+  <iframe id="pdfViewer"></iframe>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-<script>
-const urlParams = new URLSearchParams(window.location.search);
-const file = urlParams.get('file');
-const pdfUrl = decodeURIComponent(file);
+  <script>
+    // Get file parameter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const file = urlParams.get('file');
 
-let pdfDoc = null;
-let scale = 1.0; // initial zoom
-const container = document.getElementById('pdf-container');
+    if (file) {
+      document.getElementById("pdfViewer").src = file;
+      document.getElementById("fileName").textContent = decodeURIComponent(file.split('/').pop());
+    } else {
+      document.getElementById("pdfViewer").outerHTML = "<p style='text-align:center;margin-top:20px;'>No file specified.</p>";
+    }
 
-if (!pdfUrl) {
-  container.innerHTML = '<p>No PDF file specified.</p>';
-} else {
-  pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
-    pdfDoc = pdf;
-    renderAllPages();
-  }).catch(err => {
-    container.innerHTML = `<p>Error loading PDF: ${err.message}</p>`;
-  });
-}
-
-function renderAllPages() {
-  container.innerHTML = ''; // clear old pages
-  // Render pages sequentially to avoid overlapping
-  let renderPagePromises = [];
-  for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-    renderPagePromises.push(renderPage(pageNum));
-  }
-  return Promise.all(renderPagePromises);
-}
-
-function renderPage(pageNum) {
-  return pdfDoc.getPage(pageNum).then(page => {
-    const viewport = page.getViewport({ scale });
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-    container.appendChild(canvas);
-    return page.render({
-      canvasContext: context,
-      viewport: viewport
-    }).promise;
-  });
-}
-
-function zoomIn() {
-  scale += 0.2;
-  renderAllPages();
-}
-
-function zoomOut() {
-  if (scale > 0.4) { // prevent too small
-    scale -= 0.2;
-    renderAllPages();
-  }
-}
-
-function goHome() {
-  window.location.href = 'index.html';
-}
-</script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
 
 </body>
 </html>
