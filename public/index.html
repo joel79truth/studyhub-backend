@@ -16,20 +16,6 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-  <!-- OneSignal SDK -->
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-<script>
-  window.OneSignal = window.OneSignal || [];
-  OneSignal.push(function() {
-    OneSignal.init({
-      appId: "dc041d91-35cf-4daf-9955-a390afb8c506", // Replace with your OneSignal App ID
-      safari_web_id: "",    // Only if you want Safari support
-      notifyButton: {
-        enable: true, // Shows a bell icon so users can subscribe/unsubscribe
-      },
-    });
-  });
-</script>
 
 
   <!-- Google Analytics -->
@@ -159,6 +145,27 @@
     #subscribeBtn:hover { background: linear-gradient(135deg, #5AA0F2, #4689D6); transform: scale(1.05);}
     #subscribeBtn:active { transform: scale(0.95);}
   </style>
+
+
+  <!-- OneSignal SDK -->
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+  <script>
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "dc041d91-35cf-4daf-9955-a390afb8c506",
+        notifyButton: { enable: true }
+      });
+      // This shows the enable-notification popup
+      OneSignal.showSlidedownPrompt();
+    });
+  </script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js"></script>
+
+
 </head>
 
 <body>
