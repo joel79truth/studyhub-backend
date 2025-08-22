@@ -107,12 +107,13 @@ app.post('/upload', upload.single('file'), (req, res) => {
   if (!subject || !program || !semester || !file) return res.status(400).json({ message: "Missing fields or file." });
 
   const fileData = {
-    name: file.originalname,
-    subject,
-    program,
-    semester,
-    url: `files/${file.filename}`,
-  };
+  name: file.originalname,
+  subject,
+  program,
+  semester,
+  url: `/files/${file.filename}`,  // <-- leading slash
+};
+
 
   const metadataPath = path.join(__dirname, 'public', 'metadata.json');
   let metadata = {};

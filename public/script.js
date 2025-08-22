@@ -12,12 +12,33 @@ document.addEventListener('DOMContentLoaded', () => {
     closeSubjectBtn.style.display = 'none';
   });
 
+  // ----------------------
+  // Load and flatten metadata.json
+  // ----------------------
   async function loadAllFiles() {
     try {
-      const res = await fetch('metadata.json'); // local JSON
+      const res = await fetch('metadata.json');
       if (!res.ok) throw new Error('HTTP error ' + res.status);
       const data = await res.json();
-      allFiles = data.files || [];
+
+      allFiles = [];
+
+      // Basics → semester → subject → files[]
+      if (data.basics) {
+        Object.values(data.basics).forEach(semesterObj => {
+          Object.values(semesterObj).forEach(subjectFiles => {
+            allFiles.push(...subjectFiles);
+          });
+        });
+      }
+
+      // Programs → programName → files[]
+      if (data.programs) {
+        Object.values(data.programs).forEach(filesArr => {
+          allFiles.push(...filesArr);
+        });
+      }
+
       console.log('Files loaded:', allFiles);
     } catch (err) {
       console.error('Error loading files:', err);
@@ -25,6 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ----------------------
+  // Semester filter
+  // ----------------------
   window.filterSemester = function(semester) {
     selectedSemester = semester.toString();
     const subjects = [...new Set(
@@ -50,6 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
     closeSubjectBtn.style.display = 'inline-block';
   }
 
+  // ----------------------
+  // Show files by subject
+  // ----------------------
   window.showFilesForSubject = function(subject) {
     fileList.innerHTML = '';
     const files = allFiles.filter(f => f.subject === subject && f.semester === selectedSemester);
@@ -74,6 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  // ----------------------
+  // Search
+  // ----------------------
   window.handleSearch = async function() {
     const query = document.getElementById('searchInput').value.toLowerCase().trim();
     if (!query) {
@@ -101,5 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
   };
 
+  // Load files on page start
   loadAllFiles();
 });
