@@ -15,14 +15,14 @@ const urlsToCache = [
   '/icons/icon-512.png'
 ];
 
-// Install - cache files
+// ✅ Install - cache files
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Activate - clean up old caches
+// ✅ Activate - clean up old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(
@@ -32,7 +32,7 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch - improved navigation handling
+// ✅ Fetch - improved navigation handling
 self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
@@ -49,4 +49,37 @@ self.addEventListener('fetch', event => {
       })
     );
   }
+});
+
+// ✅ Push Notification Handler
+self.addEventListener("push", event => {
+  if (!event.data) return;
+  
+  const data = event.data.json();
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png"
+    })
+  );
+});
+
+// ✅ Notification Click Handler
+self.addEventListener("notificationclick", event => {
+  event.notification.close();
+
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then(clientList => {
+      for (let client of clientList) {
+        if (client.url === "/" && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow("/");
+      }
+    })
+  );
 });

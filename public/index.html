@@ -17,7 +17,20 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
   <!-- OneSignal SDK -->
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+<script>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "dc041d91-35cf-4daf-9955-a390afb8c506", // Replace with your OneSignal App ID
+      safari_web_id: "",    // Only if you want Safari support
+      notifyButton: {
+        enable: true, // Shows a bell icon so users can subscribe/unsubscribe
+      },
+    });
+  });
+</script>
+
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
@@ -236,6 +249,28 @@
  
 
   <script src="script.js"></script>
+
+
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDMGA6lbQw5ky1chyZYUJda7nPD6FZq-Z4",
+    authDomain: "truth-chart.firebaseapp.com",
+    projectId: "truth-chart",
+    storageBucket: "truth-chart.appspot.com",
+    messagingSenderId: "69225001860",  
+    appId: "1:69225001860:web:0620e79ed8ddfad8bc63d1"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
+</script>
+
   
 
   <script>
