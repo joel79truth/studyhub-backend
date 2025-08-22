@@ -144,26 +144,80 @@
     }
     #subscribeBtn:hover { background: linear-gradient(135deg, #5AA0F2, #4689D6); transform: scale(1.05);}
     #subscribeBtn:active { transform: scale(0.95);}
+
+
+    /* Notification Bell */
+    .notify-bell {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1E90FF;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 0 6px 12px rgba(30, 144, 255, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.notify-bell:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 16px rgba(30, 144, 255, 0.7);
+}
+
+.notify-bell:active {
+  transform: scale(0.95);
+  box-shadow: 0 4px 8px rgba(30, 144, 255, 0.6);
+}
+
   </style>
 
 
   <!-- OneSignal SDK -->
   <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
   <script>
-    window.OneSignal = window.OneSignal || [];
-    OneSignal.push(function() {
-      OneSignal.init({
-        appId: "dc041d91-35cf-4daf-9955-a390afb8c506",
-        notifyButton: { enable: true }
-      });
-      // This shows the enable-notification popup
-      OneSignal.showSlidedownPrompt();
+window.onload = () => {
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "dc041d91-35cf-4daf-9955-a390afb8c506",
+      notifyButton: { enable: true }
     });
-  </script>
+    OneSignal.showSlidedownPrompt();
+  });
+};
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js"></script>
+
+  </script>
+<script>
+  const notifyBell = document.getElementById('notifyBell');
+
+  notifyBell.addEventListener('click', async () => {
+    // Request browser notification permission
+    const permission = await Notification.requestPermission();
+
+    if (permission === "granted") {
+      // Register for OneSignal push notifications
+      OneSignal.push(() => {
+        OneSignal.registerForPushNotifications()
+          .then(() => {
+            console.log("✅ Notifications enabled!");
+          })
+          .catch(err => console.error("❌ OneSignal subscription failed:", err));
+      });
+
+      // Hide the bell
+      notifyBell.style.display = 'none';
+      alert("Notifications enabled!");
+    } else {
+      alert("Permission denied. Please allow notifications in your browser.");
+    }
+  });
+</script>
+
 
 
 </head>
@@ -288,18 +342,7 @@
   menuIcon.addEventListener('click', () => sidebar.classList.add('active'));
   closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('active'));
 
-  // Notification button
-  const subscribeBtn = document.getElementById('subscribeBtn');
-  subscribeBtn.addEventListener('click', async () => {
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      OneSignal.push(() => OneSignal.registerForPushNotifications());
-      alert("✅ Notifications enabled!");
-    } else {
-      alert("❌ Permission denied. Please allow notifications in your browser.");
-    }
-  });
-
+ 
   // PWA install
   let deferredPrompt;
   window.addEventListener('beforeinstallprompt', e => {
@@ -401,6 +444,8 @@
   });
 </script>
 
+<!-- Notification Bell -->
+<button id="notifyBell" class="notify-bell" title="Enable Notifications">🔔</button>
 
 
 </body>
