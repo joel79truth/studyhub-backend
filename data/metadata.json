@@ -1,0 +1,167 @@
+{
+  "basics": {
+    "1": {
+      "chemistry 2": [
+        {
+          "name": "LECTURE__2.pdf",
+          "subject": "chemistry 2",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755932993110-LECTURE__2.pdf"
+        }
+      ],
+      "physics": [
+        {
+          "name": "-PHYSICS_MODULE_(1).pdf",
+          "subject": "physics",
+          "program": "Basics",
+          "semester": "1",
+          "url": "/files/1755933830079--PHYSICS_MODULE_1.pdf"
+        },
+        {
+          "name": "-PHYSICS_MODULE_(1).pdf",
+          "subject": "physics",
+          "program": "Basics",
+          "semester": "1",
+          "url": "/files/1755933830085--PHYSICS_MODULE_1.pdf"
+        }
+      ],
+      "Biology": [
+        {
+          "name": "BIO_111_-_Microscopy_(1).pdf",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934116222-BIO_111_-_Microscopy_1.pdf"
+        },
+        {
+          "name": "BIO_111_-_Microscopy_(1).pdf",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934116226-BIO_111_-_Microscopy_1.pdf"
+        },
+        {
+          "name": "Biology.pdf",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934146444-Biology.pdf"
+        },
+        {
+          "name": "Biology.pdf",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934146449-Biology.pdf"
+        },
+        {
+          "name": "Zoology.pptx",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934169765-Zoology.pptx"
+        },
+        {
+          "name": "Zoology.pptx",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934169762-Zoology.pptx"
+        },
+        {
+          "name": "cell biology and microscopy.pdf",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934177693-cell_biology_and_microscopy.pdf"
+        },
+        {
+          "name": "cell biology and microscopy.pdf",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934177696-cell_biology_and_microscopy.pdf"
+        },
+        {
+          "name": "BIOLOGY  BIO 111  lecture 1 2025 - Copy.pptx",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934190946-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
+        },
+        {
+          "name": "BIOLOGY  BIO 111  lecture 1 2025 - Copy.pptx",
+          "subject": "Biology",
+          "program": "basics",
+          "semester": "1",
+          "url": "/files/1755934190944-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
+        }
+      ]
+    }
+  },
+  "programs": {
+    "Bachelor of Science in Environmental Science": [
+      {
+        "name": "Business ethics.pptx",
+        "subject": "business ethics",
+        "program": "Bachelor of Science in Environmental Science",
+        "semester": "5",
+        "url": "/files/1755933918230-Business_ethics.pptx"
+      },
+      {
+        "name": "Business ethics.pptx",
+        "subject": "business ethics",
+        "program": "Bachelor of Science in Environmental Science",
+        "semester": "5",
+        "url": "/files/1755933918224-Business_ethics.pptx"
+      },
+      {
+        "name": "Entrepreneurial Environment.pptx",
+        "subject": "Entreprenuerial Environment",
+        "program": "Bachelor of Science in Environmental Science",
+        "semester": "1",
+        "url": "/files/1755934239841-Entrepreneurial_Environment.pptx"
+      },
+      {
+        "name": "Entrepreneurial Environment.pptx",
+        "subject": "Entreprenuerial Environment",
+        "program": "Bachelor of Science in Environmental Science",
+        "semester": "1",
+        "url": "/files/1755934239847-Entrepreneurial_Environment.pptx"
+      }
+    ],
+    "Diploma in Agriculture General": [
+      {
+        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
+        "subject": "farm mechanisation",
+        "program": "Diploma in Agriculture General",
+        "semester": "1",
+        "url": "/files/1755933999843-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
+      },
+      {
+        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
+        "subject": "farm mechanisation",
+        "program": "Diploma in Agriculture General",
+        "semester": "1",
+        "url": "/files/1755933999846-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
+      }
+    ],
+    "Diploma  Agriculture General": [
+      {
+        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
+        "subject": "farm mechanisation",
+        "program": "Diploma  Agriculture General",
+        "semester": "1",
+        "url": "/files/1755934041399-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
+      },
+      {
+        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
+        "subject": "farm mechanisation",
+        "program": "Diploma  Agriculture General",
+        "semester": "1",
+        "url": "/files/1755934041404-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
+      }
+    ]
+  }
+}

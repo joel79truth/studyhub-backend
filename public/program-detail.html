@@ -180,16 +180,16 @@ const urlParams = new URLSearchParams(window.location.search);
 const programName = urlParams.get('program') || '';
 document.getElementById('programTitle').innerText = programName;
 
-// Fetch and display topics
 async function loadTopics() {
   try {
-    const response = await fetch('metadata.json');
+    const response = await fetch('/api/metadata'); // fetch from server
     const data = await response.json();
 
     let uploadedTopics = [];
     const programs = data.programs || {};
     const basics = data.basics || {};
 
+    // Normalize program name
     const programKey = Object.keys(programs).find(
       key => key.toLowerCase().trim() === programName.toLowerCase().trim()
     );
@@ -197,6 +197,7 @@ async function loadTopics() {
     if (programKey) {
       uploadedTopics = programs[programKey];
     } else if (programName.toLowerCase() === 'basics') {
+      // Flatten all semesters
       Object.values(basics).forEach(semester => {
         Object.values(semester).forEach(subjectFiles => {
           uploadedTopics.push(...subjectFiles);
@@ -233,8 +234,8 @@ function displayGrouped(files) {
                  <div class="topic-card">
                    <h3>${f.name}</h3>
                    <div>
-                     <button class="view-btn" onclick="window.open('${f.url}', '_blank')">📖 View</button>
-                     <a class="download-btn" href="${f.url}" download>⬇️ Download</a>
+                     <button class="view-btn" onclick="window.open('/files/${f.filename}', '_blank')">📖 View</button>
+                     <a class="download-btn" href="/files/${f.filename}" download>⬇️ Download</a>
                    </div>
                  </div>
                `).join('')}
@@ -250,6 +251,7 @@ document.getElementById('searchBar').addEventListener('input', loadTopics);
 // Initial load
 loadTopics();
 </script>
+
 
 </body>
 </html>

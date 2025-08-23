@@ -129,17 +129,18 @@ app.post("/upload", upload.single("file"), (req, res) => {
 // ------------------
 // METADATA ROUTE
 // ------------------
+
 app.get("/api/metadata", (req, res) => {
-  let metadata = {};
-  if (fs.existsSync(metadataPath)) {
-    try {
-      metadata = JSON.parse(fs.readFileSync(metadataPath, "utf-8"));
-    } catch (err) {
-      console.error(err);
-    }
+  if (!fs.existsSync(metadataPath)) return res.json({});
+  try {
+    const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf-8") || "{}");
+    res.json(metadata);
+  } catch (err) {
+    console.error("Failed to read metadata.json:", err);
+    res.status(500).json({});
   }
-  res.json(metadata);
 });
+
 
 // ------------------
 // FILE VIEW ROUTES
@@ -192,6 +193,7 @@ app.post("/ai", async (req, res) => {
     res.status(500).json({ answer: "AI failed to respond." });
   }
 });
+
 
 // ------------------
 // START SERVER
