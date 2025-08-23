@@ -244,7 +244,8 @@ document.getElementById('topicSearch').addEventListener('keypress', function(e) 
 
   async function loadPrograms() {
     try {
-      const response = await fetch('metadata.json');
+      const response = await fetch('/api/metadata');
+
       const data = await response.json();
 
       const uploadedPrograms = data.files

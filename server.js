@@ -12,16 +12,14 @@ const PORT = process.env.PORT || 3000;
 // ------------------
 // OpenAI setup
 // ------------------
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // ------------------
 // CORS CONFIG
 // ------------------
 app.use(
   cors({
-    origin: "https://studyhub-luana.netlify.app",
+    origin: "*", // allow all origins or replace with your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -40,10 +38,10 @@ app.use(express.static("public")); // serve frontend assets
 const dataDir = path.join(__dirname, "data");
 fs.mkdirSync(dataDir, { recursive: true });
 
-const filesDir = path.join(__dirname, "files"); // <--- moved outside public
+const filesDir = path.join(__dirname, "files");
 fs.mkdirSync(filesDir, { recursive: true });
 
-const metadataPath = path.join(__dirname, "public", "metadata.json");
+const metadataPath = path.join(__dirname, "data", "metadata.json");
 const noteRequestsPath = path.join(dataDir, "note_requests.json");
 
 // ------------------
@@ -51,9 +49,7 @@ const noteRequestsPath = path.join(dataDir, "note_requests.json");
 // ------------------
 app.post("/submit-request", (req, res) => {
   const { topic, course, program } = req.body;
-  if (!topic || !course || !program) {
-    return res.status(400).json({ error: "Missing fields" });
-  }
+  if (!topic || !course || !program) return res.status(400).json({ error: "Missing fields" });
 
   const request = { topic, course, program, date: new Date().toISOString() };
   let existing = [];
@@ -72,27 +68,7 @@ app.get("/api/requests", (req, res) => {
     res.json({ requests });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Failed to read requests" });
-  }
-});
-
-app.delete("/api/requests/:index", (req, res) => {
-  const index = parseInt(req.params.index, 10);
-  if (isNaN(index)) return res.status(400).json({ message: "Invalid index" });
-  if (!fs.existsSync(noteRequestsPath))
-    return res.status(404).json({ message: "No requests found" });
-
-  try {
-    const requests = JSON.parse(fs.readFileSync(noteRequestsPath, "utf-8"));
-    if (index < 0 || index >= requests.length) {
-      return res.status(404).json({ message: "Request not found" });
-    }
-    requests.splice(index, 1);
-    fs.writeFileSync(noteRequestsPath, JSON.stringify(requests, null, 2));
-    res.json({ message: "Request deleted successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to delete request" });
+    res.status(500).json({ requests: [] });
   }
 });
 
@@ -103,9 +79,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, filesDir),
   filename: (req, file, cb) => {
     const timestamp = Date.now();
-    const cleanName = file.originalname
-      .replace(/\s+/g, "_")
-      .replace(/[^a-zA-Z0-9._-]/g, "");
+    const cleanName = file.originalname.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9._-]/g, "");
     cb(null, `${timestamp}-${cleanName}`);
   },
 });
@@ -114,18 +88,18 @@ const upload = multer({ storage });
 app.post("/upload", upload.single("file"), (req, res) => {
   const { subject, program, semester } = req.body;
   const file = req.file;
-  if (!subject || !program || !semester || !file) {
+  if (!subject || !program || !semester || !file)
     return res.status(400).json({ message: "Missing fields or file." });
-  }
 
   const fileData = {
     name: file.originalname,
     subject,
     program,
     semester,
-    url: `/view/${file.filename}`, // <--- always use /view route for preview
+    url: `/files/${file.filename}`,
   };
 
+  // Read existing metadata
   let metadata = {};
   if (fs.existsSync(metadataPath)) {
     try {
@@ -136,11 +110,11 @@ app.post("/upload", upload.single("file"), (req, res) => {
     }
   }
 
+  // Add file to the proper program or basics
   if (program.toLowerCase() === "basics") {
     if (!metadata.basics) metadata.basics = {};
     if (!metadata.basics[semester]) metadata.basics[semester] = {};
-    if (!metadata.basics[semester][subject])
-      metadata.basics[semester][subject] = [];
+    if (!metadata.basics[semester][subject]) metadata.basics[semester][subject] = [];
     metadata.basics[semester][subject].push(fileData);
   } else {
     if (!metadata.programs) metadata.programs = {};
@@ -153,49 +127,52 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 // ------------------
+// METADATA ROUTE
+// ------------------
+app.get("/api/metadata", (req, res) => {
+  let metadata = {};
+  if (fs.existsSync(metadataPath)) {
+    try {
+      metadata = JSON.parse(fs.readFileSync(metadataPath, "utf-8"));
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.json(metadata);
+});
+
+// ------------------
 // FILE VIEW ROUTES
 // ------------------
-
-// Main view page
 app.get("/view/:filename", (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(filesDir, filename);
 
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).send("File not found");
-  }
-
-  // Send view.html (frontend will embed the file via /files/:filename)
+  if (!fs.existsSync(filePath)) return res.status(404).send("File not found");
   res.sendFile(path.join(__dirname, "public", "view.html"));
 });
 
-// Serve files inline (PDF, PPTX)
 app.get("/files/:filename", (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(filesDir, filename);
 
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).send("File not found");
-  }
+  if (!fs.existsSync(filePath)) return res.status(404).send("File not found");
 
   const ext = path.extname(filename).toLowerCase();
-  if (ext === ".pdf") {
-    res.setHeader("Content-Type", "application/pdf");
-  } else if (ext === ".pptx") {
+  if (ext === ".pdf") res.setHeader("Content-Type", "application/pdf");
+  else if (ext === ".pptx")
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     );
-  } else {
-    res.setHeader("Content-Type", "application/octet-stream");
-  }
+  else res.setHeader("Content-Type", "application/octet-stream");
 
   res.setHeader("Content-Disposition", "inline");
   res.sendFile(filePath);
 });
 
 // ------------------
-// AI QUESTION ENDPOINT
+// AI ENDPOINT
 // ------------------
 app.post("/ai", async (req, res) => {
   const { question } = req.body;
@@ -208,7 +185,6 @@ app.post("/ai", async (req, res) => {
       temperature: 0.7,
       max_tokens: 500,
     });
-
     const aiAnswer = completion.choices[0].message.content.trim();
     res.json({ answer: aiAnswer });
   } catch (err) {
@@ -218,16 +194,6 @@ app.post("/ai", async (req, res) => {
 });
 
 // ------------------
-// PWA MANIFEST
-// ------------------
-app.get("/manifest.json", (req, res) => {
-  res.type("application/json");
-  res.sendFile(path.join(__dirname, "public", "manifest.json"));
-});
-
-// ------------------
 // START SERVER
 // ------------------
-app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
