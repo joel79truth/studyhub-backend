@@ -96,6 +96,75 @@
           "program": "basics",
           "semester": "1",
           "url": "/files/1755934190944-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
+        },
+        {
+          "name": "BIOLOGY  BIO 111  lecture 1 2025 - Copy.pptx",
+          "program": "Basics",
+          "semester": "1",
+          "subject": "Biology",
+          "url": "/files/1756038670517-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
+        },
+        {
+          "name": "2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
+          "program": "Basics",
+          "semester": "1",
+          "subject": "Biology",
+          "url": "/files/1756041652671-2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
+          "uploadedAt": "2025-08-24T13:20:52.697Z"
+        },
+        {
+          "name": "2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
+          "program": "Basics",
+          "semester": "1",
+          "subject": "Biology",
+          "url": "/files/1756041752207-2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
+          "uploadedAt": "2025-08-24T13:22:32.244Z"
+        },
+        {
+          "name": "cell biology and microscopy.pdf",
+          "program": "Basics",
+          "semester": "1",
+          "subject": "Biology",
+          "url": "/files/1756082441755-cell_biology_and_microscopy.pdf",
+          "uploadedAt": "2025-08-25T00:40:41.913Z"
+        }
+      ],
+      "biology": [
+        {
+          "name": "photosynthesis (2).pdf",
+          "program": "Basics",
+          "semester": "1",
+          "subject": "biology",
+          "url": "/files/1756009818162-photosynthesis_2.pdf"
+        },
+        {
+          "name": "photosynthesis (2).pdf",
+          "program": "Basics",
+          "semester": "1",
+          "subject": "biology",
+          "url": "/files/1756009818167-photosynthesis_2.pdf"
+        }
+      ],
+      "Syllabus for Introduction to Computer Systems": [
+        {
+          "name": "computer syllabus.pdf",
+          "program": "Basics",
+          "semester": "1",
+          "subject": "Syllabus for Introduction to Computer Systems",
+          "url": "/files/1756083802088-computer_syllabus.pdf",
+          "uploadedAt": "2025-08-25T01:03:22.189Z"
+        }
+      ]
+    },
+    "2": {
+      "Computer Application": [
+        {
+          "name": "2 Introduction to databases.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "Computer Application",
+          "url": "/files/1756082749324-2_Introduction_to_databases.pdf",
+          "uploadedAt": "2025-08-25T00:45:49.329Z"
         }
       ]
     }
@@ -129,6 +198,28 @@
         "program": "Bachelor of Science in Environmental Science",
         "semester": "1",
         "url": "/files/1755934239847-Entrepreneurial_Environment.pptx"
+      },
+      {
+        "name": "photosynthesis (2).pdf",
+        "program": "Bachelor of Science in Environmental Science",
+        "semester": "1",
+        "subject": "Entreprenuerial Environment",
+        "url": "/files/bachelor_of_science_in_environmental_science/1756008947352-photosynthesis_2.pdf"
+      },
+      {
+        "name": "photosynthesis (2).pdf",
+        "program": "Bachelor of Science in Environmental Science",
+        "semester": "1",
+        "subject": "Entreprenuerial Environment",
+        "url": "/files/bachelor_of_science_in_environmental_science/1756008947741-photosynthesis_2.pdf"
+      },
+      {
+        "name": "Business ethics.pptx",
+        "program": "Bachelor of Science in Environmental Science",
+        "semester": "1",
+        "subject": "Business ethics",
+        "url": "/files/bachelor_of_science_in_environmental_science/1756039775050-Business_ethics.pptx",
+        "uploadedAt": "2025-08-24T12:49:35.067Z"
       }
     ],
     "Diploma in Agriculture General": [
@@ -162,6 +253,177 @@
         "semester": "1",
         "url": "/files/1755934041404-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
       }
+    ],
+    "agriculture General": [
+      {
+        "name": "poultry production.pdf",
+        "program": "agriculture General",
+        "semester": "1",
+        "subject": "biology",
+        "url": "/files/agriculture_general/1756014725367-poultry_production.pdf"
+      },
+      {
+        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
+        "program": "agriculture General",
+        "semester": "1",
+        "subject": "farm mechanisation",
+        "url": "/files/agriculture_general/1756082569711-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf",
+        "uploadedAt": "2025-08-25T00:42:49.760Z"
+      }
+    ],
+    "irrigation": [
+      {
+        "name": "2...._PHYSICS_WAVE_MOTION.pptx",
+        "program": "irrigation",
+        "semester": "1",
+        "subject": "Biology",
+        "url": "/files/irrigation/1756041910986-2...._PHYSICS_WAVE_MOTION.pptx",
+        "uploadedAt": "2025-08-24T13:25:11.038Z"
+      }
+    ],
+    "Bachelor in food science and technology": [
+      {
+        "name": "Fundamentals-Of-Food-Technology.pdf",
+        "program": "Bachelor in food science and technology",
+        "semester": "1",
+        "subject": "Physics",
+        "url": "/files/bachelor_in_food_science_and_technology/1756043044298-Fundamentals-Of-Food-Technology.pdf",
+        "uploadedAt": "2025-08-24T13:44:04.327Z"
+      }
+    ],
+    "Enviromental science": [
+      {
+        "name": "Business ethics.pptx",
+        "program": "Enviromental science",
+        "semester": "1",
+        "subject": "Business ethics",
+        "url": "/files/enviromental_science/1756082647214-Business_ethics.pptx",
+        "uploadedAt": "2025-08-25T00:44:07.223Z"
+      }
     ]
-  }
+  },
+  "files": [
+    {
+      "name": "photosynthesis (2).pdf",
+      "program": "Bachelor of Science in Environmental Science",
+      "semester": "1",
+      "subject": "Entreprenuerial Environment",
+      "url": "/files/bachelor_of_science_in_environmental_science/1756008947352-photosynthesis_2.pdf"
+    },
+    {
+      "name": "photosynthesis (2).pdf",
+      "program": "Bachelor of Science in Environmental Science",
+      "semester": "1",
+      "subject": "Entreprenuerial Environment",
+      "url": "/files/bachelor_of_science_in_environmental_science/1756008947741-photosynthesis_2.pdf"
+    },
+    {
+      "name": "photosynthesis (2).pdf",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "biology",
+      "url": "/files/1756009818162-photosynthesis_2.pdf"
+    },
+    {
+      "name": "photosynthesis (2).pdf",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "biology",
+      "url": "/files/1756009818167-photosynthesis_2.pdf"
+    },
+    {
+      "name": "poultry production.pdf",
+      "program": "agriculture General",
+      "semester": "1",
+      "subject": "biology",
+      "url": "/files/agriculture_general/1756014725367-poultry_production.pdf"
+    },
+    {
+      "name": "BIOLOGY  BIO 111  lecture 1 2025 - Copy.pptx",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "Biology",
+      "url": "/files/1756038670517-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
+    },
+    {
+      "name": "Business ethics.pptx",
+      "program": "Bachelor of Science in Environmental Science",
+      "semester": "1",
+      "subject": "Business ethics",
+      "url": "/files/bachelor_of_science_in_environmental_science/1756039775050-Business_ethics.pptx",
+      "uploadedAt": "2025-08-24T12:49:35.067Z"
+    },
+    {
+      "name": "2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "Biology",
+      "url": "/files/1756041652671-2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
+      "uploadedAt": "2025-08-24T13:20:52.697Z"
+    },
+    {
+      "name": "2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "Biology",
+      "url": "/files/1756041752207-2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
+      "uploadedAt": "2025-08-24T13:22:32.244Z"
+    },
+    {
+      "name": "2...._PHYSICS_WAVE_MOTION.pptx",
+      "program": "irrigation",
+      "semester": "1",
+      "subject": "Biology",
+      "url": "/files/irrigation/1756041910986-2...._PHYSICS_WAVE_MOTION.pptx",
+      "uploadedAt": "2025-08-24T13:25:11.038Z"
+    },
+    {
+      "name": "Fundamentals-Of-Food-Technology.pdf",
+      "program": "Bachelor in food science and technology",
+      "semester": "1",
+      "subject": "Physics",
+      "url": "/files/bachelor_in_food_science_and_technology/1756043044298-Fundamentals-Of-Food-Technology.pdf",
+      "uploadedAt": "2025-08-24T13:44:04.327Z"
+    },
+    {
+      "name": "cell biology and microscopy.pdf",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "Biology",
+      "url": "/files/1756082441755-cell_biology_and_microscopy.pdf",
+      "uploadedAt": "2025-08-25T00:40:41.913Z"
+    },
+    {
+      "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
+      "program": "agriculture General",
+      "semester": "1",
+      "subject": "farm mechanisation",
+      "url": "/files/agriculture_general/1756082569711-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf",
+      "uploadedAt": "2025-08-25T00:42:49.760Z"
+    },
+    {
+      "name": "Business ethics.pptx",
+      "program": "Enviromental science",
+      "semester": "1",
+      "subject": "Business ethics",
+      "url": "/files/enviromental_science/1756082647214-Business_ethics.pptx",
+      "uploadedAt": "2025-08-25T00:44:07.223Z"
+    },
+    {
+      "name": "2 Introduction to databases.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "Computer Application",
+      "url": "/files/1756082749324-2_Introduction_to_databases.pdf",
+      "uploadedAt": "2025-08-25T00:45:49.329Z"
+    },
+    {
+      "name": "computer syllabus.pdf",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "Syllabus for Introduction to Computer Systems",
+      "url": "/files/1756083802088-computer_syllabus.pdf",
+      "uploadedAt": "2025-08-25T01:03:22.189Z"
+    }
+  ]
 }

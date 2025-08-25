@@ -2,83 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>View Document | StudyHub LUANAR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>View File</title>
   <style>
-    body {
+    body, html {
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f0f4ff;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
       display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
-    header {
-      background: #2a4d9b;
-      color: white;
-      display: flex;
+      justify-content: center;
       align-items: center;
-      padding: 10px 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      background-color: #f5f5f5;
     }
-
-    header h1 {
-      font-size: 18px;
-      margin: 0;
-      flex-grow: 1;
-      text-align: center;
-    }
-
-    .back-btn {
-      background: white;
-      color: #2a4d9b;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-    }
-
-    .back-btn:hover {
-      background: #dce4ff;
-    }
-
     iframe {
-      flex-grow: 1;
-      width: 100%;
-      border: none;
+      width: 90%;
+      height: 90%;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .error {
+      color: red;
+      font-size: 18px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-
-  <header>
-    <button class="back-btn" onclick="goBack()">← Back</button>
-    <h1 id="fileName">Viewing Document</h1>
-  </header>
-
-  <!-- PDF Viewer -->
-  <iframe id="pdfViewer"></iframe>
+  <iframe id="fileViewer"></iframe>
 
   <script>
-    // Get file parameter from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const file = urlParams.get('file');
+    const fileParam = urlParams.get('file');
 
-    if (file) {
-      document.getElementById("pdfViewer").src = file;
-      document.getElementById("fileName").textContent = decodeURIComponent(file.split('/').pop());
+    if (!fileParam) {
+      document.body.innerHTML = '<p class="error">No file selected or file not found.</p>';
     } else {
-      document.getElementById("pdfViewer").outerHTML = "<p style='text-align:center;margin-top:20px;'>No file specified.</p>";
-    }
+      const iframe = document.getElementById('fileViewer');
 
-    function goBack() {
-      window.history.back();
+      // If fileParam already starts with "files/", use it as is, otherwise prepend "files/"
+      const pathPrefix = fileParam.startsWith('files/') ? '' : 'files/';
+      iframe.src = '/' + pathPrefix + fileParam;
+
+      iframe.onerror = () => {
+        document.body.innerHTML = '<p class="error">Failed to load file. Check the URL or file existence.</p>';
+      };
     }
   </script>
-
 </body>
 </html>

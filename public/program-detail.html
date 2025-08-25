@@ -3,255 +3,209 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Program Topics – StudyHub LUANAR</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>Program Details – StudyHub LUANAR</title>
+<link rel="stylesheet" href="style.css">
 <style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  header {
-    text-align: center;
-    padding: 25px 15px;
-    background: rgba(0,0,0,0.2);
-    backdrop-filter: blur(10px);
-    font-size: 1.5rem;
-    font-weight: bold;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  }
-
-  .container {
-    flex: 1;
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 15px;
-  }
-
-  .back-btn {
-    display: inline-block;
-    padding: 10px 18px;
-    margin-bottom: 15px;
-    background: #ff6b6b;
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s;
-  }
-  .back-btn:hover { background: #ff4757; transform: scale(1.05); }
-
-  #searchBar {
-    width: 80%;
-    padding: 12px 15px;
-    border-radius: 12px;
-    border: none;
-    margin-bottom: 20px;
-    font-size: 1rem;
-    outline: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  }
-
-  .action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    margin-bottom: 30px;
-  }
-
-  .action-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: #fff;
-    font-weight: bold;
-    transition: all 0.3s;
-    background: rgba(255,255,255,0.1);
-    padding: 20px;
-    border-radius: 15px;
-    width: 90px;
-    backdrop-filter: blur(10px);
-    text-align: center;
-  }
-  .action-btn i {
-    font-size: 25px;
-    margin-bottom: 8px;
-  }
-  .action-btn:hover {
-    transform: translateY(-5px);
-    background: rgba(255,255,255,0.2);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  }
-
-  .subject-group {
-    margin-bottom: 30px;
-  }
-  .subject-group h2 {
-    font-size: 1.3rem;
-    margin-bottom: 12px;
-    border-bottom: 2px dashed rgba(255,255,255,0.5);
-    padding-bottom: 5px;
-    color: #ffe66d;
-  }
-
-  .topic-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255,255,255,0.05);
-    padding: 15px;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.2s, background 0.3s;
-  }
-  .topic-card:hover {
-    transform: scale(1.02);
-    background: rgba(255,255,255,0.1);
-  }
-
-  .topic-card h3 {
-    margin: 0;
-    font-size: 1rem;
-    flex: 1;
-    color: #fff;
-  }
-
-  .topic-card button, .topic-card a {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    color: #fff;
-    text-decoration: none;
-    margin-left: 8px;
-    transition: all 0.2s;
-  }
-
-  .view-btn { background: #1dd1a1; }
-  .view-btn:hover { background: #10ac84; }
-  .download-btn { background: #54a0ff; }
-  .download-btn:hover { background: #2e86de; }
+body { font-family:'Segoe UI',sans-serif; margin:0; padding:0; background:url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed; background-size:cover; }
+header { text-align:center; padding:20px; background: rgba(15,172,23,0.8); color:white; box-shadow:0 4px 8px rgba(0,0,0,0.2); }
+h1 { margin:0; font-size:2rem; }
+.container { max-width:900px; margin:20px auto; padding:0 20px; }
+.search-bar { width:300px; margin:20px auto; }
+.search-bar input { width:100%; padding:10px 15px; border-radius:50px; border:none; outline:none; font-size:14px; background: rgba(255,255,255,0.9); color:#1e1e1e; box-shadow:0 6px 15px rgba(0,0,0,0.2); }
+#fileList { margin-top:20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
+.file-card { background:white; border-radius:15px; padding:20px; box-shadow:0 8px 25px rgba(0,0,0,0.15); text-align:center; }
+.file-card h3 { margin:0 0 10px 0; font-size:1.1rem; color:#1e1e1e; }
+.file-card p { font-size:0.9rem; color:#555; margin:5px 0; }
+.file-card button { margin:5px; padding:8px 14px; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition: transform 0.2s ease; }
+.view-btn { background:#3498db; color:white; }
+.download-btn { background:#2ecc71; color:white; }
+.file-card button:hover { transform:scale(1.05); }
+.back-home-btn { position:fixed; top:20px; left:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; width:55px; height:55px; background:#000; color:white; text-decoration:none; border-radius:50%; font-size:24px; box-shadow:0 6px 15px rgba(0,0,0,0.3); }
 </style>
 </head>
-
-<!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-0LTZS1S9W6');
-  </script>
-
 <body>
 
-<header id="programTitle">Program Topics</header>
+<header><h1 id="programTitle">Program Details</h1></header>
+<a href="program.html" class="back-home-btn" aria-label="Back to Programs">🏠</a>
 
-<div class="container">
-  <a href="program.html" class="back-btn">&larr; Back to Programs</a>
+<div>
+  <div class="container">
+  <!-- Action Buttons Row -->
+  <div style="
+    display:flex; 
+    justify-content:center; 
+    gap:20px; 
+    margin-bottom:15px;
+  ">
+    <!-- Upload Button -->
+    <div style="display:flex; flex-direction:column; align-items:center;">
+      <a href="upload.html" style="
+        width:40px;
+        height:40px;
+        background: linear-gradient(135deg,#4f46e5,#3b82f6);
+        border-radius:50%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:white;
+        text-decoration:none;
+        box-shadow:0 5px 12px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        font-size:18px;
+      " title="Upload Notes">📤</a>
+      <span style="
+        font-size:0.7rem;
+        font-weight: bolder;
+        color:#000;
+        margin-top:4px;
+        background: rgba(255,255,255,0.85);
+        padding:2px 6px;
+        border-radius:6px;
+      ">Upload</span>
+    </div>
 
-  <input type="text" id="searchBar" placeholder="Search topics...">
+    <!-- Request Button -->
+    <div style="display:flex; flex-direction:column; align-items:center;">
+      <a href="request.html" style="
+        width:40px;
+        height:40px;
+        background: linear-gradient(135deg,#4f46e5,#3b82f6);
+        border-radius:50%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:white;
+        text-decoration:none;
+        box-shadow:0 5px 12px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        font-size:18px;
+      " title="Request Notes">📩</a>
+      <span style="
+        font-size:0.7rem;
+        font-weight: bolder;
+        color:#000;
+        margin-top:4px;
+        background: rgba(255,255,255,0.85);
+        padding:2px 6px;
+        border-radius:6px;
+      ">Request</span>
+    </div>
 
-  <div class="action-buttons">
-    <a href="upload.html" class="action-btn">
-      <i class="fas fa-upload"></i>
-      Upload Notes
-    </a>
-    <a href="request.html" class="action-btn">
-      <i class="fas fa-envelope"></i>
-      Request Notes
-    </a>
+    <!-- Video Button -->
+    <div style="display:flex; flex-direction:column; align-items:center;">
+      <a href="videolesson.html" style="
+        width:40px;
+        height:40px;
+        background: linear-gradient(135deg,#4f46e5,#3b82f6);
+        border-radius:50%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:white;
+        text-decoration:none;
+        box-shadow:0 5px 12px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        font-size:18px;
+      " title="Video Lessons">▶️</a>
+      <span style="
+        font-size:0.7rem;
+        font-weight: bolder;
+        color:#000;
+        margin-top:4px;
+        background: rgba(255,255,255,0.85);
+        padding:2px 6px;
+        border-radius:6px;
+      ">Video</span>
+    </div>
   </div>
 
-  <div id="topicsList"></div>
+   
+<div class="container">
+  <div class="search-bar">
+    <input type="text" id="fileSearch" placeholder="Search files by subject or name...">
+  </div>
+  <div id="fileList"></div>
 </div>
 
 <script>
-const urlParams = new URLSearchParams(window.location.search);
-const programName = urlParams.get('program') || '';
-document.getElementById('programTitle').innerText = programName;
+const params = new URLSearchParams(window.location.search);
+const programName = params.get("program");
+document.getElementById("programTitle").textContent = programName || "Program Details";
 
-async function loadTopics() {
+let allFiles = [];
+
+// Normalize string comparison
+function equalsIgnoreCase(a,b) { return a?.toLowerCase() === b?.toLowerCase(); }
+
+// Check if file exists on server
+async function fileExists(url) {
   try {
-    const response = await fetch('/api/metadata'); // fetch from server
-    const data = await response.json();
+    const res = await fetch(url, { method: 'HEAD' });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
 
-    let uploadedTopics = [];
-    const programs = data.programs || {};
-    const basics = data.basics || {};
+async function loadFiles() {
+  try {
+    const res = await fetch("/api/metadata");
+    const metadata = await res.json();
 
-    // Normalize program name
-    const programKey = Object.keys(programs).find(
-      key => key.toLowerCase().trim() === programName.toLowerCase().trim()
-    );
+    const files = Array.isArray(metadata.files) ? metadata.files : [];
+    let validFiles = [];
 
-    if (programKey) {
-      uploadedTopics = programs[programKey];
-    } else if (programName.toLowerCase() === 'basics') {
-      // Flatten all semesters
-      Object.values(basics).forEach(semester => {
-        Object.values(semester).forEach(subjectFiles => {
-          uploadedTopics.push(...subjectFiles);
-        });
-      });
+    for (const f of files) {
+      if (equalsIgnoreCase(f.program, programName) && f.url && await fileExists(f.url)) {
+        validFiles.push(f);
+      }
     }
 
-    displayGrouped(uploadedTopics);
+    allFiles = validFiles;
+
+    const container = document.getElementById("fileList");
+    if (!allFiles.length) {
+      container.innerHTML = "<p>No uploaded files exist for this program.</p>";
+      return;
+    }
+
+    displayFiles(allFiles);
   } catch (err) {
     console.error(err);
-    document.getElementById('topicsList').innerHTML = '<p>No topics found.</p>';
+    document.getElementById("fileList").innerHTML = "<p>Error loading files.</p>";
   }
 }
 
-function displayGrouped(files) {
-  const searchInput = document.getElementById('searchBar').value.toLowerCase();
-
-  const grouped = {};
-  files.forEach(file => {
-    if (!grouped[file.subject]) grouped[file.subject] = [];
-    grouped[file.subject].push(file);
-  });
-
-  let html = '';
-  for (const subject in grouped) {
-    const subjectFiles = grouped[subject].filter(f => 
-      f.name.toLowerCase().includes(searchInput) || subject.toLowerCase().includes(searchInput)
-    );
-    if (!subjectFiles.length) continue;
-
-    html += `<div class="subject-group">
-               <h2>${subject}</h2>
-               ${subjectFiles.map(f => `
-                 <div class="topic-card">
-                   <h3>${f.name}</h3>
-                   <div>
-                     <button class="view-btn" onclick="window.open('/files/${f.filename}', '_blank')">📖 View</button>
-                     <a class="download-btn" href="/files/${f.filename}" download>⬇️ Download</a>
-                   </div>
-                 </div>
-               `).join('')}
-             </div>`;
-  }
-
-  document.getElementById('topicsList').innerHTML = html || "<p>No topics match your search.</p>";
+function displayFiles(files) {
+  const container = document.getElementById("fileList");
+  container.innerHTML = files.map(f => `
+    <div class="file-card">
+      <h3>${f.name}</h3>
+      <p><strong>Semester:</strong> ${f.semester}</p>
+      <p><strong>Subject:</strong> ${f.subject}</p>
+      <button class="view-btn" onclick="window.open('${f.url}', '_blank')">View</button>
+      <button class="download-btn" onclick="downloadFile('${f.url}')">Download</button>
+    </div>
+  `).join('');
 }
 
-// Search filter
-document.getElementById('searchBar').addEventListener('input', loadTopics);
+function downloadFile(url) {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = url.split("/").pop();
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
-// Initial load
-loadTopics();
+document.getElementById("fileSearch").addEventListener("input", function() {
+  const query = this.value.toLowerCase();
+  const filtered = allFiles.filter(f => f.name.toLowerCase().includes(query) || f.subject.toLowerCase().includes(query));
+  displayFiles(filtered);
+});
+
+loadFiles();
 </script>
-
 
 </body>
 </html>

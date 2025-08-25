@@ -4,168 +4,220 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 const cors = require("cors");
-const OpenAI = require("openai");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ------------------
-// OpenAI setup
+// Middleware
 // ------------------
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-// ------------------
-// CORS CONFIG
-// ------------------
-app.use(
-  cors({
-    origin: "*", // allow all origins or replace with your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
-
-// ------------------
-// MIDDLEWARE
-// ------------------
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public")); // serve frontend assets
+app.use(express.static("public"));
 
 // ------------------
-// DATA FOLDERS
+// Folders
 // ------------------
 const dataDir = path.join(__dirname, "data");
+const filesDir = path.join(__dirname, "public/files");
 fs.mkdirSync(dataDir, { recursive: true });
-
-const filesDir = path.join(__dirname, "files");
 fs.mkdirSync(filesDir, { recursive: true });
 
-const metadataPath = path.join(__dirname, "data", "metadata.json");
-const noteRequestsPath = path.join(dataDir, "note_requests.json");
+const metadataPath = path.join(dataDir, "metadata.json");
+
+// Initialize metadata.json if missing or empty
+if (!fs.existsSync(metadataPath) || fs.readFileSync(metadataPath, "utf8").trim() === "") {
+  fs.writeFileSync(metadataPath, JSON.stringify({ files: [], basics: {}, programs: {} }, null, 2));
+}
 
 // ------------------
-// NOTE REQUESTS
-// ------------------
-app.post("/submit-request", (req, res) => {
-  const { topic, course, program } = req.body;
-  if (!topic || !course || !program) return res.status(400).json({ error: "Missing fields" });
-
-  const request = { topic, course, program, date: new Date().toISOString() };
-  let existing = [];
-  if (fs.existsSync(noteRequestsPath)) {
-    existing = JSON.parse(fs.readFileSync(noteRequestsPath, "utf-8"));
-  }
-  existing.push(request);
-  fs.writeFileSync(noteRequestsPath, JSON.stringify(existing, null, 2));
-  res.status(200).json({ message: "Request saved!" });
-});
-
-app.get("/api/requests", (req, res) => {
-  if (!fs.existsSync(noteRequestsPath)) return res.json({ requests: [] });
-  try {
-    const requests = JSON.parse(fs.readFileSync(noteRequestsPath, "utf-8"));
-    res.json({ requests });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ requests: [] });
-  }
-});
-
-// ------------------
-// FILE UPLOAD
+// Multer Storage
 // ------------------
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, filesDir),
+  destination: (req, file, cb) => {
+    const program = req.body.program.trim();
+    let destDir = filesDir;
+
+    if (program.toLowerCase() !== "basics") {
+      const folderName = program.toLowerCase().replace(/\s+/g, "_");
+      destDir = path.join(filesDir, folderName);
+      fs.mkdirSync(destDir, { recursive: true });
+    }
+
+    cb(null, destDir);
+  },
   filename: (req, file, cb) => {
     const timestamp = Date.now();
     const cleanName = file.originalname.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9._-]/g, "");
     cb(null, `${timestamp}-${cleanName}`);
-  },
+  }
 });
+
 const upload = multer({ storage });
 
+// ------------------
+// Upload Route
+// ------------------
 app.post("/upload", upload.single("file"), (req, res) => {
-  const { subject, program, semester } = req.body;
+  const { program, semester, subject } = req.body;
   const file = req.file;
-  if (!subject || !program || !semester || !file)
+
+  if (!program || !semester || !subject || !file) {
     return res.status(400).json({ message: "Missing fields or file." });
+  }
+
+  // Build file URL
+  let fileUrl = `/files/${file.filename}`;
+  if (program.toLowerCase() !== "basics") {
+    const folderName = program.toLowerCase().replace(/\s+/g, "_");
+    fileUrl = `/files/${folderName}/${file.filename}`;
+  }
 
   const fileData = {
     name: file.originalname,
-    subject,
     program,
     semester,
-    url: `/files/${file.filename}`,
+    subject,
+    url: fileUrl,
+    uploadedAt: new Date().toISOString()
   };
 
-  // Read existing metadata
-  let metadata = {};
-  if (fs.existsSync(metadataPath)) {
-    try {
-      metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8") || "{}");
-    } catch (err) {
-      console.error("Error reading metadata.json:", err);
-      metadata = {};
-    }
+  // Load metadata
+  let metadata = { files: [], basics: {}, programs: {} };
+  try {
+    metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+  } catch (err) {
+    console.error("Error reading metadata.json, initializing new metadata.", err);
   }
 
-  // Add file to the proper program or basics
+  // Add to flat files array
+  metadata.files = metadata.files || [];
+  metadata.files.push(fileData);
+
+  // Structured storage
   if (program.toLowerCase() === "basics") {
-    if (!metadata.basics) metadata.basics = {};
-    if (!metadata.basics[semester]) metadata.basics[semester] = {};
-    if (!metadata.basics[semester][subject]) metadata.basics[semester][subject] = [];
+    metadata.basics[semester] = metadata.basics[semester] || {};
+    metadata.basics[semester][subject] = metadata.basics[semester][subject] || [];
     metadata.basics[semester][subject].push(fileData);
   } else {
-    if (!metadata.programs) metadata.programs = {};
-    if (!metadata.programs[program]) metadata.programs[program] = [];
+    metadata.programs[program] = metadata.programs[program] || [];
     metadata.programs[program].push(fileData);
   }
 
-  fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
-  res.status(200).json({ message: "Upload successful!", file: fileData });
+  // Save metadata
+  try {
+    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+    res.status(200).json({ message: "Upload successful!", file: fileData });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update metadata." });
+  }
 });
 
 // ------------------
-// METADATA ROUTE
+// Metadata API
 // ------------------
-
 app.get("/api/metadata", (req, res) => {
-  if (!fs.existsSync(metadataPath)) return res.json({});
   try {
-    const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf-8") || "{}");
+    const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
     res.json(metadata);
   } catch (err) {
-    console.error("Failed to read metadata.json:", err);
+    console.error(err);
     res.status(500).json({});
   }
 });
 
-
 // ------------------
-// FILE VIEW ROUTES
+// Requests Feature
 // ------------------
-app.get("/view/:filename", (req, res) => {
-  const filename = req.params.filename;
-  const filePath = path.join(filesDir, filename);
+const requestsPath = path.join(dataDir, "requests.json");
 
-  if (!fs.existsSync(filePath)) return res.status(404).send("File not found");
-  res.sendFile(path.join(__dirname, "public", "view.html"));
+// Initialize requests.json if missing or empty
+if (!fs.existsSync(requestsPath) || fs.readFileSync(requestsPath, "utf8").trim() === "") {
+  fs.writeFileSync(requestsPath, JSON.stringify([], null, 2));
+}
+
+// 📌 Submit new request
+app.post("/submit-request", (req, res) => {
+  const { topic, course, program, semester } = req.body;
+
+  if (!topic || !course || !program || !semester) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  let requests = [];
+  try {
+    requests = JSON.parse(fs.readFileSync(requestsPath, "utf8"));
+  } catch (err) {
+    console.error("Error reading requests.json:", err);
+  }
+
+  const newRequest = {
+    topic,
+    course,
+    program,
+    semester,
+    createdAt: new Date().toISOString()
+  };
+
+  requests.push(newRequest);
+
+  try {
+    fs.writeFileSync(requestsPath, JSON.stringify(requests, null, 2));
+    res.json({ message: "Request saved!", request: newRequest });
+  } catch (err) {
+    console.error("Error saving request:", err);
+    res.status(500).json({ message: "Failed to save request" });
+  }
 });
 
-app.get("/files/:filename", (req, res) => {
-  const filename = req.params.filename;
-  const filePath = path.join(filesDir, filename);
+// 📌 Get all requests
+app.get("/api/requests", (req, res) => {
+  try {
+    const requests = JSON.parse(fs.readFileSync(requestsPath, "utf8"));
+    res.json({ requests });
+  } catch (err) {
+    console.error("Error loading requests:", err);
+    res.status(500).json({ requests: [] });
+  }
+});
+
+// 📌 Delete request by index
+app.delete("/api/requests/:index", (req, res) => {
+  const index = parseInt(req.params.index, 10);
+
+  try {
+    let requests = JSON.parse(fs.readFileSync(requestsPath, "utf8"));
+    if (index < 0 || index >= requests.length) {
+      return res.status(400).json({ message: "Invalid index" });
+    }
+
+    requests.splice(index, 1);
+    fs.writeFileSync(requestsPath, JSON.stringify(requests, null, 2));
+
+    res.json({ message: "Request deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting request:", err);
+    res.status(500).json({ message: "Failed to delete request" });
+  }
+});
+
+
+
+
+// ------------------
+// Serve Files
+// ------------------
+app.get("/files/*", (req, res) => {
+  const relativePath = req.params[0];
+  const filePath = path.join(filesDir, relativePath);
 
   if (!fs.existsSync(filePath)) return res.status(404).send("File not found");
 
-  const ext = path.extname(filename).toLowerCase();
+  const ext = path.extname(filePath).toLowerCase();
   if (ext === ".pdf") res.setHeader("Content-Type", "application/pdf");
-  else if (ext === ".pptx")
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-    );
+  else if (ext === ".pptx") res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
   else res.setHeader("Content-Type", "application/octet-stream");
 
   res.setHeader("Content-Disposition", "inline");
@@ -173,29 +225,8 @@ app.get("/files/:filename", (req, res) => {
 });
 
 // ------------------
-// AI ENDPOINT
+// Start Server
 // ------------------
-app.post("/ai", async (req, res) => {
-  const { question } = req.body;
-  if (!question) return res.status(400).json({ answer: "No question provided." });
-
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: question }],
-      temperature: 0.7,
-      max_tokens: 500,
-    });
-    const aiAnswer = completion.choices[0].message.content.trim();
-    res.json({ answer: aiAnswer });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ answer: "AI failed to respond." });
-  }
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });
-
-
-// ------------------
-// START SERVER
-// ------------------
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));

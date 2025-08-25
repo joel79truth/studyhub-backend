@@ -52,6 +52,7 @@
   .message {
     margin-top: 12px;
     font-weight: 600;
+    min-height: 1.2em;
   }
   .message.success { color: #2ecc71; }
   .message.error { color: #e74c3c; }
@@ -74,7 +75,7 @@
     <input type="file" id="file" name="file" accept=".pdf,.pptx" required />
 
     <button type="submit">Upload</button>
-    <div class="message" id="uploadMessage"></div>
+    <div class="message" id="uploadMessage" aria-live="polite"></div>
   </form>
 
   <button class="back-btn" onclick="window.location.href='index.html'" aria-label="Back to Home">🏠 Back to Home</button>
@@ -84,7 +85,7 @@
 const form = document.getElementById("uploadForm");
 const messageEl = document.getElementById("uploadMessage");
 
-form.addEventListener("submit", async function(e) {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const program = document.getElementById("program").value.trim();
@@ -125,9 +126,5 @@ form.addEventListener("submit", async function(e) {
   }
 });
 </script>
-
-<script src="upload.js" defer></script>
-
-
 </body>
 </html>

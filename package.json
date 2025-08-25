@@ -198,5 +198,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joel79truth/studyhub-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joel79truth/studyhub-backend/issues"
+  },
+  "homepage": "https://github.com/joel79truth/studyhub-backend#readme"
 }

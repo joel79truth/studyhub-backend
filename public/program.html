@@ -1,289 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Programs - StudyHub LUANAR</title>
-  <link rel="stylesheet" href="style.css">
-
-</head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0LTZS1S9W6');
-</script>
-
-<body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programs – StudyHub LUANAR</title>
+<link rel="stylesheet" href="style.css">
 <style>
-
-/* Body with forest background */
-body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: url(' https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260 ') no-repeat center center fixed;
-  background-size: cover;
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* Header */
-header {
-  text-align: center;
-  padding: 20px;
-  background: rgba(15, 172, 23, 0.774); /* Slightly transparent for readability */
-  color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-/* Container */
-.container {
-  max-width: 1000px;
-  margin: 20px auto;
-  padding: 0 20px;
-}
-
-/* Search Bar */
-/* Sleek Floating Search Bar */
-.search-bar {
-  position: relative;
-  width: 300px; /* compact */
-  margin: 20px auto;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 10px 40px 10px 15px; /* space for icon on the right */
-  border-radius: 50px;
-  border: none;
-  outline: none;
-  font-size: 14px;
-  background: rgba(255,255,255,0.9);
-  color: #1e1e1e;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.search-bar input::placeholder {
-  color: #555;
-  font-weight: 500;
-}
-
-/* Search Icon inside the input */
-.search-bar .search-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: white;
-  background: linear-gradient(135deg, #4f46e5, #3b82f6);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.search-bar .search-icon:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-}
-
-.search-bar .search-icon:active {
-  transform: scale(0.95);
-}
-
-
-/* Program Cards */
-#programList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
-}
-
-.program-card {
-  background: white;
-  border-radius: 15px;
-  padding: 25px 20px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-
-.program-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-}
-
-.program-card h3 {
-  margin: 0;
-  color: #1e1e1e;
-  font-weight: 600;
-}
-
-/* Back Home Button */
-.back-home-btn {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 55px;
-  height: 55px;
-  background: #000000;
-  color: white;
-  text-decoration: none;
-  border-radius: 50%;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-  font-family: 'Segoe UI', sans-serif;
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-  z-index: 1000;
-  font-size: 24px;
-}
-
-.back-home-btn div {
-  font-size: 12px;
-  margin-top: 3px;
-  font-weight: bold;
-}
-
-.back-home-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
-}
-
-.back-home-btn:active {
-  transform: scale(0.95);
-}
-
-
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
+    background-size: cover;
+  }
+  header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(15,172,23,0.8);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  h1 { margin: 0; font-size: 2rem; }
+  .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+  .search-bar { width: 300px; margin: 20px auto; position: relative; }
+  .search-bar input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border-radius: 50px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: rgba(255,255,255,0.9);
+    color: #1e1e1e;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+  #programList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .program-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .program-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  }
+  .back-home-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    background: #000;
+    color: white;
+    text-decoration: none;
+    border-radius: 50%;
+    font-size: 24px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  }
 </style>
+</head>
+<body>
 
+<a href="index.html" class="back-home-btn" aria-label="Back to Home">🏠</a>
+<header><h1>LUANAR Programs</h1></header>
 
-<header>
-  <h1> LUANAR Programs</h1>
-</header>
+<!-- Search & Action Buttons -->
+<div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
 
-<div class="search-bar">
-  <input type="text" id="topicSearch" placeholder="Search programs or basics...">
-  <div class="search-icon" id="searchBtn">
-    <i class="fas fa-search"></i>
+<div style="
+  text-align:center; 
+  margin-bottom:10px; 
+  font-size:0.9rem; 
+  color:#000000; 
+  font-weight:bold;
+  background: rgba(255,255,255,0.7); 
+  padding:5px 10px; 
+  border-radius:8px;
+  display: inline-block;
+">
+  Have notes to share? Upload them or request others' notes!
+</div>
+
+  <!-- Buttons Row -->
+  <div style="display:flex; gap:15px; align-items:center;">
+    <!-- Upload Button -->
+    <div style="display:flex; flex-direction:column; align-items:center;">
+      <a href="upload.html" style="
+        width:45px;
+        height:45px;
+        background: linear-gradient(135deg,#4f46e5,#3b82f6);
+        border-radius:50%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:white;
+        text-decoration:none;
+        box-shadow:0 5px 12px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        font-size:20px;
+      " title="Upload Notes">📤</a>
+      <span style="
+        font-size:0.75rem;
+        font-weight: bolder;
+        color:#000;
+        margin-top:4px;
+        background: rgba(255,255,255,0.8);
+        padding:2px 6px;
+        border-radius:8px;
+      ">Upload</span>
+    </div>
+
+    <!-- Request Button -->
+    <div style="display:flex; flex-direction:column; align-items:center;">
+      <a href="request.html" style="
+        width:45px;
+        height:45px;
+        background: linear-gradient(135deg,#4f46e5,#3b82f6);
+        border-radius:50%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:white;
+        text-decoration:none;
+        box-shadow:0 5px 12px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        font-size:20px;
+      " title="Request Notes">📩</a>
+      <span style="
+        font-size:0.75rem;
+        font-weight: bolder;
+        color:#000;
+        margin-top:4px;
+        background: rgba(255,255,255,0.8);
+        padding:2px 6px;
+        border-radius:8px;
+      ">Request</span>
+    </div>
   </div>
 </div>
-  <script>
-function handleProgramSearch() {
-  const query = document.getElementById('topicSearch').value.toLowerCase().trim();
-  const filtered = allPrograms.filter(p => p.toLowerCase().includes(query));
-  displayPrograms(filtered);
-}
-
-// Add click event to the icon
-document.getElementById('searchBtn').addEventListener('click', handleProgramSearch);
-
-// Trigger search on Enter key
-document.getElementById('topicSearch').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') handleProgramSearch();
-});
-</script>
 
 
+  
 
 
-<!-- Font Awesome CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-
-<a href="index.html" class="back-home-btn">
-  🏠
-  <div>Back</div>
-</a>
-
-
+<div class="container">
+  <div class="search-bar">
+    <input type="text" id="programSearch" placeholder="Search programs...">
+  </div>
   <div id="programList"></div>
 </div>
 
 <script>
-  const defaultPrograms = [
-    "Bachelor of Agriculture",
-    "Bachelor of Science in Environmental Science",
-    "Bachelor of Engineering",
-    "Bachelor of Education",
-    "Bachelor of Science in Nutrition",
-    "Bachelor of Commerce",
-    "Bachelor of Science in Irrigation Engineering (Hons)",
-   "Diploma in Irrigation Technology",
-    "Diploma in Agro-Food Processing",
-    "Diploma in Agriculture Education",
-    "Diploma in Animal Health and Production",
-    "Diploma in Environmental Management",
-    "Diploma in Land Administration",
-    "Diploma in Agriculture",
-    "Diploma in Horticulture and Landscape Management",
-    "Diploma in Food, Nutrition and Livelihood Security",
-     "Diploma Agriculture General ",
-     "basics"
-    
-  ];
+let allPrograms = [];
 
-  let allPrograms = [...defaultPrograms]; // will merge with uploaded programs
+async function loadPrograms() {
+  try {
+    const res = await fetch("/api/metadata");
+    const data = await res.json();
 
-  async function loadPrograms() {
-    try {
-      const response = await fetch('/api/metadata');
+    // Only include programs that have uploaded files
+    const uploadedPrograms = (data.files || []).map(f => f.program).filter(Boolean);
+    const lowerSet = new Set();
+    allPrograms = uploadedPrograms.filter(p => {
+      const lower = p.toLowerCase();
+      if (lowerSet.has(lower)) return false;
+      lowerSet.add(lower);
+      return true;
+    });
 
-      const data = await response.json();
-
-      const uploadedPrograms = data.files
-        .map(file => file.program)
-        .filter(Boolean); // remove undefined/null
-      const uniqueUploaded = [...new Set(uploadedPrograms)];
-
-      // Merge default and uploaded programs
-      allPrograms = [...new Set([...defaultPrograms, ...uniqueUploaded])];
-
-      displayPrograms(allPrograms);
-    } catch (error) {
-      console.error('Error fetching uploaded programs:', error);
-      displayPrograms(allPrograms);
-    }
+    displayPrograms(allPrograms);
+  } catch (err) {
+    console.error("Failed to load programs:", err);
+    displayPrograms([]);
   }
-
-  function displayPrograms(programs) {
-    const container = document.getElementById('programList');
-    container.innerHTML = programs.map(p => `
-      <div class="program-card" onclick="openProgram('${p}')">
-        <h3>${p}</h3>
-      </div>
-    `).join('');
-  }
-
- 
-function openProgram(program) {
-  // Encode the program name to pass in URL
-  const encodedProgram = encodeURIComponent(program);
-  window.location.href = `program-detail.html?program=${encodedProgram}`;
 }
 
+function displayPrograms(programs) {
+  const container = document.getElementById("programList");
+  if (!programs.length) {
+    container.innerHTML = "<p>No programs uploaded yet.</p>";
+    return;
+  }
 
-  // Load programs on page load
-  loadPrograms();
+  container.innerHTML = programs.map(p => `
+    <div class="program-card" onclick="openProgram('${encodeURIComponent(p)}')">
+      <h3>${p}</h3>
+    </div>
+  `).join('');
+}
+
+function openProgram(program) {
+  window.location.href = `program-detail.html?program=${program}`;
+}
+
+// Search filter
+document.getElementById("programSearch").addEventListener("input", function() {
+  const query = this.value.toLowerCase();
+  const filtered = allPrograms.filter(p => p.toLowerCase().includes(query));
+  displayPrograms(filtered);
+});
+
+loadPrograms();
 </script>
-</div>
+
 </body>
 </html>
