@@ -300,6 +300,16 @@
         "url": "/files/enviromental_science/1756082647214-Business_ethics.pptx",
         "uploadedAt": "2025-08-25T00:44:07.223Z"
       }
+    ],
+    "Applied science": [
+      {
+        "name": "-PHYSICS_MODULE_(1).pdf",
+        "program": "Applied science",
+        "semester": "1",
+        "subject": "Biology",
+        "url": "/files/applied_science/1756222874760--PHYSICS_MODULE_1.pdf",
+        "uploadedAt": "2025-08-26T15:41:15.429Z"
+      }
     ]
   },
   "files": [
@@ -424,6 +434,14 @@
       "subject": "Syllabus for Introduction to Computer Systems",
       "url": "/files/1756083802088-computer_syllabus.pdf",
       "uploadedAt": "2025-08-25T01:03:22.189Z"
+    },
+    {
+      "name": "-PHYSICS_MODULE_(1).pdf",
+      "program": "Applied science",
+      "semester": "1",
+      "subject": "Biology",
+      "url": "/files/applied_science/1756222874760--PHYSICS_MODULE_1.pdf",
+      "uploadedAt": "2025-08-26T15:41:15.429Z"
     }
   ]
 }
