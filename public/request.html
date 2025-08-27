@@ -144,43 +144,56 @@
       <label for="semester">Semester</label>
       <input type="text" id="semester" name="semester" required aria-required="true" />
 
+      <label for="notes">Additional Notes (optional)</label>
+      <input type="text" id="notes" name="notes" aria-label="Additional notes" />
+    
+      <label for="email">Your email (optional)</label>
+      <input type="text" id="email" name="email" aria-label="Your email address" />
+
+
       <button type="submit" aria-label="Submit note request">Submit Request</button>
       <p class="success" id="successMsg" role="alert" aria-live="polite">✅ Request sent successfully!</p>
+      
+    
     </form>
 
     <a href="index.html" class="back-link" aria-label="Back to Home">← Back to Home</a>
   </div>
 
   <script>
-    document.getElementById("requestForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const topic = document.getElementById("topic").value.trim();
-      const course = document.getElementById("course").value.trim();
-      const program = document.getElementById("program").value.trim();
-      const semester = document.getElementById("semester").value.trim();
+  document.getElementById("requestForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const topic = document.getElementById("topic").value.trim();
+    const course = document.getElementById("course").value.trim();
+    const program = document.getElementById("program").value.trim();
+    const semester = document.getElementById("semester").value.trim();
+    const notes = document.getElementById("notes").value.trim();
+    const email = document.getElementById("email").value.trim();
 
-      if (!topic || !course || !program || !semester) {
-        alert("Please fill in all fields.");
-        return;
-      }
+    if (!topic || !course || !program || !semester) {
+      alert("Please fill in all required fields.");
+      return;
+    }
 
-      try {
-        const res = await fetch("/submit-request", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic, course, program, semester })
-        });
+    try {
+      const res = await fetch("/submit-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, course, program, semester, notes, email })
+      });
 
-        if (res.ok) {
-          document.getElementById("successMsg").style.display = "block";
-          document.getElementById("requestForm").reset();
-        } else {
-          alert("❌ Failed to submit. Please try again.");
-        }
-      } catch {
+      if (res.ok) {
+        document.getElementById("successMsg").style.display = "block";
+        document.getElementById("requestForm").reset();
+      } else {
         alert("❌ Failed to submit. Please try again.");
       }
-    });
-  </script>
+    } catch {
+      alert("❌ Failed to submit. Please try again.");
+    }
+  });
+</script>
+
+
 </body>
 </html>

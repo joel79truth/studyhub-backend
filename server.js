@@ -140,7 +140,7 @@ if (!fs.existsSync(requestsPath) || fs.readFileSync(requestsPath, "utf8").trim()
 
 // 📌 Submit new request
 app.post("/submit-request", (req, res) => {
-  const { topic, course, program, semester } = req.body;
+  const { topic, course, program, semester, notes, email } = req.body;
 
   if (!topic || !course || !program || !semester) {
     return res.status(400).json({ message: "All fields are required" });
@@ -158,6 +158,8 @@ app.post("/submit-request", (req, res) => {
     course,
     program,
     semester,
+    notes: notes || "",
+    email: email || "",
     createdAt: new Date().toISOString()
   };
 

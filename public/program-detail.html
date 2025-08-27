@@ -149,15 +149,6 @@ let allFiles = [];
 // Normalize string comparison
 function equalsIgnoreCase(a,b) { return a?.toLowerCase() === b?.toLowerCase(); }
 
-// Check if file exists on server
-async function fileExists(url) {
-  try {
-    const res = await fetch(url, { method: 'HEAD' });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
 
 async function loadFiles() {
   try {
@@ -168,10 +159,11 @@ async function loadFiles() {
     let validFiles = [];
 
     for (const f of files) {
-      if (equalsIgnoreCase(f.program, programName) && f.url && await fileExists(f.url)) {
-        validFiles.push(f);
-      }
-    }
+  if (equalsIgnoreCase(f.program, programName) && f.url) {
+    validFiles.push(f);
+  }
+}
+
 
     allFiles = validFiles;
 
