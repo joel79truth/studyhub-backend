@@ -56,6 +56,21 @@
   }
   .message.success { color: #2ecc71; }
   .message.error { color: #e74c3c; }
+
+  #progressBar {
+    height: 100%;
+    width: 0%;
+    border-radius: 12px;
+    background: linear-gradient(270deg, #ff813f, #e67333, #ffca3a, #ff813f);
+    background-size: 600% 100%;
+    animation: gradientMove 2s linear infinite;
+    transition: width 0.2s ease;
+  }
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 </style>
 </head>
 <body>
@@ -75,6 +90,11 @@
     <input type="file" id="file" name="file" accept=".pdf,.pptx" required />
 
     <button type="submit">Upload</button>
+
+    <div id="progressContainer" style="margin-top: 15px; height: 20px; width: 100%; background: rgba(255,255,255,0.3); border-radius: 12px; overflow: hidden; display:none;">
+      <div id="progressBar"></div>
+    </div>
+
     <div class="message" id="uploadMessage" aria-live="polite"></div>
   </form>
 
@@ -85,7 +105,7 @@
 const form = document.getElementById("uploadForm");
 const messageEl = document.getElementById("uploadMessage");
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const program = document.getElementById("program").value.trim();
@@ -108,22 +128,45 @@ form.addEventListener("submit", async (e) => {
   formData.append("subject", subject);
   formData.append("file", fileInput.files[0]);
 
-  try {
-    const res = await fetch("/upload", { method: "POST", body: formData });
-    const result = await res.json();
-    if (res.ok) {
+  const progressContainer = document.getElementById("progressContainer");
+  const progressBar = document.getElementById("progressBar");
+  progressContainer.style.display = "block";
+  progressBar.style.width = "0%";
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/upload");
+
+  xhr.upload.addEventListener("progress", (event) => {
+    if (event.lengthComputable) {
+      const percent = Math.round((event.loaded / event.total) * 100);
+      progressBar.style.width = percent + "%";
+    }
+  });
+
+  xhr.onload = () => {
+    if (xhr.status === 200) {
       messageEl.textContent = "✅ Upload successful!";
       messageEl.classList.add("success");
       form.reset();
+      progressBar.style.width = "100%";
+      setTimeout(() => { progressContainer.style.display = "none"; progressBar.style.width = "0%"; }, 1000);
     } else {
-      messageEl.textContent = "❌ Upload failed: " + result.message;
+      const res = JSON.parse(xhr.responseText);
+      messageEl.textContent = "❌ Upload failed: " + (res.message || "Server error");
       messageEl.classList.add("error");
+      progressContainer.style.display = "none";
+      progressBar.style.width = "0%";
     }
-  } catch (err) {
-    console.error(err);
+  };
+
+  xhr.onerror = () => {
     messageEl.textContent = "❌ An error occurred during upload.";
     messageEl.classList.add("error");
-  }
+    progressContainer.style.display = "none";
+    progressBar.style.width = "0%";
+  };
+
+  xhr.send(formData);
 });
 </script>
 </body>

@@ -1,294 +1,457 @@
 {
+  "files": [
+    {
+      "name": "Physics_Kazongwe.pdf",
+      "program": "irrigation",
+      "semester": "1",
+      "subject": "physics 1",
+      "url": "/files/irrigation/1756576797023-Physics_Kazongwe.pdf",
+      "uploadedAt": "2025-08-30T17:59:59.016Z"
+    },
+    {
+      "name": "Physics_Kazongwe.pdf",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "physics 1",
+      "url": "/files/1756577713651-Physics_Kazongwe.pdf",
+      "uploadedAt": "2025-08-30T18:15:13.986Z"
+    },
+    {
+      "name": "PHYSICS II_COURSE_OUTLINE.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "physics 2",
+      "url": "/files/1756577799529-PHYSICS_II_COURSE_OUTLINE.pdf",
+      "uploadedAt": "2025-08-30T18:16:39.574Z"
+    },
+    {
+      "name": "PHYSICS_II_-_Module.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "physics 2",
+      "url": "/files/1756577813854-PHYSICS_II_-_Module.pdf",
+      "uploadedAt": "2025-08-30T18:16:53.884Z"
+    },
+    {
+      "name": "RADIOACTIVITY AND NUCLEAR EQUQTIONS.pptx",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "physics 2",
+      "url": "/files/1756577822419-RADIOACTIVITY_AND_NUCLEAR_EQUQTIONS.pptx",
+      "uploadedAt": "2025-08-30T18:17:03.497Z"
+    },
+    {
+      "name": "UPDATED_Magnetism_2024_NEW.pptx",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "physics 2",
+      "url": "/files/1756577837249-UPDATED_Magnetism_2024_NEW.pptx",
+      "uploadedAt": "2025-08-30T18:17:17.555Z"
+    },
+    {
+      "name": "Trig_and_Calculus_Module.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "Mathematics 2",
+      "url": "/files/1756577861340-Trig_and_Calculus_Module.pdf",
+      "uploadedAt": "2025-08-30T18:17:41.348Z"
+    },
+    {
+      "name": "NRC_Trigonometry_064642.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "Mathematics 2",
+      "url": "/files/1756577892399-NRC_Trigonometry_064642.pdf",
+      "uploadedAt": "2025-08-30T18:18:12.410Z"
+    },
+    {
+      "name": "CHE_121_Module_2_First_Draft.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756577913107-CHE_121_Module_2_First_Draft.pdf",
+      "uploadedAt": "2025-08-30T18:18:33.136Z"
+    },
+    {
+      "name": "LECTURE 1 Introduction to Organic Chemistry.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756577930821-LECTURE_1_Introduction_to_Organic_Chemistry.pdf",
+      "uploadedAt": "2025-08-30T18:18:50.840Z"
+    },
+    {
+      "name": "LECTURE 2 alkenes intro - Copy - Copy.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756577992232-LECTURE_2_alkenes_intro_-_Copy_-_Copy.pdf",
+      "uploadedAt": "2025-08-30T18:19:52.242Z"
+    },
+    {
+      "name": "LECTURE 3 alkenes intro.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756578001202-LECTURE_3_alkenes_intro.pdf",
+      "uploadedAt": "2025-08-30T18:20:01.205Z"
+    },
+    {
+      "name": "LECTURE 4 ISOMERISM.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756578009033-LECTURE_4_ISOMERISM.pdf",
+      "uploadedAt": "2025-08-30T18:20:09.047Z"
+    },
+    {
+      "name": "LECTURE 5 Part 2 reactions of alkenes - Copy.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756578595934-LECTURE_5_Part_2_reactions_of_alkenes_-_Copy.pdf",
+      "uploadedAt": "2025-08-30T18:29:55.951Z"
+    },
+    {
+      "name": "LECTURE 6 Haloalkanes.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756578607422-LECTURE_6_Haloalkanes.pdf",
+      "uploadedAt": "2025-08-30T18:30:07.429Z"
+    },
+    {
+      "name": "LECTURE 7 Alcohols and Ethers.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756578619147-LECTURE_7_Alcohols_and_Ethers.pdf",
+      "uploadedAt": "2025-08-30T18:30:19.158Z"
+    },
+    {
+      "name": "LECTURE 8 Aldehydes and Ketones.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756578633755-LECTURE_8_Aldehydes_and_Ketones.pdf",
+      "uploadedAt": "2025-08-30T18:30:33.798Z"
+    },
+    {
+      "name": "PeriodicTable.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "chemistry 2",
+      "url": "/files/1756578646912-PeriodicTable.pdf",
+      "uploadedAt": "2025-08-30T18:30:46.925Z"
+    },
+    {
+      "name": "EXCEL APPLICATIONS 1.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "Computer 2",
+      "url": "/files/1756578698345-EXCEL_APPLICATIONS_1.pdf",
+      "uploadedAt": "2025-08-30T18:31:38.349Z"
+    },
+    {
+      "name": "8 CREATING DATABASE Access 2007.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "Computer 2",
+      "url": "/files/1756578713228-8_CREATING_DATABASE_Access_2007.pdf",
+      "uploadedAt": "2025-08-30T18:31:53.231Z"
+    },
+    {
+      "name": "6 Access 2010_ Introduction to Objects.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "Computer 2",
+      "url": "/files/1756578722525-6_Access_2010__Introduction_to_Objects.pdf",
+      "uploadedAt": "2025-08-30T18:32:02.530Z"
+    },
+    {
+      "name": "3 Databases TYPES_MODELS_STRUCTURE _ Introduction.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "Computer 2",
+      "url": "/files/1756578733700-3_Databases_TYPES_MODELS_STRUCTURE___Introduction.pdf",
+      "uploadedAt": "2025-08-30T18:32:13.703Z"
+    },
+    {
+      "name": "2 Introduction to databases.pdf",
+      "program": "Basics",
+      "semester": "2",
+      "subject": "Computer 2",
+      "url": "/files/1756578742439-2_Introduction_to_databases.pdf",
+      "uploadedAt": "2025-08-30T18:32:22.449Z"
+    },
+    {
+      "name": "BIO_111_-_Microscopy_(1).pdf",
+      "program": "Basics",
+      "semester": "1",
+      "subject": "Biology",
+      "url": "/files/1756578863091-BIO_111_-_Microscopy_1.pdf",
+      "uploadedAt": "2025-08-30T18:34:23.118Z"
+    },
+    {
+      "name": "Business ethics.pptx",
+      "program": "Enviromental science",
+      "semester": "1",
+      "subject": "Business ethics",
+      "url": "/files/enviromental_science/1756643806197-Business_ethics.pptx",
+      "uploadedAt": "2025-08-31T12:36:46.212Z"
+    },
+    {
+      "name": "Entrepreneurial Environment.pptx",
+      "program": "Enviromental science",
+      "semester": "1",
+      "subject": "Entreprenuerial Environment",
+      "url": "/files/enviromental_science/1756643905004-Entrepreneurial_Environment.pptx",
+      "uploadedAt": "2025-08-31T12:38:25.025Z"
+    },
+    {
+      "name": "Lesson 3 (Intro To Population And Resources).pptx",
+      "program": "Enviromental science",
+      "semester": "1",
+      "subject": "populaio",
+      "url": "/files/enviromental_science/1756643956603-Lesson_3_Intro_To_Population_And_Resources.pptx",
+      "uploadedAt": "2025-08-31T12:39:16.670Z"
+    },
+    {
+      "name": "Non_conventional(_NCLs)(1).pdf",
+      "program": "Agriculture General",
+      "semester": "5",
+      "subject": "Non conventional",
+      "url": "/files/agriculture_general/1756644085708-Non_conventional_NCLs1.pdf",
+      "uploadedAt": "2025-08-31T12:41:25.782Z"
+    },
+    {
+      "name": "Lesson 4 (Theories on the relationship between population and resources).pptx",
+      "program": "Bachelor of Science in Environmental Science",
+      "semester": "1",
+      "subject": "Lesson 4",
+      "url": "/files/bachelor_of_science_in_environmental_science/1756644186488-Lesson_4_Theories_on_the_relationship_between_population_and_resources.pptx",
+      "uploadedAt": "2025-08-31T12:43:06.563Z"
+    },
+    {
+      "name": "Fundamentals-Of-Food-Technology.pdf",
+      "program": "Bachelor in food science and technology",
+      "semester": "1",
+      "subject": "Fundamentals-Of-Food-Technology",
+      "url": "/files/bachelor_in_food_science_and_technology/1756644296223-Fundamentals-Of-Food-Technology.pdf",
+      "uploadedAt": "2025-08-31T12:44:56.254Z"
+    }
+  ],
   "basics": {
     "1": {
-      "chemistry 2": [
+      "physics 1": [
         {
-          "name": "LECTURE__2.pdf",
-          "subject": "chemistry 2",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755932993110-LECTURE__2.pdf"
-        }
-      ],
-      "physics": [
-        {
-          "name": "-PHYSICS_MODULE_(1).pdf",
-          "subject": "physics",
+          "name": "Physics_Kazongwe.pdf",
           "program": "Basics",
           "semester": "1",
-          "url": "/files/1755933830079--PHYSICS_MODULE_1.pdf"
-        },
-        {
-          "name": "-PHYSICS_MODULE_(1).pdf",
-          "subject": "physics",
-          "program": "Basics",
-          "semester": "1",
-          "url": "/files/1755933830085--PHYSICS_MODULE_1.pdf"
+          "subject": "physics 1",
+          "url": "/files/1756577713651-Physics_Kazongwe.pdf",
+          "uploadedAt": "2025-08-30T18:15:13.986Z"
         }
       ],
       "Biology": [
         {
           "name": "BIO_111_-_Microscopy_(1).pdf",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934116222-BIO_111_-_Microscopy_1.pdf"
-        },
-        {
-          "name": "BIO_111_-_Microscopy_(1).pdf",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934116226-BIO_111_-_Microscopy_1.pdf"
-        },
-        {
-          "name": "Biology.pdf",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934146444-Biology.pdf"
-        },
-        {
-          "name": "Biology.pdf",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934146449-Biology.pdf"
-        },
-        {
-          "name": "Zoology.pptx",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934169765-Zoology.pptx"
-        },
-        {
-          "name": "Zoology.pptx",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934169762-Zoology.pptx"
-        },
-        {
-          "name": "cell biology and microscopy.pdf",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934177693-cell_biology_and_microscopy.pdf"
-        },
-        {
-          "name": "cell biology and microscopy.pdf",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934177696-cell_biology_and_microscopy.pdf"
-        },
-        {
-          "name": "BIOLOGY  BIO 111  lecture 1 2025 - Copy.pptx",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934190946-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
-        },
-        {
-          "name": "BIOLOGY  BIO 111  lecture 1 2025 - Copy.pptx",
-          "subject": "Biology",
-          "program": "basics",
-          "semester": "1",
-          "url": "/files/1755934190944-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
-        },
-        {
-          "name": "BIOLOGY  BIO 111  lecture 1 2025 - Copy.pptx",
           "program": "Basics",
           "semester": "1",
           "subject": "Biology",
-          "url": "/files/1756038670517-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
-        },
-        {
-          "name": "2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
-          "program": "Basics",
-          "semester": "1",
-          "subject": "Biology",
-          "url": "/files/1756041652671-2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
-          "uploadedAt": "2025-08-24T13:20:52.697Z"
-        },
-        {
-          "name": "2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
-          "program": "Basics",
-          "semester": "1",
-          "subject": "Biology",
-          "url": "/files/1756041752207-2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
-          "uploadedAt": "2025-08-24T13:22:32.244Z"
-        },
-        {
-          "name": "cell biology and microscopy.pdf",
-          "program": "Basics",
-          "semester": "1",
-          "subject": "Biology",
-          "url": "/files/1756082441755-cell_biology_and_microscopy.pdf",
-          "uploadedAt": "2025-08-25T00:40:41.913Z"
-        }
-      ],
-      "biology": [
-        {
-          "name": "photosynthesis (2).pdf",
-          "program": "Basics",
-          "semester": "1",
-          "subject": "biology",
-          "url": "/files/1756009818162-photosynthesis_2.pdf"
-        },
-        {
-          "name": "photosynthesis (2).pdf",
-          "program": "Basics",
-          "semester": "1",
-          "subject": "biology",
-          "url": "/files/1756009818167-photosynthesis_2.pdf"
-        }
-      ],
-      "Syllabus for Introduction to Computer Systems": [
-        {
-          "name": "computer syllabus.pdf",
-          "program": "Basics",
-          "semester": "1",
-          "subject": "Syllabus for Introduction to Computer Systems",
-          "url": "/files/1756083802088-computer_syllabus.pdf",
-          "uploadedAt": "2025-08-25T01:03:22.189Z"
+          "url": "/files/1756578863091-BIO_111_-_Microscopy_1.pdf",
+          "uploadedAt": "2025-08-30T18:34:23.118Z"
         }
       ]
     },
     "2": {
-      "Computer Application": [
+      "physics 2": [
+        {
+          "name": "PHYSICS II_COURSE_OUTLINE.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "physics 2",
+          "url": "/files/1756577799529-PHYSICS_II_COURSE_OUTLINE.pdf",
+          "uploadedAt": "2025-08-30T18:16:39.574Z"
+        },
+        {
+          "name": "PHYSICS_II_-_Module.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "physics 2",
+          "url": "/files/1756577813854-PHYSICS_II_-_Module.pdf",
+          "uploadedAt": "2025-08-30T18:16:53.884Z"
+        },
+        {
+          "name": "RADIOACTIVITY AND NUCLEAR EQUQTIONS.pptx",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "physics 2",
+          "url": "/files/1756577822419-RADIOACTIVITY_AND_NUCLEAR_EQUQTIONS.pptx",
+          "uploadedAt": "2025-08-30T18:17:03.497Z"
+        },
+        {
+          "name": "UPDATED_Magnetism_2024_NEW.pptx",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "physics 2",
+          "url": "/files/1756577837249-UPDATED_Magnetism_2024_NEW.pptx",
+          "uploadedAt": "2025-08-30T18:17:17.555Z"
+        }
+      ],
+      "Mathematics 2": [
+        {
+          "name": "Trig_and_Calculus_Module.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "Mathematics 2",
+          "url": "/files/1756577861340-Trig_and_Calculus_Module.pdf",
+          "uploadedAt": "2025-08-30T18:17:41.348Z"
+        },
+        {
+          "name": "NRC_Trigonometry_064642.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "Mathematics 2",
+          "url": "/files/1756577892399-NRC_Trigonometry_064642.pdf",
+          "uploadedAt": "2025-08-30T18:18:12.410Z"
+        }
+      ],
+      "chemistry 2": [
+        {
+          "name": "CHE_121_Module_2_First_Draft.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756577913107-CHE_121_Module_2_First_Draft.pdf",
+          "uploadedAt": "2025-08-30T18:18:33.136Z"
+        },
+        {
+          "name": "LECTURE 1 Introduction to Organic Chemistry.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756577930821-LECTURE_1_Introduction_to_Organic_Chemistry.pdf",
+          "uploadedAt": "2025-08-30T18:18:50.840Z"
+        },
+        {
+          "name": "LECTURE 2 alkenes intro - Copy - Copy.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756577992232-LECTURE_2_alkenes_intro_-_Copy_-_Copy.pdf",
+          "uploadedAt": "2025-08-30T18:19:52.242Z"
+        },
+        {
+          "name": "LECTURE 3 alkenes intro.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756578001202-LECTURE_3_alkenes_intro.pdf",
+          "uploadedAt": "2025-08-30T18:20:01.205Z"
+        },
+        {
+          "name": "LECTURE 4 ISOMERISM.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756578009033-LECTURE_4_ISOMERISM.pdf",
+          "uploadedAt": "2025-08-30T18:20:09.047Z"
+        },
+        {
+          "name": "LECTURE 5 Part 2 reactions of alkenes - Copy.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756578595934-LECTURE_5_Part_2_reactions_of_alkenes_-_Copy.pdf",
+          "uploadedAt": "2025-08-30T18:29:55.951Z"
+        },
+        {
+          "name": "LECTURE 6 Haloalkanes.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756578607422-LECTURE_6_Haloalkanes.pdf",
+          "uploadedAt": "2025-08-30T18:30:07.429Z"
+        },
+        {
+          "name": "LECTURE 7 Alcohols and Ethers.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756578619147-LECTURE_7_Alcohols_and_Ethers.pdf",
+          "uploadedAt": "2025-08-30T18:30:19.158Z"
+        },
+        {
+          "name": "LECTURE 8 Aldehydes and Ketones.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756578633755-LECTURE_8_Aldehydes_and_Ketones.pdf",
+          "uploadedAt": "2025-08-30T18:30:33.798Z"
+        },
+        {
+          "name": "PeriodicTable.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "chemistry 2",
+          "url": "/files/1756578646912-PeriodicTable.pdf",
+          "uploadedAt": "2025-08-30T18:30:46.925Z"
+        }
+      ],
+      "Computer 2": [
+        {
+          "name": "EXCEL APPLICATIONS 1.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "Computer 2",
+          "url": "/files/1756578698345-EXCEL_APPLICATIONS_1.pdf",
+          "uploadedAt": "2025-08-30T18:31:38.349Z"
+        },
+        {
+          "name": "8 CREATING DATABASE Access 2007.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "Computer 2",
+          "url": "/files/1756578713228-8_CREATING_DATABASE_Access_2007.pdf",
+          "uploadedAt": "2025-08-30T18:31:53.231Z"
+        },
+        {
+          "name": "6 Access 2010_ Introduction to Objects.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "Computer 2",
+          "url": "/files/1756578722525-6_Access_2010__Introduction_to_Objects.pdf",
+          "uploadedAt": "2025-08-30T18:32:02.530Z"
+        },
+        {
+          "name": "3 Databases TYPES_MODELS_STRUCTURE _ Introduction.pdf",
+          "program": "Basics",
+          "semester": "2",
+          "subject": "Computer 2",
+          "url": "/files/1756578733700-3_Databases_TYPES_MODELS_STRUCTURE___Introduction.pdf",
+          "uploadedAt": "2025-08-30T18:32:13.703Z"
+        },
         {
           "name": "2 Introduction to databases.pdf",
           "program": "Basics",
           "semester": "2",
-          "subject": "Computer Application",
-          "url": "/files/1756082749324-2_Introduction_to_databases.pdf",
-          "uploadedAt": "2025-08-25T00:45:49.329Z"
+          "subject": "Computer 2",
+          "url": "/files/1756578742439-2_Introduction_to_databases.pdf",
+          "uploadedAt": "2025-08-30T18:32:22.449Z"
         }
       ]
     }
   },
   "programs": {
-    "Bachelor of Science in Environmental Science": [
-      {
-        "name": "Business ethics.pptx",
-        "subject": "business ethics",
-        "program": "Bachelor of Science in Environmental Science",
-        "semester": "5",
-        "url": "/files/1755933918230-Business_ethics.pptx"
-      },
-      {
-        "name": "Business ethics.pptx",
-        "subject": "business ethics",
-        "program": "Bachelor of Science in Environmental Science",
-        "semester": "5",
-        "url": "/files/1755933918224-Business_ethics.pptx"
-      },
-      {
-        "name": "Entrepreneurial Environment.pptx",
-        "subject": "Entreprenuerial Environment",
-        "program": "Bachelor of Science in Environmental Science",
-        "semester": "1",
-        "url": "/files/1755934239841-Entrepreneurial_Environment.pptx"
-      },
-      {
-        "name": "Entrepreneurial Environment.pptx",
-        "subject": "Entreprenuerial Environment",
-        "program": "Bachelor of Science in Environmental Science",
-        "semester": "1",
-        "url": "/files/1755934239847-Entrepreneurial_Environment.pptx"
-      },
-      {
-        "name": "photosynthesis (2).pdf",
-        "program": "Bachelor of Science in Environmental Science",
-        "semester": "1",
-        "subject": "Entreprenuerial Environment",
-        "url": "/files/bachelor_of_science_in_environmental_science/1756008947352-photosynthesis_2.pdf"
-      },
-      {
-        "name": "photosynthesis (2).pdf",
-        "program": "Bachelor of Science in Environmental Science",
-        "semester": "1",
-        "subject": "Entreprenuerial Environment",
-        "url": "/files/bachelor_of_science_in_environmental_science/1756008947741-photosynthesis_2.pdf"
-      },
-      {
-        "name": "Business ethics.pptx",
-        "program": "Bachelor of Science in Environmental Science",
-        "semester": "1",
-        "subject": "Business ethics",
-        "url": "/files/bachelor_of_science_in_environmental_science/1756039775050-Business_ethics.pptx",
-        "uploadedAt": "2025-08-24T12:49:35.067Z"
-      }
-    ],
-    "Diploma in Agriculture General": [
-      {
-        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
-        "subject": "farm mechanisation",
-        "program": "Diploma in Agriculture General",
-        "semester": "1",
-        "url": "/files/1755933999843-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
-      },
-      {
-        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
-        "subject": "farm mechanisation",
-        "program": "Diploma in Agriculture General",
-        "semester": "1",
-        "url": "/files/1755933999846-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
-      }
-    ],
-    "Diploma  Agriculture General": [
-      {
-        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
-        "subject": "farm mechanisation",
-        "program": "Diploma  Agriculture General",
-        "semester": "1",
-        "url": "/files/1755934041399-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
-      },
-      {
-        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
-        "subject": "farm mechanisation",
-        "program": "Diploma  Agriculture General",
-        "semester": "1",
-        "url": "/files/1755934041404-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf"
-      }
-    ],
-    "agriculture General": [
-      {
-        "name": "poultry production.pdf",
-        "program": "agriculture General",
-        "semester": "1",
-        "subject": "biology",
-        "url": "/files/agriculture_general/1756014725367-poultry_production.pdf"
-      },
-      {
-        "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
-        "program": "agriculture General",
-        "semester": "1",
-        "subject": "farm mechanisation",
-        "url": "/files/agriculture_general/1756082569711-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf",
-        "uploadedAt": "2025-08-25T00:42:49.760Z"
-      }
-    ],
     "irrigation": [
       {
-        "name": "2...._PHYSICS_WAVE_MOTION.pptx",
+        "name": "Physics_Kazongwe.pdf",
         "program": "irrigation",
         "semester": "1",
-        "subject": "Biology",
-        "url": "/files/irrigation/1756041910986-2...._PHYSICS_WAVE_MOTION.pptx",
-        "uploadedAt": "2025-08-24T13:25:11.038Z"
-      }
-    ],
-    "Bachelor in food science and technology": [
-      {
-        "name": "Fundamentals-Of-Food-Technology.pdf",
-        "program": "Bachelor in food science and technology",
-        "semester": "1",
-        "subject": "Physics",
-        "url": "/files/bachelor_in_food_science_and_technology/1756043044298-Fundamentals-Of-Food-Technology.pdf",
-        "uploadedAt": "2025-08-24T13:44:04.327Z"
+        "subject": "physics 1",
+        "url": "/files/irrigation/1756576797023-Physics_Kazongwe.pdf",
+        "uploadedAt": "2025-08-30T17:59:59.016Z"
       }
     ],
     "Enviromental science": [
@@ -297,151 +460,55 @@
         "program": "Enviromental science",
         "semester": "1",
         "subject": "Business ethics",
-        "url": "/files/enviromental_science/1756082647214-Business_ethics.pptx",
-        "uploadedAt": "2025-08-25T00:44:07.223Z"
+        "url": "/files/enviromental_science/1756643806197-Business_ethics.pptx",
+        "uploadedAt": "2025-08-31T12:36:46.212Z"
+      },
+      {
+        "name": "Entrepreneurial Environment.pptx",
+        "program": "Enviromental science",
+        "semester": "1",
+        "subject": "Entreprenuerial Environment",
+        "url": "/files/enviromental_science/1756643905004-Entrepreneurial_Environment.pptx",
+        "uploadedAt": "2025-08-31T12:38:25.025Z"
+      },
+      {
+        "name": "Lesson 3 (Intro To Population And Resources).pptx",
+        "program": "Enviromental science",
+        "semester": "1",
+        "subject": "populaio",
+        "url": "/files/enviromental_science/1756643956603-Lesson_3_Intro_To_Population_And_Resources.pptx",
+        "uploadedAt": "2025-08-31T12:39:16.670Z"
       }
     ],
-    "Applied science": [
+    "Agriculture General": [
       {
-        "name": "-PHYSICS_MODULE_(1).pdf",
-        "program": "Applied science",
+        "name": "Non_conventional(_NCLs)(1).pdf",
+        "program": "Agriculture General",
+        "semester": "5",
+        "subject": "Non conventional",
+        "url": "/files/agriculture_general/1756644085708-Non_conventional_NCLs1.pdf",
+        "uploadedAt": "2025-08-31T12:41:25.782Z"
+      }
+    ],
+    "Bachelor of Science in Environmental Science": [
+      {
+        "name": "Lesson 4 (Theories on the relationship between population and resources).pptx",
+        "program": "Bachelor of Science in Environmental Science",
         "semester": "1",
-        "subject": "Biology",
-        "url": "/files/applied_science/1756222874760--PHYSICS_MODULE_1.pdf",
-        "uploadedAt": "2025-08-26T15:41:15.429Z"
+        "subject": "Lesson 4",
+        "url": "/files/bachelor_of_science_in_environmental_science/1756644186488-Lesson_4_Theories_on_the_relationship_between_population_and_resources.pptx",
+        "uploadedAt": "2025-08-31T12:43:06.563Z"
+      }
+    ],
+    "Bachelor in food science and technology": [
+      {
+        "name": "Fundamentals-Of-Food-Technology.pdf",
+        "program": "Bachelor in food science and technology",
+        "semester": "1",
+        "subject": "Fundamentals-Of-Food-Technology",
+        "url": "/files/bachelor_in_food_science_and_technology/1756644296223-Fundamentals-Of-Food-Technology.pdf",
+        "uploadedAt": "2025-08-31T12:44:56.254Z"
       }
     ]
-  },
-  "files": [
-    {
-      "name": "photosynthesis (2).pdf",
-      "program": "Bachelor of Science in Environmental Science",
-      "semester": "1",
-      "subject": "Entreprenuerial Environment",
-      "url": "/files/bachelor_of_science_in_environmental_science/1756008947352-photosynthesis_2.pdf"
-    },
-    {
-      "name": "photosynthesis (2).pdf",
-      "program": "Bachelor of Science in Environmental Science",
-      "semester": "1",
-      "subject": "Entreprenuerial Environment",
-      "url": "/files/bachelor_of_science_in_environmental_science/1756008947741-photosynthesis_2.pdf"
-    },
-    {
-      "name": "photosynthesis (2).pdf",
-      "program": "Basics",
-      "semester": "1",
-      "subject": "biology",
-      "url": "/files/1756009818162-photosynthesis_2.pdf"
-    },
-    {
-      "name": "photosynthesis (2).pdf",
-      "program": "Basics",
-      "semester": "1",
-      "subject": "biology",
-      "url": "/files/1756009818167-photosynthesis_2.pdf"
-    },
-    {
-      "name": "poultry production.pdf",
-      "program": "agriculture General",
-      "semester": "1",
-      "subject": "biology",
-      "url": "/files/agriculture_general/1756014725367-poultry_production.pdf"
-    },
-    {
-      "name": "BIOLOGY  BIO 111  lecture 1 2025 - Copy.pptx",
-      "program": "Basics",
-      "semester": "1",
-      "subject": "Biology",
-      "url": "/files/1756038670517-BIOLOGY_BIO_111_lecture_1_2025_-_Copy.pptx"
-    },
-    {
-      "name": "Business ethics.pptx",
-      "program": "Bachelor of Science in Environmental Science",
-      "semester": "1",
-      "subject": "Business ethics",
-      "url": "/files/bachelor_of_science_in_environmental_science/1756039775050-Business_ethics.pptx",
-      "uploadedAt": "2025-08-24T12:49:35.067Z"
-    },
-    {
-      "name": "2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
-      "program": "Basics",
-      "semester": "1",
-      "subject": "Biology",
-      "url": "/files/1756041652671-2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
-      "uploadedAt": "2025-08-24T13:20:52.697Z"
-    },
-    {
-      "name": "2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
-      "program": "Basics",
-      "semester": "1",
-      "subject": "Biology",
-      "url": "/files/1756041752207-2.3-BIO_31201_Seed_germination_and_Plant_Nutrients.pptx",
-      "uploadedAt": "2025-08-24T13:22:32.244Z"
-    },
-    {
-      "name": "2...._PHYSICS_WAVE_MOTION.pptx",
-      "program": "irrigation",
-      "semester": "1",
-      "subject": "Biology",
-      "url": "/files/irrigation/1756041910986-2...._PHYSICS_WAVE_MOTION.pptx",
-      "uploadedAt": "2025-08-24T13:25:11.038Z"
-    },
-    {
-      "name": "Fundamentals-Of-Food-Technology.pdf",
-      "program": "Bachelor in food science and technology",
-      "semester": "1",
-      "subject": "Physics",
-      "url": "/files/bachelor_in_food_science_and_technology/1756043044298-Fundamentals-Of-Food-Technology.pdf",
-      "uploadedAt": "2025-08-24T13:44:04.327Z"
-    },
-    {
-      "name": "cell biology and microscopy.pdf",
-      "program": "Basics",
-      "semester": "1",
-      "subject": "Biology",
-      "url": "/files/1756082441755-cell_biology_and_microscopy.pdf",
-      "uploadedAt": "2025-08-25T00:40:41.913Z"
-    },
-    {
-      "name": "Farm Mechanization Presentation - Emmanuel Chimwemwe Banda.pdf",
-      "program": "agriculture General",
-      "semester": "1",
-      "subject": "farm mechanisation",
-      "url": "/files/agriculture_general/1756082569711-Farm_Mechanization_Presentation_-_Emmanuel_Chimwemwe_Banda.pdf",
-      "uploadedAt": "2025-08-25T00:42:49.760Z"
-    },
-    {
-      "name": "Business ethics.pptx",
-      "program": "Enviromental science",
-      "semester": "1",
-      "subject": "Business ethics",
-      "url": "/files/enviromental_science/1756082647214-Business_ethics.pptx",
-      "uploadedAt": "2025-08-25T00:44:07.223Z"
-    },
-    {
-      "name": "2 Introduction to databases.pdf",
-      "program": "Basics",
-      "semester": "2",
-      "subject": "Computer Application",
-      "url": "/files/1756082749324-2_Introduction_to_databases.pdf",
-      "uploadedAt": "2025-08-25T00:45:49.329Z"
-    },
-    {
-      "name": "computer syllabus.pdf",
-      "program": "Basics",
-      "semester": "1",
-      "subject": "Syllabus for Introduction to Computer Systems",
-      "url": "/files/1756083802088-computer_syllabus.pdf",
-      "uploadedAt": "2025-08-25T01:03:22.189Z"
-    },
-    {
-      "name": "-PHYSICS_MODULE_(1).pdf",
-      "program": "Applied science",
-      "semester": "1",
-      "subject": "Biology",
-      "url": "/files/applied_science/1756222874760--PHYSICS_MODULE_1.pdf",
-      "uploadedAt": "2025-08-26T15:41:15.429Z"
-    }
-  ]
+  }
 }

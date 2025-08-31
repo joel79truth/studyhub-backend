@@ -1,27 +1,46 @@
+
+
+
+
+
+
+
 const fs = require('fs');
 const path = require('path');
 
 // Path to your program folder
 const folderPath = path.join(__dirname, 'program');
 
-// Read all files in the folder
-const files = fs.readdirSync(folderPath).filter(f => f.endsWith('.pdf') || f.endsWith('.pptx'));
+// Initialize metadata object
+const data = {};
 
-// Create JSON structure
-const data = {
-  "1": {}, // Semester 1
-  "2": {}  // Semester 2
-};
+// Read all program folders inside 'program'
+const programs = fs.readdirSync(folderPath).filter(f => 
+  fs.statSync(path.join(folderPath, f)).isDirectory()
+);
 
-// Example: Just put all files under "Semester 1 -> General"
-data["1"]["General"] = {
-  "All Topics": files.map(file => ({
-    name: file,
-    url: `program/${file}`
-  }))
-};
+programs.forEach(program => {
+  const programPath = path.join(folderPath, program);
+
+  // Get all pdf and pptx files in the program folder
+  const files = fs.readdirSync(programPath).filter(f => 
+    f.endsWith('.pdf') || f.endsWith('.pptx')
+  );
+
+  // Add files under the program
+  data[program] = {
+    "All Topics": files.map(file => ({
+      name: file,
+      url: `program/${program}/${file}`
+    }))
+  };
+});
 
 // Save to metadata.json
 fs.writeFileSync('metadata.json', JSON.stringify(data, null, 2));
 
 console.log('✅ metadata.json generated successfully!');
+
+
+
+
