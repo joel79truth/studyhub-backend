@@ -130,17 +130,17 @@ h1 {
 /* File Cards Grid */
 #fileList { 
   display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-  gap: 20px; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 15px; 
 }
 
 /* File Card */
 .file-card { 
   background: rgba(30, 41, 59, 0.9);
   backdrop-filter: blur(10px);
-  border-radius: 20px; 
+  border-radius: 16px; 
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(59, 130, 246, 0.2);
   position: relative;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -171,7 +171,7 @@ h1 {
 /* Preview Area */
 .file-card-preview {
   width: 100%;
-  height: 180px;
+  height: 120px;
   background: rgba(15, 23, 42, 0.705);
   display: flex;
   align-items: center;
@@ -201,18 +201,18 @@ h1 {
 }
 
 .file-placeholder .file-icon {
-  font-size: 50px;
+  font-size: 36px;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
 }
 
 /* Card Header */
 .file-card-header {
-  padding: 20px 20px 12px 20px;
+  padding: 14px 16px 10px 16px;
 }
 
 .file-card h3 { 
   margin: 0; 
-  font-size: 1.05rem; 
+  font-size: 0.95rem; 
   color: #fff;
   font-weight: 600;
   line-height: 1.4;
@@ -225,22 +225,22 @@ h1 {
 
 /* Card Body */
 .file-card-body {
-  padding: 0 20px 20px 20px;
+  padding: 0 16px 16px 16px;
 }
 
 .file-info-grid {
   display: grid;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .file-info-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
+  gap: 6px;
+  padding: 8px 12px;
   background: rgba(59, 130, 246, 0.1);
-  border-radius: 12px;
+  border-radius: 10px;
   border-left: 3px solid #3b82f6;
 }
 
@@ -250,16 +250,16 @@ h1 {
 }
 
 .file-info-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #94a3b8;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  min-width: 70px;
+  min-width: 60px;
 }
 
 .file-info-value {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #e2e8f0;
   font-weight: 500;
   flex: 1;
@@ -273,17 +273,17 @@ h1 {
 
 .file-card button { 
   flex: 1;
-  padding: 12px 16px;
+  padding: 10px 12px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .view-btn { 
@@ -489,33 +489,46 @@ h1 {
   }
 
   #fileList {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 15px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .file-card-preview {
-    height: 160px;
+    height: 100px;
   }
 
   .file-card-header {
-    padding: 16px 16px 10px 16px;
+    padding: 12px 14px 8px 14px;
   }
 
   .file-card h3 {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .file-card-body {
-    padding: 0 16px 16px 16px;
+    padding: 0 14px 14px 14px;
   }
 
   .file-info-item {
-    padding: 8px 12px;
+    padding: 7px 10px;
+  }
+
+  .file-info-label {
+    font-size: 0.65rem;
+    min-width: 55px;
+  }
+
+  .file-info-value {
+    font-size: 0.8rem;
   }
 
   .file-card button {
-    padding: 10px 14px;
-    font-size: 0.85rem;
+    padding: 9px 12px;
+    font-size: 0.8rem;
+  }
+
+  .button-group {
+    gap: 8px;
   }
 
   .back-home-btn {
@@ -556,48 +569,83 @@ h1 {
 
 @media (max-width: 480px) {
   h1 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+  }
+
+  .container {
+    padding: 0 10px;
+    margin: 15px auto;
   }
 
   #fileList {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
+  }
+
+  .file-card {
+    border-radius: 12px;
   }
 
   .file-card-preview {
-    height: 140px;
+    height: 90px;
   }
 
   .file-card-header {
-    padding: 14px 14px 8px 14px;
+    padding: 10px 12px 6px 12px;
   }
 
   .file-card h3 {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    -webkit-line-clamp: 2;
   }
 
   .file-card-body {
-    padding: 0 14px 14px 14px;
+    padding: 0 12px 12px 12px;
+  }
+
+  .file-info-grid {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .file-info-item {
+    padding: 6px 8px;
+    border-radius: 8px;
   }
 
   .file-info-label {
-    font-size: 0.7rem;
-    min-width: 60px;
+    font-size: 0.6rem;
+    min-width: 50px;
   }
 
   .file-info-value {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
+  }
+
+  .button-group {
+    gap: 6px;
   }
 
   .file-card button {
-    padding: 10px 12px;
-    font-size: 0.8rem;
-    gap: 4px;
+    padding: 8px 10px;
+    font-size: 0.75rem;
+    gap: 3px;
+    border-radius: 8px;
   }
 
   .filter-btn {
-    padding: 7px 14px;
-    font-size: 0.8rem;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
+  .search-bar input {
+    padding: 11px 12px 11px 40px;
+    font-size: 13px;
+  }
+
+  .search-bar::before {
+    left: 12px;
+    font-size: 14px;
   }
 
   .back-home-btn {
@@ -620,7 +668,11 @@ h1 {
   }
 
   #youButton .btn-label {
-    font-size: 10px;
+    font-size: 9px;
+  }
+
+  .file-placeholder .file-icon {
+    font-size: 28px;
   }
 }
 
@@ -858,7 +910,7 @@ function displayFiles(files) {
           </div>
           <div class="button-group">
             <button class="view-btn" onclick="viewFile('${filePath}')">👁️ View</button>
-            <button class="download-btn" onclick="downloadFile('${filePath}')">⬇️ Download</button>
+            <button class="download-btn" onclick="downloadFile('${filePath}', '${f.filename}')">⬇️ Download</button>
           </div>
         </div>
       </div>
@@ -871,11 +923,11 @@ function viewFile(filePath) {
   window.open(filePath, "_blank");
 }
 
-// Download file
-function downloadFile(url) {
+// Download file with the correct filename
+function downloadFile(url, filename) {
   const link = document.createElement("a");
   link.href = url;
-  link.download = url.split("/").pop();
+  link.download = filename;          // Use the clean filename from metadata
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
