@@ -179,6 +179,7 @@
     "utils-merge": "^1.0.1",
     "uuid": "^11.1.0",
     "vary": "^1.1.2",
+    "web-push": "^3.6.7",
     "web-vitals": "^4.2.4",
     "webidl-conversions": "^3.0.1",
     "websocket-driver": "^0.7.4",

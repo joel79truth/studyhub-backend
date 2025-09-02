@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // ------------------
-// Folders
+// Folders & metadata
 // ------------------
 const dataDir = path.join(__dirname, "data");
 const filesDir = path.join(__dirname, "public/files");
@@ -25,10 +25,8 @@ fs.mkdirSync(dataDir, { recursive: true });
 fs.mkdirSync(filesDir, { recursive: true });
 
 const metadataPath = path.join(dataDir, "metadata.json");
-
-// Initialize metadata.json if missing or empty
 if (!fs.existsSync(metadataPath) || fs.readFileSync(metadataPath, "utf8").trim() === "") {
-  fs.writeFileSync(metadataPath, JSON.stringify({ files: [], basics: {}, programs: {} }, null, 2));
+  fs.writeFileSync(metadataPath, JSON.stringify({ files: [], basics: {}, programs: {}, messages: [] }, null, 2));
 }
 
 // ------------------
@@ -44,7 +42,6 @@ const storage = multer.diskStorage({
       destDir = path.join(filesDir, folderName);
       fs.mkdirSync(destDir, { recursive: true });
     }
-
     cb(null, destDir);
   },
   filename: (req, file, cb) => {
@@ -84,18 +81,11 @@ app.post("/upload", upload.single("file"), (req, res) => {
   };
 
   // Load metadata
-  let metadata = { files: [], basics: {}, programs: {} };
-  try {
-    metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
-  } catch (err) {
-    console.error("Error reading metadata.json, initializing new metadata.", err);
-  }
+  let metadata = { files: [], basics: {}, programs: {}, messages: [] };
+  try { metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8")); } 
+  catch { console.error("Error reading metadata.json"); }
 
-  // Add to flat files array
-  metadata.files = metadata.files || [];
   metadata.files.push(fileData);
-
-  // Structured storage
   if (program.toLowerCase() === "basics") {
     metadata.basics[semester] = metadata.basics[semester] || {};
     metadata.basics[semester][subject] = metadata.basics[semester][subject] || [];
@@ -105,7 +95,6 @@ app.post("/upload", upload.single("file"), (req, res) => {
     metadata.programs[program].push(fileData);
   }
 
-  // Save metadata
   try {
     fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
     res.status(200).json({ message: "Upload successful!", file: fileData });
@@ -132,81 +121,83 @@ app.get("/api/metadata", (req, res) => {
 // Requests Feature
 // ------------------
 const requestsPath = path.join(dataDir, "requests.json");
-
-// Initialize requests.json if missing or empty
 if (!fs.existsSync(requestsPath) || fs.readFileSync(requestsPath, "utf8").trim() === "") {
   fs.writeFileSync(requestsPath, JSON.stringify([], null, 2));
 }
 
-// 📌 Submit new request
 app.post("/submit-request", (req, res) => {
   const { topic, course, program, semester, notes, email } = req.body;
-
-  if (!topic || !course || !program || !semester) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
+  if (!topic || !course || !program || !semester) return res.status(400).json({ message: "All fields are required" });
 
   let requests = [];
-  try {
-    requests = JSON.parse(fs.readFileSync(requestsPath, "utf8"));
-  } catch (err) {
-    console.error("Error reading requests.json:", err);
-  }
+  try { requests = JSON.parse(fs.readFileSync(requestsPath, "utf8")); } catch {}
 
-  const newRequest = {
-    topic,
-    course,
-    program,
-    semester,
-    notes: notes || "",
-    email: email || "",
-    createdAt: new Date().toISOString()
-  };
-
+  const newRequest = { topic, course, program, semester, notes: notes||"", email: email||"", createdAt: new Date().toISOString() };
   requests.push(newRequest);
 
   try {
     fs.writeFileSync(requestsPath, JSON.stringify(requests, null, 2));
     res.json({ message: "Request saved!", request: newRequest });
   } catch (err) {
-    console.error("Error saving request:", err);
+    console.error(err);
     res.status(500).json({ message: "Failed to save request" });
   }
 });
 
-// 📌 Get all requests
 app.get("/api/requests", (req, res) => {
-  try {
-    const requests = JSON.parse(fs.readFileSync(requestsPath, "utf8"));
-    res.json({ requests });
-  } catch (err) {
-    console.error("Error loading requests:", err);
-    res.status(500).json({ requests: [] });
-  }
+  try { const requests = JSON.parse(fs.readFileSync(requestsPath, "utf8")); res.json({ requests }); }
+  catch { res.status(500).json({ requests: [] }); }
 });
 
-// 📌 Delete request by index
 app.delete("/api/requests/:index", (req, res) => {
   const index = parseInt(req.params.index, 10);
-
   try {
     let requests = JSON.parse(fs.readFileSync(requestsPath, "utf8"));
-    if (index < 0 || index >= requests.length) {
-      return res.status(400).json({ message: "Invalid index" });
-    }
-
+    if (index<0||index>=requests.length) return res.status(400).json({ message: "Invalid index" });
     requests.splice(index, 1);
     fs.writeFileSync(requestsPath, JSON.stringify(requests, null, 2));
-
     res.json({ message: "Request deleted successfully" });
-  } catch (err) {
-    console.error("Error deleting request:", err);
-    res.status(500).json({ message: "Failed to delete request" });
-  }
+  } catch { res.status(500).json({ message: "Failed to delete request" }); }
 });
 
+// ------------------
+// Real-time Messages via SSE
+// ------------------
+let clients = [];
 
+app.get("/events", (req,res)=>{
+  res.setHeader("Content-Type","text/event-stream");
+  res.setHeader("Cache-Control","no-cache");
+  res.setHeader("Connection","keep-alive");
+  res.flushHeaders();
 
+  clients.push(res);
+
+  req.on("close", ()=>{
+    clients = clients.filter(c=>c!==res);
+  });
+});
+
+function sendMessageNotification(message){
+  clients.forEach(client=>{
+    client.write(`data: ${JSON.stringify(message)}\n\n`);
+  });
+}
+
+// Example: store chat messages in metadata.json
+app.post("/chat-message", (req,res)=>{
+  const { sender, program, text } = req.body;
+  if(!sender || !program || !text) return res.status(400).json({message:"Missing fields"});
+
+  let metadata = JSON.parse(fs.readFileSync(metadataPath,"utf8"));
+  metadata.messages = metadata.messages || [];
+  const newMessage = { sender, program, text, timestamp: new Date().toISOString() };
+  metadata.messages.push(newMessage);
+  fs.writeFileSync(metadataPath, JSON.stringify(metadata,null,2));
+
+  sendMessageNotification(newMessage);
+  res.json({ message:"Message sent!", newMessage });
+});
 
 // ------------------
 // Serve Files
@@ -214,21 +205,17 @@ app.delete("/api/requests/:index", (req, res) => {
 app.get("/files/*", (req, res) => {
   const relativePath = req.params[0];
   const filePath = path.join(filesDir, relativePath);
-
   if (!fs.existsSync(filePath)) return res.status(404).send("File not found");
 
   const ext = path.extname(filePath).toLowerCase();
-  if (ext === ".pdf") res.setHeader("Content-Type", "application/pdf");
-  else if (ext === ".pptx") res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
-  else res.setHeader("Content-Type", "application/octet-stream");
-
-  res.setHeader("Content-Disposition", "inline");
+  if(ext===".pdf") res.setHeader("Content-Type","application/pdf");
+  else if(ext===".pptx") res.setHeader("Content-Type","application/vnd.openxmlformats-officedocument.presentationml.presentation");
+  else res.setHeader("Content-Type","application/octet-stream");
+  res.setHeader("Content-Disposition","inline");
   res.sendFile(filePath);
 });
 
 // ------------------
 // Start Server
 // ------------------
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
-});
+app.listen(PORT, "0.0.0.0", ()=>console.log(`✅ Server running at http://localhost:${PORT}`));

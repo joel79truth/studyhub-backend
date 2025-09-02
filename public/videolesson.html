@@ -5,106 +5,161 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Video Lessons</title>
 
-  
-
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Roboto', sans-serif;
       margin: 0;
-      background: #f4f4f4;
+      background: linear-gradient(135deg, #e0f7fa, #e1bee7);
       text-align: center;
+      overflow-x: hidden;
     }
+
     header {
-      background: #0066da;
+      background: linear-gradient(90deg, #0066da, #2ab431);
       color: white;
-      padding: 10px;
-      font-size: 20px;
+      padding: 15px;
+      font-size: 22px;
+      font-weight: 700;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
+
+    .back-btn {
+      background: #e53935;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      margin: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #b71c1c;
+      transform: scale(1.05);
+    }
+
+    .logo-container {
+      text-align: center;
+      margin: 20px 0;
+      animation: fadeInDown 1s ease forwards;
+    }
+
+    .luanar-logo {
+      width: 120px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      transition: transform 0.3s ease;
+    }
+
+    .luanar-logo:hover {
+      transform: scale(1.1);
+    }
+
     #searchBar {
-      width: 80%;
+      width: 85%;
       max-width: 500px;
-      padding: 10px;
+      padding: 12px 15px;
       margin: 15px auto;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      border-radius: 25px;
+      border: 2px solid #00bcd4;
       font-size: 16px;
+      outline: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
     }
+
+    #searchBar:focus {
+      border-color: #0066da;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
     .video-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
-      padding-bottom: 40px;
+      gap: 25px;
+      padding-bottom: 50px;
     }
+
     .video-card {
-      background: white;
-      padding: 10px;
-      border-radius: 10px;
+      background: rgba(255,255,255,0.95);
+      padding: 15px;
+      border-radius: 15px;
       width: 90%;
       max-width: 500px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      transform: translateY(30px) scale(0.95);
+      opacity: 0;
+      transition: transform 0.6s ease, opacity 0.6s ease, box-shadow 0.3s ease;
+      perspective: 1000px; /* Enable 3D effect for children */
     }
+
+    .video-card.visible {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .video-card.floating {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .video-card:hover {
+      transform: translateY(-5px) scale(1.03);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+
     iframe {
       width: 100%;
       height: 250px;
-      border-radius: 8px;
+      border-radius: 12px;
+      border: none;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      transform-style: preserve-3d;
     }
+
+    .video-card:hover iframe {
+      transform: rotateX(5deg) rotateY(5deg) scale(1.05);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.35);
+    }
+
     .topic {
-      font-weight: bold;
-      margin-bottom: 8px;
+      font-weight: 600;
+      margin-bottom: 10px;
       text-align: left;
       font-size: 18px;
-    }
-    .back-btn {
-      background: red;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      margin: 10px;
-      cursor: pointer;
+      color: #333;
     }
 
-.luanar-logo {
-  width: 120px; /* Adjust size as needed */
-  height: auto;
-  display: block;
-  margin: 20px auto; /* Centers the logo */
-}
+    /* Animations */
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
 
-.logo-container {
-  text-align: center;
-}
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
 
-    .back-btn:hover {
-      background: darkred;
+    /* Responsive */
+    @media(max-width: 500px){
+      iframe { height: 200px; }
+      header { font-size: 20px; }
     }
   </style>
-
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0LTZS1S9W6');
-</script>
-
-
-
-
 </head>
-
-
-
 <body>
 
 <header>📚 Video Lessons</header>
 <button class="back-btn" onclick="window.location.href='index.html'">⬅ Back</button>
 
-
-<!-- Place this where you want the logo to appear -->
 <div class="logo-container">
   <img src="images/luanar logo.png" alt="LUANAR Logo" class="luanar-logo">
 </div>
@@ -116,12 +171,12 @@
 <script>
   let videos = [];
 
-  // Load videos from JSON file
   fetch('videos.json')
     .then(response => response.json())
     .then(data => {
       videos = data.videos;
       renderVideos(videos);
+      observeVideos();
     })
     .catch(err => {
       document.getElementById('videoList').innerHTML = '<p>Failed to load videos.</p>';
@@ -137,9 +192,10 @@
       return;
     }
 
-    videoArray.forEach(video => {
+    videoArray.forEach((video, index) => {
       const card = document.createElement('div');
-      card.className = 'video-card';
+      card.className = 'video-card floating';
+      card.style.animationDelay = `${index * 0.1}s`;
       card.setAttribute('data-title', video.title.toLowerCase());
 
       card.innerHTML = `
@@ -155,6 +211,21 @@
     const searchTerm = document.getElementById('searchBar').value.toLowerCase();
     const filtered = videos.filter(v => v.title.toLowerCase().includes(searchTerm));
     renderVideos(filtered);
+    observeVideos();
+  }
+
+  function observeVideos() {
+    const cards = document.querySelectorAll('.video-card');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    cards.forEach(card => observer.observe(card));
   }
 </script>
 
