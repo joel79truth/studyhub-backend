@@ -4,151 +4,76 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Program Details – StudyHub LUANAR</title>
-<link rel="stylesheet" href="style.css">
 <style>
 body {
-  font-family:'Segoe UI',sans-serif;
-  margin:0; padding:0;
-  background:url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
-  background-size:cover;
+    font-family:'Segoe UI',sans-serif;
+    margin:0;
+    padding:0;
+    background:url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
+    background-size:cover;
 }
 header {
-  text-align:center;
-  padding:20px;
-  background: rgba(15,172,23,0.85);
-  color:white;
-  box-shadow:0 4px 8px rgba(0,0,0,0.2);
-  font-size:1.8rem;
+    text-align:center;
+    padding:20px;
+    background: rgba(15,172,23,0.8);
+    color:white;
+    box-shadow:0 4px 8px rgba(0,0,0,0.2);
 }
-.container {
-  max-width:900px;
-  margin:20px auto;
-  padding:0 20px;
-}
-.search-bar {
-  width:100%;
-  margin:20px 0;
-}
+h1 { margin:0; font-size:2rem; }
+.container { max-width:900px; margin:20px auto; padding:0 20px; }
+.search-bar { width:300px; margin:20px auto; }
 .search-bar input {
-  width:100%;
-  padding:10px 15px;
-  border-radius:50px;
-  border:none;
-  outline:none;
-  font-size:14px;
-  background: rgba(255,255,255,0.9);
-  color:#1e1e1e;
-  box-shadow:0 6px 15px rgba(0,0,0,0.2);
+    width:100%;
+    padding:10px 15px;
+    border-radius:50px;
+    border:none;
+    outline:none;
+    font-size:14px;
+    background: rgba(255,255,255,0.9);
+    color:#1e1e1e;
+    box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
-#fileList {
-  margin-top:20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-  gap:20px;
-}
-.file-card {
-  background:white;
-  border-radius:15px;
-  padding:20px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.15);
-  text-align:center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.file-card:hover {
-  transform: translateY(-5px);
-  box-shadow:0 12px 30px rgba(0,0,0,0.2);
-}
-.file-card h3 {
-  margin:0 0 10px 0;
-  font-size:1.1rem;
-  color:#1e1e1e;
-}
-.file-card p {
-  font-size:0.9rem;
-  color:#555;
-  margin:5px 0;
-}
-.file-card button {
-  margin:5px;
-  padding:8px 14px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-  transition: transform 0.2s ease;
-}
+#fileList { margin-top:20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
+.file-card { background:white; border-radius:15px; padding:20px; box-shadow:0 8px 25px rgba(0,0,0,0.15); text-align:center; }
+.file-card h3 { margin:0 0 10px 0; font-size:1.1rem; color:#1e1e1e; }
+.file-card p { font-size:0.9rem; color:#555; margin:5px 0; }
+.file-card button { margin:5px; padding:8px 14px; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition: transform 0.2s ease; }
 .view-btn { background:#3498db; color:white; }
 .download-btn { background:#2ecc71; color:white; }
 .file-card button:hover { transform:scale(1.05); }
-.back-home-btn {
-  position:fixed;
-  top:20px; left:20px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  width:55px; height:55px;
-  background:#000;
-  color:white;
-  text-decoration:none;
-  border-radius:50%;
-  font-size:24px;
-  box-shadow:0 6px 15px rgba(0,0,0,0.3);
-}
+.back-home-btn { position:fixed; top:20px; left:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; width:55px; height:55px; background:#000; color:white; text-decoration:none; border-radius:50%; font-size:24px; box-shadow:0 6px 15px rgba(0,0,0,0.3); }
 
 /* Modal styles */
-#fileModal {
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: rgba(0,0,0,0.75);
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-  opacity:0;
-  transition: opacity 0.3s ease;
+#viewerModal {
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.8);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
 }
-#fileModal.show {
-  display:flex;
-  opacity:1;
+#viewerModal iframe {
+    width:90%;
+    max-width:800px;
+    height:80%;
+    border:none;
+    border-radius:12px;
+    background:white;
 }
-#fileModalContent {
-  position:relative;
-  width:90%; max-width:900px;
-  height:80%;
-  background:white;
-  border-radius:12px;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  transform: scale(0.7);
-  animation: zoomIn 0.4s forwards;
-}
-@keyframes zoomIn {
-  to { transform: scale(1); }
-}
-#fileModal iframe {
-  width:100%;
-  height:100%;
-  border:none;
-}
-.close-modal-btn {
-  position:absolute;
-  top:10px; right:10px;
-  background:red;
-  color:white;
-  border:none;
-  border-radius:6px;
-  padding:5px 10px;
-  cursor:pointer;
-  z-index:10;
+#viewerModal .close-btn {
+    position:absolute;
+    top:20px;
+    right:20px;
+    font-size:30px;
+    color:white;
+    cursor:pointer;
 }
 </style>
 </head>
 <body>
 
-<header id="programTitle">Program Details</header>
+<header><h1 id="programTitle">Program Details</h1></header>
 <a href="program.html" class="back-home-btn" aria-label="Back to Programs">🏠</a>
 
 <div class="container">
@@ -158,12 +83,10 @@ header {
   <div id="fileList"></div>
 </div>
 
-<!-- Modal for viewing files -->
-<div id="fileModal">
-  <div id="fileModalContent">
-    <button class="close-modal-btn" onclick="closeModal()">✖ Close</button>
-    <iframe id="fileViewer"></iframe>
-  </div>
+<!-- Modal for viewing -->
+<div id="viewerModal">
+    <span class="close-btn" onclick="closeViewer()">×</span>
+    <iframe id="viewerFrame"></iframe>
 </div>
 
 <script>
@@ -173,24 +96,13 @@ document.getElementById("programTitle").textContent = programName || "Program De
 
 let allFiles = [];
 
-function equalsIgnoreCase(a,b) { return a?.toLowerCase() === b?.toLowerCase(); }
-
 async function loadFiles() {
   try {
     const res = await fetch("/api/metadata");
     const metadata = await res.json();
-
     const files = Array.isArray(metadata.files) ? metadata.files : [];
-    let validFiles = [];
-    for (const f of files) {
-      if (equalsIgnoreCase(f.program, programName) && f.url) {
-        validFiles.push(f);
-      }
-    }
-
-    allFiles = validFiles;
+    allFiles = files.filter(f => f.program?.toLowerCase() === (programName||"").toLowerCase());
     displayFiles(allFiles);
-
   } catch (err) {
     console.error(err);
     document.getElementById("fileList").innerHTML = "<p>Error loading files.</p>";
@@ -199,58 +111,53 @@ async function loadFiles() {
 
 function displayFiles(files) {
   const container = document.getElementById("fileList");
-  if(!files.length) {
-    container.innerHTML = "<p>No uploaded files exist for this program.</p>";
-    return;
-  }
-
   container.innerHTML = files.map(f => `
     <div class="file-card">
       <h3>${f.name}</h3>
       <p><strong>Semester:</strong> ${f.semester}</p>
       <p><strong>Subject:</strong> ${f.subject}</p>
-      <button class="view-btn" onclick="openModal('${f.url}')">View</button>
+      <button class="view-btn" onclick="viewFile('${f.url}')">View</button>
       <button class="download-btn" onclick="downloadFile('${f.url}')">Download</button>
     </div>
   `).join('');
 }
 
+// Open file in modal
+function viewFile(url) {
+    const ext = url.split('.').pop().toLowerCase();
+    const iframe = document.getElementById('viewerFrame');
+
+    if (ext === "pdf") {
+        iframe.src = url;
+    } else if (ext === "pptx") {
+        iframe.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(location.origin + url)}`;
+    } else {
+        alert("Cannot preview this file type.");
+        return;
+    }
+
+    document.getElementById('viewerModal').style.display = "flex";
+}
+
+function closeViewer() {
+    document.getElementById('viewerModal').style.display = "none";
+    document.getElementById('viewerFrame').src = "";
+}
+
 function downloadFile(url) {
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = url.split("/").pop();
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = url.split("/").pop();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
-// Modal functions
-function openModal(url) {
-  const modal = document.getElementById('fileModal');
-  const viewer = document.getElementById('fileViewer');
-
-  if(url.endsWith('.pdf')) {
-    viewer.src = url;
-  } else if(url.endsWith('.pptx')) {
-    viewer.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(location.origin + url)}`;
-  } else {
-    viewer.src = url;
-  }
-
-  modal.classList.add('show');
-}
-
-function closeModal() {
-  const modal = document.getElementById('fileModal');
-  const viewer = document.getElementById('fileViewer');
-  viewer.src = '';
-  modal.classList.remove('show');
-}
-
+// Search
 document.getElementById("fileSearch").addEventListener("input", function() {
-  const query = this.value.toLowerCase();
-  const filtered = allFiles.filter(f => f.name.toLowerCase().includes(query) || f.subject.toLowerCase().includes(query));
-  displayFiles(filtered);
+    const query = this.value.toLowerCase();
+    const filtered = allFiles.filter(f => f.name.toLowerCase().includes(query) || f.subject.toLowerCase().includes(query));
+    displayFiles(filtered);
 });
 
 loadFiles();
