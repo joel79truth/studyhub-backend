@@ -1,70 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Program Chat – Coming Soon</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f4f8;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
-      color: #333;
-    }
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      max-width: 500px;
-    }
-    h1 { color: #4f46e5; margin-bottom: 20px; }
-    p { font-size: 1.1rem; margin-bottom: 20px; line-height: 1.5; }
-    a {
-      display: inline-block;
-      padding: 12px 25px;
-      background: #3b82f6;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    a:hover { background: #2563eb; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Program Chat</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  * { box-sizing: border-box; margin:0; padding:0; font-family: 'Poppins', sans-serif; }
+  body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(120deg,#2980b9,#8e44ad);
+    overflow: hidden;
+  }
+  .login-container {
+    background: rgba(255,255,255,0.1);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    text-align: center;
+    animation: fadeIn 1.2s ease forwards;
+  }
+  h1 {
+    color: #fff;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    animation: slideDown 1s ease forwards;
+  }
+  input, select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+  }
+  button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 12px;
+    background: #fff;
+    color: #2980b9;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: #2980b9;
+    color: #fff;
+  }
+  .bubble {
+    position: absolute;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    animation: float 6s infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-100px) scale(1.2); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+  @keyframes slideDown { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
+
+</style>
 </head>
+<body>
 
+<div class="login-container">
+  <h1>Welcome to Program Chat</h1>
+  <input type="text" id="username" placeholder="Enter your name" required>
+  <select id="program">
+    <option value="" disabled selected>Select your program</option>
+    <option value="Agriculture">Agriculture</option>
+    <option value="ICT">Aplied Science</option>
+    <option value="Business">Irrigation Engineering</option>
+    <option value="Engineering">Bachelor of Agriculture Engineering</option>
+    <option value="General">Agriculture General</option>
+    <option value="Other">Textile and Fashion Design</option>
+    <option value="Other">Animal Healthy</option>
+    <option value="Other">Land Adiministration</option>
+    <option value="Other">Enviromental Management</option>
+    <option value="Other">Horticulture</option>
+  </select>
+  <button onclick="login()">Enter Chat</button>
+</div>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0LTZS1S9W6');
+  function login() {
+    const username = document.getElementById('username').value.trim();
+    const program = document.getElementById('program').value;
+    if(!username || !program){
+      alert("Please enter your name and select a program!");
+      return;
+    }
+    localStorage.setItem('userName', username);
+    localStorage.setItem('program', program);
+    window.location.href = "chat.html";
+  }
 </script>
 
-<body>
-  <div class="container">
-    <h1>💬 Program Chat – Coming Soon!</h1>
-    <p>
-      We’re building an interactive chat space where students can discuss programs, share notes, and help each other learn.  
-      Your ideas and contributions can make this platform even better!
-    </p>
-    <p>
-      If you’re passionate about education and collaboration, we’d love to hear from you.
-      Reach out via WhatsApp or call at:
-    </p>
-    <a href="tel:0986742072">📞 0986742072</a>
-    <p style="margin-top:20px; font-size:0.9rem; color:#555;">
-      Let’s create a vibrant learning community together. Your support is welcome!
-    </p>
-  </div>
 </body>
 </html>

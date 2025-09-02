@@ -239,6 +239,38 @@
       "subject": "Fundamentals-Of-Food-Technology",
       "url": "/files/bachelor_in_food_science_and_technology/1756644296223-Fundamentals-Of-Food-Technology.pdf",
       "uploadedAt": "2025-08-31T12:44:56.254Z"
+    },
+    {
+      "name": "INTRO TO STAT MODULE 1.pdf",
+      "program": "Bachelor of Science in Agricultural Engineering",
+      "semester": "1",
+      "subject": "INTRO TO STAT MODULE 1",
+      "url": "/files/bachelor_of_science_in_agricultural_engineering/1756783872892-INTRO_TO_STAT_MODULE_1.pdf",
+      "uploadedAt": "2025-09-02T03:31:12.935Z"
+    },
+    {
+      "name": "STA 32101 Introduction_to_Statistics__Module_2nd_Edition,_2018.pdf",
+      "program": "Bachelor of Science in Agricultural Engineering",
+      "semester": "1",
+      "subject": "Statistics__Module_2nd_Editio",
+      "url": "/files/bachelor_of_science_in_agricultural_engineering/1756783931752-STA_32101_Introduction_to_Statistics__Module_2nd_Edition_2018.pdf",
+      "uploadedAt": "2025-09-02T03:32:11.779Z"
+    },
+    {
+      "name": "FOR 32102 Session 1 (Overview of Statistics).pdf",
+      "program": "Bachelor of Science in Agricultural Engineering",
+      "semester": "1",
+      "subject": "STATIS",
+      "url": "/files/bachelor_of_science_in_agricultural_engineering/1756783971688-FOR_32102_Session_1_Overview_of_Statistics.pdf",
+      "uploadedAt": "2025-09-02T03:32:51.697Z"
+    },
+    {
+      "name": "STA_32101_Introduction_to_Statistics COURSE OUTLINE.pdf",
+      "program": "Bachelor of Science in Agricultural Engineering",
+      "semester": "1",
+      "subject": "Statistics COURSE OUTLINE",
+      "url": "/files/bachelor_of_science_in_agricultural_engineering/1756784020614-STA_32101_Introduction_to_Statistics_COURSE_OUTLINE.pdf",
+      "uploadedAt": "2025-09-02T03:33:40.616Z"
     }
   ],
   "basics": {
@@ -508,6 +540,40 @@
         "subject": "Fundamentals-Of-Food-Technology",
         "url": "/files/bachelor_in_food_science_and_technology/1756644296223-Fundamentals-Of-Food-Technology.pdf",
         "uploadedAt": "2025-08-31T12:44:56.254Z"
+      }
+    ],
+    "Bachelor of Science in Agricultural Engineering": [
+      {
+        "name": "INTRO TO STAT MODULE 1.pdf",
+        "program": "Bachelor of Science in Agricultural Engineering",
+        "semester": "1",
+        "subject": "INTRO TO STAT MODULE 1",
+        "url": "/files/bachelor_of_science_in_agricultural_engineering/1756783872892-INTRO_TO_STAT_MODULE_1.pdf",
+        "uploadedAt": "2025-09-02T03:31:12.935Z"
+      },
+      {
+        "name": "STA 32101 Introduction_to_Statistics__Module_2nd_Edition,_2018.pdf",
+        "program": "Bachelor of Science in Agricultural Engineering",
+        "semester": "1",
+        "subject": "Statistics__Module_2nd_Editio",
+        "url": "/files/bachelor_of_science_in_agricultural_engineering/1756783931752-STA_32101_Introduction_to_Statistics__Module_2nd_Edition_2018.pdf",
+        "uploadedAt": "2025-09-02T03:32:11.779Z"
+      },
+      {
+        "name": "FOR 32102 Session 1 (Overview of Statistics).pdf",
+        "program": "Bachelor of Science in Agricultural Engineering",
+        "semester": "1",
+        "subject": "STATIS",
+        "url": "/files/bachelor_of_science_in_agricultural_engineering/1756783971688-FOR_32102_Session_1_Overview_of_Statistics.pdf",
+        "uploadedAt": "2025-09-02T03:32:51.697Z"
+      },
+      {
+        "name": "STA_32101_Introduction_to_Statistics COURSE OUTLINE.pdf",
+        "program": "Bachelor of Science in Agricultural Engineering",
+        "semester": "1",
+        "subject": "Statistics COURSE OUTLINE",
+        "url": "/files/bachelor_of_science_in_agricultural_engineering/1756784020614-STA_32101_Introduction_to_Statistics_COURSE_OUTLINE.pdf",
+        "uploadedAt": "2025-09-02T03:33:40.616Z"
       }
     ]
   }
