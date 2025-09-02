@@ -6,6 +6,7 @@
 <title>Programs – StudyHub LUANAR</title>
 <link rel="stylesheet" href="style.css">
 <style>
+  /* Your existing styles (unchanged) */
   * {
     margin: 0;
     padding: 0;
@@ -491,59 +492,49 @@
       transition: none !important;
     }
 
-
-
-    /* Keep only essential transitions */
-    @media (max-width: 768px) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-  
-  .program-card,
-  .toggle-btn,
-  .actions a,
-  .back-home-btn,
-  #youButton .profile-picture {
-    transition: transform 0.15s ease !important;
-  }
-}
-
+    .program-card,
+    .toggle-btn,
+    .actions a,
+    .back-home-btn,
+    #youButton .profile-picture {
+      transition: transform 0.15s ease !important;
+    }
   }
 
-@media (max-width: 480px) {
-  body {
-    background: url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=400&w=600') no-repeat center center fixed;
-    background-size: cover;
+  @media (max-width: 480px) {
+    body {
+      background: url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=400&w=600') no-repeat center center fixed;
+      background-size: cover;
+    }
   }
-}
-@media (max-width: 768px) {
-  header, 
-  .program-card, 
-  .search-bar, 
-  .info-banner {
-    backdrop-filter: none !important;
-    box-shadow: none !important;
-    border: none !important;
-  }
-}
-@media (max-width: 768px) {
-  .program-card:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: initial;
-  }
-  .program-card::before {
-    opacity: 0 !important;
-  }
-}
 
-@media (max-width: 768px) {
-  #youButton .btn-label {
-    text-shadow: none;
+  @media (max-width: 768px) {
+    header, 
+    .program-card, 
+    .search-bar, 
+    .info-banner {
+      backdrop-filter: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
   }
-}
 
+  @media (max-width: 768px) {
+    .program-card:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: initial;
+    }
+    .program-card::before {
+      opacity: 0 !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #youButton .btn-label {
+      text-shadow: none;
+    }
+  }
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
@@ -551,11 +542,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-RP8NY538W2');
 </script>
-</script>
-
 </head>
 <body>
 
@@ -575,131 +563,16 @@
   <div class="btn-label">You</div>
 </div>
 
-  <!-- Buttons Row -->
-  <div style="display:flex; gap:15px; align-items:center;">
-    <!-- Upload Button -->
-    <div style="display:flex; flex-direction:column; align-items:center;">
-      <a href="upload.html" style="
-        width:45px;
-        height:45px;
-        background: linear-gradient(135deg,#4f46e5,#3b82f6);
-        border-radius:50%;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        color:white;
-        text-decoration:none;
-        box-shadow:0 5px 12px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
-        font-size:20px;
-      " title="Upload Notes">📤</a>
-      <span style="
-        font-size:0.75rem;
-        font-weight: bolder;
-        color:#000;
-        margin-top:4px;
-        background: rgba(255,255,255,0.8);
-        padding:2px 6px;
-        border-radius:8px;
-      ">Upload</span>
-    </div>
-
-    <!-- Request Button -->
-    <div style="display:flex; flex-direction:column; align-items:center;">
-      <a href="request.html" style="
-        width:45px;
-        height:45px;
-        background: linear-gradient(135deg,#4f46e5,#3b82f6);
-        border-radius:50%;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        color:white;
-        text-decoration:none;
-        box-shadow:0 5px 12px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
-        font-size:20px;
-      " title="Request Notes">📩</a>
-      <span style="
-        font-size:0.75rem;
-        font-weight: bolder;
-        color:#000;
-        margin-top:4px;
-        background: rgba(255,255,255,0.8);
-        padding:2px 6px;
-        border-radius:8px;
-      ">Request</span>
-    </div>
-
-   <div style="display:flex; gap:15px; align-items:center;">
-  <!-- Wisdom Button -->
-  <div style="display:flex; flex-direction:column; align-items:center;">
-    <a href="wisdom.html" style="
-      width:45px;
-      height:45px;
-      background: linear-gradient(135deg,#f59e0b,#facc15);
-      border-radius:50%;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:white;
-      text-decoration:none;
-      box-shadow:0 5px 12px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-      font-size:20px;
-    " title="Wisdom">💡</a>
-    <span style="
-      font-size:0.75rem;
-      font-weight: bolder;
-      color:#000;
-      margin-top:4px;
-      background: rgba(255,255,255,0.8);
-      padding:2px 6px;
-      border-radius:8px;
-    ">Wisdom</span>
-  </div>
-
-  <div style="display:flex; gap:15px; align-items:center;">
-  <!-- Video Lessons Button -->
-  <div style="display:flex; flex-direction:column; align-items:center;">
-    <a href="videolesson.html" style="
-      width:45px;
-      height:45px;
-      background: linear-gradient(135deg,#10b981,#34d399);
-      border-radius:50%;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:white;
-      text-decoration:none;
-      box-shadow:0 5px 12px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-      font-size:20px;
-    " title="Video Lessons">🎥</a>
-    <span style="
-      font-size:0.75rem;
-      font-weight: bolder;
-      color:#000;
-      margin-top:4px;
-      background: rgba(255,255,255,0.8);
-      padding:2px 6px;
-      border-radius:8px;
-    ">Videos</span>
+<!-- Draggable Action Menu (added) -->
+<div class="action-menu">
+  <button class="toggle-btn">☰</button>
+  <div class="actions">
+    <a href="upload.html" title="Upload Notes">📤</a>
+    <a href="request.html" title="Request Notes">📩</a>
+    <a href="wisdom.html" title="Wisdom">💡</a>
+    <a href="videolesson.html" title="Video Lessons">🎥</a>
   </div>
 </div>
-
-
-</div>
-
-
-
-  </div>
-</div>
-
-
-
-  
-
 
 <div class="container">
   <div class="info-banner">
@@ -716,6 +589,9 @@
 <script>
 let allPrograms = [];
 let programCounts = {};
+
+// Variables for touch dragging
+let touchStartX = 0, touchStartY = 0;
 
 // Normalize program names for comparison
 function normalizeName(name) {
@@ -752,7 +628,6 @@ function mergeSimilarPrograms(files) {
 
   return mergedCounts;
 }
-
 
 // Load programs from backend
 async function loadPrograms() {
@@ -836,26 +711,30 @@ window.addEventListener("load", () => {
 const actionMenu = document.querySelector(".action-menu");
 const toggleBtn = document.querySelector(".toggle-btn");
 
-toggleBtn.addEventListener("click", () => {
-  actionMenu.classList.toggle("active");
-  toggleBtn.textContent = actionMenu.classList.contains("active") ? ">" : "<";
-});
+if (toggleBtn && actionMenu) {
+  toggleBtn.addEventListener("click", () => {
+    actionMenu.classList.toggle("active");
+    toggleBtn.textContent = actionMenu.classList.contains("active") ? ">" : "☰";
+  });
+}
 
 // Draggable support
 let isDragging = false, offsetX, offsetY;
 
-actionMenu.addEventListener("mousedown", e => {
-  if (e.target === toggleBtn || e.target.closest('.actions')) return;
-  isDragging = true;
-  const rect = actionMenu.getBoundingClientRect();
-  offsetX = e.clientX - rect.left;
-  offsetY = e.clientY - rect.top;
-  actionMenu.classList.add("dragging");
-  actionMenu.style.transition = 'none';
-});
+if (actionMenu) {
+  actionMenu.addEventListener("mousedown", e => {
+    if (e.target === toggleBtn || e.target.closest('.actions')) return;
+    isDragging = true;
+    const rect = actionMenu.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    actionMenu.classList.add("dragging");
+    actionMenu.style.transition = 'none';
+  });
+}
 
 document.addEventListener("mousemove", e => {
-  if (!isDragging) return;
+  if (!isDragging || !actionMenu) return;
   let x = e.clientX - offsetX;
   let y = e.clientY - offsetY;
   x = Math.max(0, Math.min(x, window.innerWidth - actionMenu.offsetWidth));
@@ -866,7 +745,7 @@ document.addEventListener("mousemove", e => {
 });
 
 document.addEventListener("mouseup", () => {
-  if (isDragging) {
+  if (isDragging && actionMenu) {
     isDragging = false;
     actionMenu.classList.remove("dragging");
     actionMenu.style.transition = '';
@@ -874,14 +753,21 @@ document.addEventListener("mouseup", () => {
 });
 
 // Touch support for mobile dragging
-let ticking = false;
+if (actionMenu) {
+  actionMenu.addEventListener("touchstart", e => {
+    if (e.target === toggleBtn || e.target.closest('.actions')) return;
+    const touch = e.touches[0];
+    const rect = actionMenu.getBoundingClientRect();
+    touchStartX = touch.clientX - rect.left;
+    touchStartY = touch.clientY - rect.top;
+    actionMenu.classList.add("dragging");
+    actionMenu.style.transition = 'none';
+  }, { passive: true });
 
-actionMenu.addEventListener("touchmove", e => {
-  if (!touchStartX || ticking) return;
-  e.preventDefault();
-  const touch = e.touches[0];
-  ticking = true;
-  requestAnimationFrame(() => {
+  actionMenu.addEventListener("touchmove", e => {
+    if (!actionMenu.classList.contains("dragging")) return;
+    e.preventDefault();
+    const touch = e.touches[0];
     let x = touch.clientX - touchStartX;
     let y = touch.clientY - touchStartY;
     x = Math.max(0, Math.min(x, window.innerWidth - actionMenu.offsetWidth));
@@ -889,9 +775,15 @@ actionMenu.addEventListener("touchmove", e => {
     actionMenu.style.left = x + "px";
     actionMenu.style.top = y + "px";
     actionMenu.style.right = "auto";
-    ticking = false;
+  }, { passive: false });
+
+  actionMenu.addEventListener("touchend", () => {
+    if (actionMenu) {
+      actionMenu.classList.remove("dragging");
+      actionMenu.style.transition = '';
+    }
   });
-});
+}
 
 // Initial load
 loadPrograms();
