@@ -160,21 +160,22 @@ header {
 /* Input area */
 #input-area {
   display: flex;
-  padding: 12px 20px;
+  padding: 10px;
   background: rgba(255,255,255,0.95);
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap; /* allow wrapping on small screens */
 }
 
 #message-input {
-  flex: 1;
-  padding: 12px 16px;
+  flex: 1 1 auto; /* grow and shrink */
+  min-width: 0;   /* allow shrinking properly on small screens */
+  padding: 10px 15px;
   border-radius: 25px;
   border: 1px solid #ccc;
-  outline: none;
-  font-size: 15px;
-  transition: all 0.2s;
+  font-size: 14px;
 }
+
 
 #message-input:focus { border-color: #4CAF50; }
 
@@ -276,10 +277,34 @@ onSnapshot(messagesQuery,snapshot=>{
 });
 
 // Send message
+async function getUniqueUserName() {
+  const dbUsers = collection(db, 'users'); // Create a 'users' collection to store usernames
+  let name;
+  while (true) {
+    name = prompt("Enter your name:") || 'Anonymous';
+    const snapshot = await getDocs(query(dbUsers, where("name", "==", name)));
+    if (snapshot.empty) break; // name is unique
+    alert("This name is already in use. Please choose a different name.");
+  }
+  localStorage.setItem('userName', name);
+  // Optionally, save username in Firestore
+  await addDoc(dbUsers, { name });
+  return name;
+}
+
+// Usage
+userName = localStorage.getItem('userName');
+if (!userName) {
+  userName = await getUniqueUserName();
+}
 async function sendMessage(){
   const text=input.value.trim();
   if(!text) return;
-  await addDoc(collection(db,'chats',program,'messages'),{sender:userName,text,timestamp:serverTimestamp()});
+  await addDoc(collection(db,'chats',program,'messages'),{
+    sender: userName,
+    text,
+    timestamp: serverTimestamp()
+  });
   input.value='';
 }
 sendBtn.addEventListener('click',sendMessage);
