@@ -156,34 +156,64 @@ header {
   margin-top: 4px;
   display: block;
 }
-
 /* Input area */
 #input-area {
-  position: sticky; /* or fixed */
+  position: fixed;        /* fixed so it always stays at bottom */
   bottom: 0;
   left: 0;
   width: 100%;
   display: flex;
+  align-items: flex-end;
+  gap: 8px;
   padding: 10px;
-  background: rgba(255,255,255,0.95);
+  background: #fff;       /* clean background */
+  border-top: 1px solid #ddd;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+/* The input box */
+
+/* Input area like ChatGPT */
+#input-area {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border-top: 1px solid #ddd;
   z-index: 2;
 }
 
-
-#messages {
+/* Input box */
+#message-input {
   flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  margin-bottom: 70px; /* same height as input area to avoid overlapping */
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  scroll-behavior: smooth;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 18px;
+  resize: none;       /* prevent manual resize */
+  max-height: 100px;  /* so it won’t get too tall */
+  overflow-y: auto;   /* scrollbar if text too long */
 }
 
+/* Send button */
+#send-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+#send-btn:hover {
+  background: #45a049;
+}
 
 #message-input:focus { border-color: #4CAF50; }
 
