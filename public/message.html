@@ -87,17 +87,33 @@
   <h1>Welcome to Program Chat</h1>
   <input type="text" id="username" placeholder="Enter your name" required>
   <select id="program">
+   
     <option value="" disabled selected>Select your program</option>
-    <option value="Agriculture">Agriculture</option>
-    <option value="ICT">Aplied Science</option>
-    <option value="Business">Irrigation Engineering</option>
-    <option value="Engineering">Bachelor of Agriculture Engineering</option>
-    <option value="General">Agriculture General</option>
-    <option value="Other">Textile and Fashion Design</option>
-    <option value="Other">Animal Healthy</option>
-    <option value="Other">Land Adiministration</option>
-    <option value="Other">Enviromental Management</option>
-    <option value="Other">Horticulture</option>
+     <option value="Basics">Basics</option>
+    <option value="Computer Science">Computer Science</option>
+    <option value="Agriculture">Bachalor of Science in Agriculture</option>
+    <option value="Aplied Science">Aplied Science</option>
+    <option value="Irrigation engineering">Irrigation Engineering</option>
+    <option value="Agriculture General">Agriculture General</option>
+    
+    <option value="Textile and Fashion Design">Textile and Fashion Design</option>
+    <option value="Animal Healthy">Animal Healthy</option>
+    <option value="Land Adiministration">Land Adiministration</option>
+    <option value="Enviromental Management">Enviromental Management</option>
+    <option value="Horticulture">Horticulture</option>
+    <option value="Agricultural Engineering">Agricultural Engineering</option>
+    <option value="Agricultural Economics">Agricultural Economics</option>
+    <option value="Agricultural Education">Agricultural Education</option>
+    <option value="Bachelor of Science in Agronomy">Bachelor of Science in Agronomy</option>
+    <option value="Bachelor of Science in Animal Science">Bachelor of Science in Animal Science</option>
+    <option value="Bachelor of Science in Aquaculture and Fisheries Management">Bachelor of Science in Aquaculture and Fisheries Management</option>
+    <option value="Bachelor of Science in Horticulture and Landscape Management">Bachelor of Science in Horticulture and Landscape Management</option>
+    <option value="Bachelor of Science in Plant Science and Crop Protection">Bachelor of Science in Plant Science and Crop Protection</option>
+    <option value="Bachelor of Science in Soil and Water Management">Bachelor of Science in Soil and Water Management</option>
+    <option value="Bachelor of Science in Agricultural Economics and Agribusiness">Bachelor of Science in Agricultural Economics and Agribusiness</option>
+    <option value="Bachelor of Science in Food Technology">Bachelor of Science in Food Technology</option>
+    
+
   </select>
   <button onclick="login()">Enter Chat</button>
 </div>
@@ -111,7 +127,7 @@
       return;
     }
     localStorage.setItem('userName', username);
-    localStorage.setItem('program', program);
+    localStorage.setItem('program', program); 
     window.location.href = "chat.html";
   }
 </script>

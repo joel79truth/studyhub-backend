@@ -2,7 +2,7 @@
   "files": [
     {
       "name": "Physics_Kazongwe.pdf",
-      "program": "irrigation",
+      "program": "Irrigation Engineering",
       "semester": "1",
       "subject": "physics 1",
       "url": "/files/irrigation/1756576797023-Physics_Kazongwe.pdf",
@@ -271,6 +271,102 @@
       "subject": "Statistics COURSE OUTLINE",
       "url": "/files/bachelor_of_science_in_agricultural_engineering/1756784020614-STA_32101_Introduction_to_Statistics_COURSE_OUTLINE.pdf",
       "uploadedAt": "2025-09-02T03:33:40.616Z"
+    },
+    {
+      "name": "TOPIC 2..pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Contract-law",
+      "url": "/files/irrigation_engineering/1756817365771-TOPIC_2..pdf",
+      "uploadedAt": "2025-09-02T12:49:25.786Z"
+    },
+    {
+      "name": "TOPIC 3.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Contract-law",
+      "url": "/files/irrigation_engineering/1756817377978-TOPIC_3.pdf",
+      "uploadedAt": "2025-09-02T12:49:37.984Z"
+    },
+    {
+      "name": "TOPIC 5-Planning techniques applied in construction.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Contract-law",
+      "url": "/files/irrigation_engineering/1756817387936-TOPIC_5-Planning_techniques_applied_in_construction.pdf",
+      "uploadedAt": "2025-09-02T12:49:47.944Z"
+    },
+    {
+      "name": "TOPIC_4-CQS.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Contract-law",
+      "url": "/files/irrigation_engineering/1756817396973-TOPIC_4-CQS.pdf",
+      "uploadedAt": "2025-09-02T12:49:56.978Z"
+    },
+    {
+      "name": "COURSE TITLE HYDROLOGY AND AGROMET.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Hydrology",
+      "url": "/files/irrigation_engineering/1756817453202-COURSE_TITLE_HYDROLOGY_AND_AGROMET.pdf",
+      "uploadedAt": "2025-09-02T12:50:53.204Z"
+    },
+    {
+      "name": "Elementary Engineering Hydrology (M.J. Deodhar) (z-lib.org).pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Hydrology",
+      "url": "/files/irrigation_engineering/1756817476722-Elementary_Engineering_Hydrology_M.J._Deodhar_z-lib.org.pdf",
+      "uploadedAt": "2025-09-02T12:51:17.049Z"
+    },
+    {
+      "name": "HYDRO.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Hydrology",
+      "url": "/files/irrigation_engineering/1756817497591-HYDRO.pdf",
+      "uploadedAt": "2025-09-02T12:51:37.605Z"
+    },
+    {
+      "name": "HYDROLOGY AND AGROMETEOLOGY.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Hydrology",
+      "url": "/files/irrigation_engineering/1756817517381-HYDROLOGY_AND_AGROMETEOLOGY.pdf",
+      "uploadedAt": "2025-09-02T12:51:57.399Z"
+    },
+    {
+      "name": "Hydrology Module.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Hydrology",
+      "url": "/files/irrigation_engineering/1756817536400-Hydrology_Module.pdf",
+      "uploadedAt": "2025-09-02T12:52:16.417Z"
+    },
+    {
+      "name": "Hydrology.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Hydrology",
+      "url": "/files/irrigation_engineering/1756817552845-Hydrology.pdf",
+      "uploadedAt": "2025-09-02T12:52:32.848Z"
+    },
+    {
+      "name": "Hydrology-1.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Hydrology",
+      "url": "/files/irrigation_engineering/1756817570463-Hydrology-1.pdf",
+      "uploadedAt": "2025-09-02T12:52:50.523Z"
+    },
+    {
+      "name": "Precipitation.pdf",
+      "program": "Irrigation Engineering",
+      "semester": "4",
+      "subject": "Hydrology",
+      "url": "/files/irrigation_engineering/1756817591486-Precipitation.pdf",
+      "uploadedAt": "2025-09-02T12:53:11.493Z"
     }
   ],
   "basics": {
@@ -574,6 +670,104 @@
         "subject": "Statistics COURSE OUTLINE",
         "url": "/files/bachelor_of_science_in_agricultural_engineering/1756784020614-STA_32101_Introduction_to_Statistics_COURSE_OUTLINE.pdf",
         "uploadedAt": "2025-09-02T03:33:40.616Z"
+      }
+    ],
+    "Irrigation Engineering": [
+      {
+        "name": "TOPIC 2..pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Contract-law",
+        "url": "/files/irrigation_engineering/1756817365771-TOPIC_2..pdf",
+        "uploadedAt": "2025-09-02T12:49:25.786Z"
+      },
+      {
+        "name": "TOPIC 3.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Contract-law",
+        "url": "/files/irrigation_engineering/1756817377978-TOPIC_3.pdf",
+        "uploadedAt": "2025-09-02T12:49:37.984Z"
+      },
+      {
+        "name": "TOPIC 5-Planning techniques applied in construction.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Contract-law",
+        "url": "/files/irrigation_engineering/1756817387936-TOPIC_5-Planning_techniques_applied_in_construction.pdf",
+        "uploadedAt": "2025-09-02T12:49:47.944Z"
+      },
+      {
+        "name": "TOPIC_4-CQS.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Contract-law",
+        "url": "/files/irrigation_engineering/1756817396973-TOPIC_4-CQS.pdf",
+        "uploadedAt": "2025-09-02T12:49:56.978Z"
+      },
+      {
+        "name": "COURSE TITLE HYDROLOGY AND AGROMET.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Hydrology",
+        "url": "/files/irrigation_engineering/1756817453202-COURSE_TITLE_HYDROLOGY_AND_AGROMET.pdf",
+        "uploadedAt": "2025-09-02T12:50:53.204Z"
+      },
+      {
+        "name": "Elementary Engineering Hydrology (M.J. Deodhar) (z-lib.org).pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Hydrology",
+        "url": "/files/irrigation_engineering/1756817476722-Elementary_Engineering_Hydrology_M.J._Deodhar_z-lib.org.pdf",
+        "uploadedAt": "2025-09-02T12:51:17.049Z"
+      },
+      {
+        "name": "HYDRO.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Hydrology",
+        "url": "/files/irrigation_engineering/1756817497591-HYDRO.pdf",
+        "uploadedAt": "2025-09-02T12:51:37.605Z"
+      },
+      {
+        "name": "HYDROLOGY AND AGROMETEOLOGY.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Hydrology",
+        "url": "/files/irrigation_engineering/1756817517381-HYDROLOGY_AND_AGROMETEOLOGY.pdf",
+        "uploadedAt": "2025-09-02T12:51:57.399Z"
+      },
+      {
+        "name": "Hydrology Module.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Hydrology",
+        "url": "/files/irrigation_engineering/1756817536400-Hydrology_Module.pdf",
+        "uploadedAt": "2025-09-02T12:52:16.417Z"
+      },
+      {
+        "name": "Hydrology.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Hydrology",
+        "url": "/files/irrigation_engineering/1756817552845-Hydrology.pdf",
+        "uploadedAt": "2025-09-02T12:52:32.848Z"
+      },
+      {
+        "name": "Hydrology-1.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Hydrology",
+        "url": "/files/irrigation_engineering/1756817570463-Hydrology-1.pdf",
+        "uploadedAt": "2025-09-02T12:52:50.523Z"
+      },
+      {
+        "name": "Precipitation.pdf",
+        "program": "Irrigation Engineering",
+        "semester": "4",
+        "subject": "Hydrology",
+        "url": "/files/irrigation_engineering/1756817591486-Precipitation.pdf",
+        "uploadedAt": "2025-09-02T12:53:11.493Z"
       }
     ]
   }
