@@ -1,232 +1,172 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Video Lessons</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Lessons</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  text-align: center;
+  overflow-x: hidden;
+  background: url('https://images.pexels.com/photos/414519/pexels-photo-414519.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260') no-repeat center center fixed;
+  background-size: cover;
+}
 
-    body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #e0f7fa, #e1bee7);
-      text-align: center;
-      overflow-x: hidden;
-    }
+header {
+  background: linear-gradient(90deg, #0066da, #2ab431);
+  color: white;
+  padding: 15px;
+  font-size: 22px;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
-    header {
-      background: linear-gradient(90deg, #0066da, #2ab431);
-      color: white;
-      padding: 15px;
-      font-size: 22px;
-      font-weight: 700;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+.back-btn {
+  background: #e53935;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  margin: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
-    .back-btn {
-      background: #e53935;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 12px;
-      margin: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+.back-btn:hover {
+  background: #b71c1c;
+  transform: scale(1.05);
+}
 
-    .back-btn:hover {
-      background: #b71c1c;
-      transform: scale(1.05);
-    }
+#searchBar {
+  width: 85%;
+  max-width: 500px;
+  padding: 12px 15px;
+  margin: 15px auto;
+  border-radius: 25px;
+  border: 2px solid #00bcd4;
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
 
-    .logo-container {
-      text-align: center;
-      margin: 20px 0;
-      animation: fadeInDown 1s ease forwards;
-    }
+#searchBar:focus {
+  border-color: #0066da;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
 
-    .luanar-logo {
-      width: 120px;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-      transition: transform 0.3s ease;
-    }
+.carousel-wrapper {
+  width: 100%;
+  overflow: hidden;
+  padding: 30px 0;
+}
 
-    .luanar-logo:hover {
-      transform: scale(1.1);
-    }
+.video-container {
+  display: flex;
+  gap: 25px;
+  transition: transform 1s ease;
+}
 
-    #searchBar {
-      width: 85%;
-      max-width: 500px;
-      padding: 12px 15px;
-      margin: 15px auto;
-      border-radius: 25px;
-      border: 2px solid #00bcd4;
-      font-size: 16px;
-      outline: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
+.video-card {
+  min-width: 320px;
+  max-width: 400px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+}
 
-    #searchBar:focus {
-      border-color: #0066da;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    }
+.video-card iframe {
+  width: 100%;
+  height: 220px;
+  border-radius: 12px;
+  border: none;
+}
 
-    .video-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 25px;
-      padding-bottom: 50px;
-    }
-
-    .video-card {
-      background: rgba(255,255,255,0.95);
-      padding: 15px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-      transform: translateY(30px) scale(0.95);
-      opacity: 0;
-      transition: transform 0.6s ease, opacity 0.6s ease, box-shadow 0.3s ease;
-      perspective: 1000px; /* Enable 3D effect for children */
-    }
-
-    .video-card.visible {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-    }
-
-    .video-card.floating {
-      animation: float 4s ease-in-out infinite;
-    }
-
-    .video-card:hover {
-      transform: translateY(-5px) scale(1.03);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-    }
-
-    iframe {
-      width: 100%;
-      height: 250px;
-      border-radius: 12px;
-      border: none;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-      transform-style: preserve-3d;
-    }
-
-    .video-card:hover iframe {
-      transform: rotateX(5deg) rotateY(5deg) scale(1.05);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.35);
-    }
-
-    .topic {
-      font-weight: 600;
-      margin-bottom: 10px;
-      text-align: left;
-      font-size: 18px;
-      color: #333;
-    }
-
-    /* Animations */
-    @keyframes fadeInDown {
-      0% { opacity: 0; transform: translateY(-20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    /* Responsive */
-    @media(max-width: 500px){
-      iframe { height: 200px; }
-      header { font-size: 20px; }
-    }
-  </style>
+.topic {
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: left;
+  font-size: 18px;
+  color: #333;
+}
+</style>
 </head>
 <body>
 
 <header>📚 Video Lessons</header>
 <button class="back-btn" onclick="window.location.href='index.html'">⬅ Back</button>
-
-<div class="logo-container">
-  <img src="images/luanar logo.png" alt="LUANAR Logo" class="luanar-logo">
-</div>
-
 <input type="text" id="searchBar" placeholder="Search videos..." onkeyup="filterVideos()" />
 
-<div class="video-container" id="videoList"></div>
+<div class="carousel-wrapper">
+  <div class="video-container" id="videoList"></div>
+</div>
 
 <script>
-  let videos = [];
+const videos = [
+  { title: "Ideal Fluid", youtubeId: "lJM4GuUd3Hk" },
+  { title: "Equation of Continuity", youtubeId: "utEMUiC59F4" },
+  { title: "Bernoulli’s Theorem", youtubeId: "DW4rItB20h4" },
+  { title: "Torricelli’s Theorem", youtubeId: "046-DygKrhc" },
+  { title: "Full Wave Motion Comprehensive", youtubeId: "LFwmV1ktbTs" }
+];
 
-  fetch('videos.json')
-    .then(response => response.json())
-    .then(data => {
-      videos = data.videos;
-      renderVideos(videos);
-      observeVideos();
-    })
-    .catch(err => {
-      document.getElementById('videoList').innerHTML = '<p>Failed to load videos.</p>';
-      console.error('Error loading videos.json:', err);
-    });
+const container = document.getElementById('videoList');
+let currentIndex = 0;
+let slideInterval;
+let isPlaying = false;
 
-  function renderVideos(videoArray) {
-    const container = document.getElementById('videoList');
-    container.innerHTML = '';
+// Render all video cards
+function renderVideos(videosArray) {
+  container.innerHTML = '';
+  videosArray.forEach(video => {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.innerHTML = `
+      <div class="topic">${video.title}</div>
+      <iframe src="https://www.youtube.com/embed/${video.youtubeId}?enablejsapi=1" allowfullscreen></iframe>
+    `;
+    container.appendChild(card);
+  });
 
-    if (videoArray.length === 0) {
-      container.innerHTML = '<p>No videos found.</p>';
-      return;
-    }
+  // Add listeners to stop sliding if video is played
+  document.querySelectorAll('iframe').forEach(iframe => {
+    iframe.addEventListener('mouseenter', () => { isPlaying = true; });
+    iframe.addEventListener('mouseleave', () => { isPlaying = false; });
+  });
+}
 
-    videoArray.forEach((video, index) => {
-      const card = document.createElement('div');
-      card.className = 'video-card floating';
-      card.style.animationDelay = `${index * 0.1}s`;
-      card.setAttribute('data-title', video.title.toLowerCase());
+renderVideos(videos);
 
-      card.innerHTML = `
-        <div class="topic">${video.title}</div>
-        <iframe src="https://www.youtube.com/embed/${video.youtubeId}" allowfullscreen></iframe>
-      `;
+// Slide logic
+function showNextVideo() {
+  if(isPlaying) return; // pause if user interacts
+  const cards = document.querySelectorAll('.video-card');
+  const cardWidth = cards[0].offsetWidth + 25; // include gap
+  currentIndex++;
+  if(currentIndex >= cards.length) currentIndex = 0;
+  container.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+}
 
-      container.appendChild(card);
-    });
-  }
+// Start sliding every 7 seconds
+slideInterval = setInterval(showNextVideo, 7000);
 
-  function filterVideos() {
-    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-    const filtered = videos.filter(v => v.title.toLowerCase().includes(searchTerm));
-    renderVideos(filtered);
-    observeVideos();
-  }
-
-  function observeVideos() {
-    const cards = document.querySelectorAll('.video-card');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.2 });
-
-    cards.forEach(card => observer.observe(card));
-  }
+// Search filter
+function filterVideos() {
+  const term = document.getElementById('searchBar').value.toLowerCase();
+  const filtered = videos.filter(v => v.title.toLowerCase().includes(term));
+  renderVideos(filtered);
+  currentIndex = 0;
+  container.style.transform = `translateX(0px)`;
+}
 </script>
 
 </body>
