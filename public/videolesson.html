@@ -1,185 +1,261 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Lessons</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-body {
-  font-family: 'Roboto', sans-serif;
+/* ===== Global Style ===== */
+* {
+  box-sizing: border-box;
   margin: 0;
-  text-align: center;
-  overflow-x: hidden;
-  background: url('https://images.pexels.com/photos/414519/pexels-photo-414519.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260') no-repeat center center fixed;
-  background-size: cover;
+  padding: 0;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #0f172a;
+  color: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+/* ===== Header ===== */
 header {
-  background: linear-gradient(90deg, #0066da, #2ab431);
-  color: white;
-  padding: 15px;
+  background: linear-gradient(90deg, #2563eb, #16a34a);
+  padding: 15px 25px;
   font-size: 22px;
   font-weight: 700;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
-.back-btn {
-  background: #e53935;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 12px;
-  margin: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.back-btn:hover {
-  background: #b71c1c;
-  transform: scale(1.05);
-}
-
-#searchBar {
-  width: 85%;
-  max-width: 500px;
-  padding: 12px 15px;
-  margin: 15px auto;
-  border-radius: 25px;
-  border: 2px solid #00bcd4;
-  font-size: 16px;
-  outline: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-#searchBar:focus {
-  border-color: #0066da;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-}
-
-.carousel-wrapper {
-  width: 100%;
-  overflow: hidden;
-  padding: 30px 0;
-}
-
-.video-container {
-  display: flex;
-  gap: 25px;
-  transition: transform 1s ease;
-}
-
-.video-card {
-  min-width: 320px;
-  max-width: 400px;
-  background: rgba(255,255,255,0.95);
-  border-radius: 15px;
+/* ===== Search Bar ===== */
+.search-bar {
   padding: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  flex-shrink: 0;
+  background: #1e293b;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-
-.video-card iframe {
-  width: 100%;
-  height: 220px;
-  border-radius: 12px;
+.search-bar input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 500px;
+  padding: 12px 18px;
+  border-radius: 30px;
   border: none;
+  outline: none;
+  font-size: 15px;
+  background: rgba(255,255,255,0.1);
+  color: #f8fafc;
+  backdrop-filter: blur(12px);
+  transition: 0.3s;
+}
+.search-bar input::placeholder {
+  color: #cbd5e1;
+}
+.search-bar input:focus {
+  background: rgba(255,255,255,0.2);
+  box-shadow: 0 0 12px rgba(56,189,248,0.6);
 }
 
-.topic {
+/* ===== Filter Buttons ===== */
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 20px;
+}
+.filter-buttons button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 10px;
-  text-align: left;
+  transition: 0.3s;
+}
+.filter-buttons button:hover {
+  background: #1d4ed8;
+}
+.back-btn {
+  background: #ef4444 !important;
+}
+.back-btn:hover {
+  background: #b91c1c !important;
+}
+
+/* ===== Player Section ===== */
+.player {
+  padding: 20px;
+  background: #111827;
+}
+.player iframe {
+  width: 100%;
+  height: 420px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  background: #000;
+}
+.player h3 {
+  margin-top: 12px;
   font-size: 18px;
-  color: #333;
+  font-weight: 600;
+}
+.player p {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ===== Video Grid ===== */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  flex: 1;
+}
+.video-card {
+  background: rgba(255,255,255,0.07);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+.video-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+}
+.thumbnail {
+  background: #000;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.video-info {
+  padding: 12px;
+}
+.video-info h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #f8fafc;
+}
+.video-info p {
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .player iframe {
+    height: 240px;
+  }
 }
 </style>
-
-
-
- <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-0LTZS1S9W6');
-  </script>
-
 </head>
 <body>
 
 <header>📚 Video Lessons</header>
-<button class="back-btn" onclick="window.location.href='index.html'">⬅ Back</button>
-<input type="text" id="searchBar" placeholder="Search videos..." onkeyup="filterVideos()" />
 
-<div class="carousel-wrapper">
-  <div class="video-container" id="videoList"></div>
+<div class="search-bar">
+  <input type="text" id="searchBar" placeholder="Search for a lesson..." onkeyup="filterVideos()">
 </div>
+
+<div class="filter-buttons">
+  <button onclick="filterSubject('All')">All Lessons</button>
+  <button onclick="filterSubject('Physics')">Physics</button>
+  <button onclick="filterSubject('Mathematics')">Mathematics</button>
+  <button onclick="filterSubject('Chemistry')">Chemistry</button>
+  <button class="back-btn" onclick="window.location.href='index.html'">⬅ Back</button>
+</div>
+
+<!-- Player -->
+<div class="player" id="player">
+  <iframe id="mainPlayer" src="" allowfullscreen></iframe>
+  <h3 id="videoTitle">Select a lesson to start learning</h3>
+  <p id="videoSubject"></p>
+</div>
+
+<!-- Video Grid -->
+<div class="video-grid" id="videoList"></div>
 
 <script>
 const videos = [
-  { title: "Ideal Fluid", youtubeId: "lJM4GuUd3Hk" },
-  { title: "Equation of Continuity", youtubeId: "utEMUiC59F4" },
-  { title: "Bernoulli’s Theorem", youtubeId: "DW4rItB20h4" },
-  { title: "Torricelli’s Theorem", youtubeId: "046-DygKrhc" },
-  { title: "Full Wave Motion Comprehensive", youtubeId: "LFwmV1ktbTs" }
+  { title: "Ideal Fluid", youtubeId: "lJM4GuUd3Hk", subject: "Physics" },
+  { title: "Equation of Continuity", youtubeId: "utEMUiC59F4", subject: "Physics" },
+  { title: "Bernoulli’s Theorem", youtubeId: "DW4rItB20h4", subject: "Physics" },
+  { title: "Torricelli’s Theorem", youtubeId: "046-DygKrhc", subject: "Physics" },
+  { title: "Full Wave Motion Comprehensive", youtubeId: "LFwmV1ktbTs", subject: "Physics" }
 ];
 
 const container = document.getElementById('videoList');
-let currentIndex = 0;
-let slideInterval;
-let isPlaying = false;
+const player = document.getElementById('mainPlayer');
+const titleEl = document.getElementById('videoTitle');
+const subjectEl = document.getElementById('videoSubject');
 
-// Render all video cards
+// Render videos
 function renderVideos(videosArray) {
   container.innerHTML = '';
   videosArray.forEach(video => {
     const card = document.createElement('div');
     card.className = 'video-card';
     card.innerHTML = `
-      <div class="topic">${video.title}</div>
-      <iframe src="https://www.youtube.com/embed/${video.youtubeId}?enablejsapi=1" allowfullscreen></iframe>
+      <div class="thumbnail">
+        <img src="https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg" alt="${video.title}">
+      </div>
+      <div class="video-info">
+        <h4>${video.title}</h4>
+        <p>${video.subject}</p>
+      </div>
     `;
+    card.onclick = () => playVideo(video);
     container.appendChild(card);
   });
-
-  // Add listeners to stop sliding if video is played
-  document.querySelectorAll('iframe').forEach(iframe => {
-    iframe.addEventListener('mouseenter', () => { isPlaying = true; });
-    iframe.addEventListener('mouseleave', () => { isPlaying = false; });
-  });
 }
-
 renderVideos(videos);
 
-// Slide logic
-function showNextVideo() {
-  if(isPlaying) return; // pause if user interacts
-  const cards = document.querySelectorAll('.video-card');
-  const cardWidth = cards[0].offsetWidth + 25; // include gap
-  currentIndex++;
-  if(currentIndex >= cards.length) currentIndex = 0;
-  container.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+// Play video inside player
+function playVideo(video) {
+  player.src = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1`;
+  titleEl.textContent = video.title;
+  subjectEl.textContent = video.subject;
 }
 
-// Start sliding every 7 seconds
-slideInterval = setInterval(showNextVideo, 7000);
-
-// Search filter
+// Filter videos by search
 function filterVideos() {
   const term = document.getElementById('searchBar').value.toLowerCase();
   const filtered = videos.filter(v => v.title.toLowerCase().includes(term));
   renderVideos(filtered);
-  currentIndex = 0;
-  container.style.transform = `translateX(0px)`;
+}
+
+// Filter by subject
+function filterSubject(subject) {
+  if (subject === "All") {
+    renderVideos(videos);
+  } else {
+    const filtered = videos.filter(v => v.subject === subject);
+    renderVideos(filtered);
+  }
 }
 </script>
-
 </body>
 </html>
