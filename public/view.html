@@ -1,53 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>View File</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f5f5f5;
-    }
-    iframe {
-      width: 90%;
-      height: 90%;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-    .error {
-      color: red;
-      font-size: 18px;
-      text-align: center;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Book</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.45);
+    z-index: 0;
+}
+
+.toolbar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    color: #fff;
+}
+
+.toolbar h2 {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.toolbar button {
+    padding: 8px 14px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.toolbar button:hover {
+    background: rgba(255,255,255,0.35);
+}
+
+.pdf-container {
+    flex: 1;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.pdf-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    transition: all 0.3s ease;
+}
+</style>
 </head>
 <body>
-  <iframe id="fileViewer"></iframe>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const fileParam = urlParams.get('file');
+<div class="toolbar">
+    <button onclick="goBack()">← Back</button>
+    <h2 id="bookTitle">Book Title</h2>
+    <div>
+        <button onclick="zoomIn()">🔍+</button>
+        <button onclick="zoomOut()">🔍-</button>
+        <button onclick="toggleFullscreen()">⛶</button>
+    </div>
+</div>
 
-    if (!fileParam) {
-      document.body.innerHTML = '<p class="error">No file selected or file not found.</p>';
-    } else {
-      const iframe = document.getElementById('fileViewer');
+<div class="pdf-container">
+    <iframe id="pdfViewer" src=""></iframe>
+</div>
 
-      // If fileParam already starts with "files/", use it as is, otherwise prepend "files/"
-      const pathPrefix = fileParam.startsWith('files/') ? '' : 'files/';
-      iframe.src = '/' + pathPrefix + fileParam;
+<script>
+// --- Get file from query string ---
+const params = new URLSearchParams(window.location.search);
+const file = params.get('file');
+if(file) {
+    document.getElementById('pdfViewer').src = `wisdom/${file}`;
+    document.getElementById('bookTitle').innerText = file.replace(/_/g, ' ').replace('.pdf','');
+}
 
-      iframe.onerror = () => {
-        document.body.innerHTML = '<p class="error">Failed to load file. Check the URL or file existence.</p>';
-      };
+// --- Toolbar Functions ---
+function goBack() {
+    window.history.back();
+}
+
+let scale = 1;
+function zoomIn() {
+    scale += 0.1;
+    document.getElementById('pdfViewer').style.transform = `scale(${scale})`;
+    document.getElementById('pdfViewer').style.transformOrigin = 'top center';
+}
+function zoomOut() {
+    if(scale > 0.3){
+        scale -= 0.1;
+        document.getElementById('pdfViewer').style.transform = `scale(${scale})`;
+        document.getElementById('pdfViewer').style.transformOrigin = 'top center';
     }
-  </script>
+}
+
+function toggleFullscreen() {
+    const elem = document.documentElement;
+    if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(err => console.log(err));
+    } else {
+        document.exitFullscreen();
+    }
+}
+</script>
+
 </body>
 </html>

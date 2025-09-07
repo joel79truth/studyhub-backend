@@ -9,22 +9,38 @@
 
   * { box-sizing: border-box; margin:0; padding:0; font-family: 'Poppins', sans-serif; }
   body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(120deg,#2980b9,#8e44ad);
-    overflow: hidden;
-  }
-  .login-container {
-    background: rgba(255,255,255,0.1);
-    padding: 40px;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    text-align: center;
-    animation: fadeIn 1.2s ease forwards;
-  }
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;   /* stack children top-to-bottom */
+  justify-content: flex-start;  /* start from the top */
+  align-items: center;  /* center horizontally */
+  background: linear-gradient(120deg,#2980b9,#08b11f);
+  overflow: hidden;
+  padding-top: 30px; /* space from top */
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px; /* spacing below logo */
+}
+
+.luanar-logo {
+  max-width: 85px;
+  height: auto;
+}
+
+.login-container {
+  background: rgba(255,255,255,0.1);
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  text-align: center;
+  animation: fadeIn 2.2s ease forwards;
+  width: 85%;
+  max-width: 400px; /* keeps form nicely centered */
+}
+
   h1 {
     color: #fff;
     margin-bottom: 30px;
@@ -69,6 +85,7 @@
   @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
   @keyframes slideDown { from {transform:translateY(-50px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 
+
 </style>
 
  <!-- Google Analytics -->
@@ -82,6 +99,11 @@
 
 </head>
 <body>
+
+
+  <div class="logo-container">
+    <img src="images/luanar-logo.png" alt="LUANAR-Logo" class="luanar-logo">
+ </div>
 
 <div class="login-container">
   <h1>Welcome to Program Chat</h1>

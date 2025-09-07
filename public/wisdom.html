@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,28 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wisdom & Encouragement</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+
 <style>
 /* --- Body & Background --- */
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
-    overflow: hidden;
+    min-height: 100vh;
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat;
     position: relative;
+    overflow-x: hidden;
 }
 
 body::before {
     content: '';
     position: absolute;
     top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.35); /* dark overlay for readability */
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
     z-index: 0;
 }
 
@@ -35,71 +36,201 @@ body::before {
 .back-btn {
     margin: 20px;
     padding: 10px 20px;
-    background: #2563eb;
-    color: white;
-    border-radius: 6px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    border-radius: 8px;
     text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
     z-index: 2;
     position: relative;
-    font-weight: bold;
-    transition: transform 0.2s, background 0.2s;
 }
 .back-btn:hover {
-    background: #1d4ed8;
+    background: rgba(255,255,255,0.35);
     transform: scale(1.05);
 }
 
 /* --- Verse Card --- */
 .verse-card {
-    max-width: 700px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px 24px;
-    margin-top: 60px;
-    border-radius: 20px;
-    box-shadow: 0 12px 20px rgba(0,0,0,0.25);
-    text-align: center;
-    z-index: 2;
     position: relative;
-    animation: fadeInUp 1s ease forwards;
+    width: 90%;
+    max-width: 720px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    margin-top: 60px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    text-align: center;
+    color: #f1f1f1;
+    z-index: 2;
+    transition: transform 0.3s ease;
 }
 
 .verse-card h2 {
-    color: #b45309;
-    font-size: 26px;
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
     margin-bottom: 20px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    color: #ffd700;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
 }
 
 .verse-card p {
     font-size: 20px;
     line-height: 1.8;
-    color: #374151;
     margin-bottom: 30px;
-    opacity: 0;
-    animation: fadeInText 1s forwards;
+    transition: opacity 0.5s ease;
+}
+
+/* --- Encouragement Section --- */
+.encouragement {
+    font-size: 18px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    color: #e0f7fa;
+    margin: 20px 0 40px 0;
+    transition: transform 0.3s;
+    width: 90%;
+    max-width: 720px;
+}
+.encouragement:hover {
+    transform: translateY(-3px);
 }
 
 /* --- Next Button --- */
 .next-btn {
-    margin-top: 10px;
-    padding: 12px 24px;
-    background: #b45309;
-    color: white;
-    border-radius: 10px;
-    cursor: pointer;
-    border: none;
+    padding: 12px 28px;
     font-size: 16px;
-    transition: transform 0.2s, background 0.2s;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #fff;
+    transition: all 0.3s ease;
 }
 .next-btn:hover {
-    background: #92400e;
     transform: scale(1.05);
+    background: linear-gradient(135deg, #ff8c00, #ffd700);
 }
+
+/* --- Books Section --- */
+.books-section {
+    margin-top: 30px;
+    width: 50%;
+    max-width: 720px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    color: #fff;
+    text-align: center;
+    z-index: 2;
+    position: relative;
+}
+
+.show-more-btn {
+    margin-top: 15px;
+    padding: 10px 24px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg,#1d4ed8,#2563eb);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+.show-more-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+}
+
+/* --- Modal --- */
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80%;
+    overflow-y: auto;
+    text-align: left;
+    color: #111;
+    animation: fadeIn 0.5s ease forwards;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #111;
+}
+
+/* --- Book Items --- */
+.book-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 12px;
+}
+
+.book-item span {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.book-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.book-buttons button, .book-buttons a {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: #fff;
+}
+
+.book-buttons .view-btn { background: #2563eb; }
+.book-buttons .view-btn:hover { background: #1d4ed8; }
+.book-buttons .download-btn { background: #f59e0b; }
+.book-buttons .download-btn:hover { background: #b45309; }
+
+/* --- Animations --- */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-20px);} to {opacity:1; transform:translateY(0);} }
 
 /* --- Floating Bubbles --- */
 .floating-bubble {
     position: absolute;
-    background: rgba(255,255,255,0.2);
     border-radius: 50%;
     pointer-events: none;
     animation: floatUp linear infinite;
@@ -107,32 +238,39 @@ body::before {
 }
 
 @keyframes floatUp {
-    0% { transform: translateY(100vh) scale(0.5); opacity: 0.3; }
-    50% { opacity: 0.6; }
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0.2; }
+    50% { opacity: 0.5; }
     100% { transform: translateY(-50px) scale(1); opacity: 0; }
 }
 
-/* --- Fade Animations --- */
-@keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInText {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
 /* --- Responsive --- */
-@media(max-width: 600px){
-    .verse-card {
-        margin-top: 40px;
-        padding: 24px 16px;
-    }
+@media(max-width: 900px){
+    .verse-card { padding: 30px 20px; }
+    .verse-card h2 { font-size: 24px; }
     .verse-card p { font-size: 18px; }
     .next-btn { font-size: 14px; padding: 10px 20px; }
+    .encouragement { font-size: 16px; padding: 16px; }
+}
+
+@media(max-width: 600px){
+    .verse-card { padding: 25px 15px; }
+    .verse-card h2 { font-size: 20px; }
+    .verse-card p { font-size: 16px; }
+    .next-btn { font-size: 13px; padding: 8px 16px; }
+    .encouragement { font-size: 14px; padding: 14px; }
+    .book-item { flex-direction: column; }
+    .book-buttons { width: 100%; justify-content: flex-start; }
 }
 </style>
+
+<!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-0LTZS1S9W6');
+  </script>
 
 </head>
 <body>
@@ -145,7 +283,31 @@ body::before {
     <button class="next-btn" onclick="newVerse()">Next Verse</button>
 </div>
 
+<!-- Books of Wisdom Section -->
+<div class="books-section">
+    <h3>Books of Wisdom</h3>
+    <ul style="padding-left:0; list-style:none;">
+        <li style="margin:3px; font-weight:bold">Prosperity</li>
+        <li style="margin:3px; font-weight:bold">Power of Your Mind</li>
+    </ul>
+    <button class="show-more-btn" onclick="openModal()">Show More</button>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="booksModal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">×</button>
+        <h3>Books of Wisdom</h3>
+        <div id="booksContainer"></div>
+    </div>
+</div>
+
+<div class="encouragement">
+    🌟 Stay focused and committed. Every small step brings you closer to your purpose. Keep learning and growing daily.
+</div>
+
 <script>
+// --- Verses ---
 const verses = [
     '"The fear of the Lord is the beginning of wisdom, and knowledge of the Holy One is understanding." – Proverbs 9:10',
     '"Trust in the Lord with all your heart and lean not on your own understanding." – Proverbs 3:5',
@@ -158,7 +320,6 @@ const verses = [
     '"In all your ways acknowledge him, and he will make your paths straight." – Proverbs 3:6',
     '"As water reflects the face, so one’s life reflects the heart." – Proverbs 27:19'
 ];
-
 function newVerse() {
     const randomIndex = Math.floor(Math.random() * verses.length);
     const verseElem = document.getElementById('verse');
@@ -166,24 +327,69 @@ function newVerse() {
     setTimeout(() => {
         verseElem.innerText = verses[randomIndex];
         verseElem.style.opacity = 1;
-    }, 300);
+    }, 400);
 }
 
 // --- Floating Bubbles ---
 function createBubbles() {
-    for(let i=0; i<15; i++){
+    for(let i=0; i<25; i++){
         const bubble = document.createElement('div');
         bubble.className = 'floating-bubble';
-        const size = Math.random()*20 + 10;
+        const size = Math.random()*25 + 10;
         bubble.style.width = size+'px';
         bubble.style.height = size+'px';
         bubble.style.left = Math.random()*100+'vw';
         bubble.style.animationDuration = (Math.random()*5+5)+'s';
         bubble.style.animationDelay = Math.random()*5+'s';
+        bubble.style.background = `rgba(255,255,255,${Math.random()*0.2+0.1})`;
         document.body.appendChild(bubble);
     }
 }
 createBubbles();
+
+// --- Modal Functions ---
+function openModal() {
+    document.getElementById('booksModal').style.display = 'flex';
+    loadBooks();
+}
+function closeModal() {
+    document.getElementById('booksModal').style.display = 'none';
+}
+
+// --- Load Books from JSON ---
+async function loadBooks() {
+    const container = document.getElementById('booksContainer');
+    container.innerHTML = '<p>Loading books...</p>';
+    try {
+        const res = await fetch('wisdom.json');
+        const books = await res.json();
+        if (books.length === 0) {
+            container.innerHTML = '<p>No books available.</p>';
+            return;
+        }
+        container.innerHTML = '';
+        books.forEach(book => {
+            const div = document.createElement('div');
+            div.className = 'book-item';
+            div.innerHTML = `
+                <span class="book-title">${book.title}</span>
+                <div class="book-buttons">
+                    <button class="view-btn" onclick="viewBook('${book.file}')">View</button>
+                    <a href="wisdom/${book.file}" class="download-btn" download>Download</a>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    } catch (err) {
+        container.innerHTML = '<p>Error loading books.</p>';
+        console.error(err);
+    }
+}
+
+// --- View Book Function ---
+function viewBook(file) {
+    window.open(`view.html?file=${encodeURIComponent(file)}`, '_blank');
+}
 </script>
 
 </body>
