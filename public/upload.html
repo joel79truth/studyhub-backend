@@ -151,7 +151,8 @@ form.addEventListener("submit", (e) => {
       progressBar.style.width = "100%";
       setTimeout(() => { progressContainer.style.display = "none"; progressBar.style.width = "0%"; }, 1000);
     } else {
-      const res = JSON.parse(xhr.responseText);
+      let res = {};
+      try { res = JSON.parse(xhr.responseText); } catch {}
       messageEl.textContent = "❌ Upload failed: " + (res.message || "Server error");
       messageEl.classList.add("error");
       progressContainer.style.display = "none";

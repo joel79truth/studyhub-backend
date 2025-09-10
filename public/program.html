@@ -69,6 +69,87 @@
     font-size: 24px;
     box-shadow: 0 6px 15px rgba(0,0,0,0.3);
   }
+
+ /* Container (draggable) */
+.action-menu {
+  position: fixed;
+  top: 170px;
+  right: 80px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: grab;
+  z-index: 9999;
+  user-select: none;
+}
+
+.action-menu.dragging {
+  cursor: grabbing;
+}
+
+/* Toggle button (< / >) */
+.toggle-btn {
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  background: black;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.toggle-btn:hover {
+  background: #333;
+}
+
+/* Actions container */
+.actions {
+  display: flex;
+  gap: 12px;
+  opacity: 0;
+  transform: translateX(60px); /* hidden to the right */
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+
+/* Active state -> show */
+.action-menu.active .actions {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Action buttons */
+.actions a {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 20px;
+  text-decoration: none;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover effect */
+.actions a:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+}
+
+/* Button colors */
+.actions a[title="Upload Notes"] { background: linear-gradient(135deg,#4f46e5,#3b82f6); }
+.actions a[title="Request Notes"] { background: linear-gradient(135deg,#9333ea,#a855f7); }
+.actions a[title="Wisdom"] { background: linear-gradient(135deg,#f59e0b,#facc15); }
+.actions a[title="Video Lessons"] { background: linear-gradient(135deg,#10b981,#34d399); }
+
 </style>
 
 <!-- Google tag (gtag.js) -->
@@ -105,125 +186,22 @@
   Have notes to share? Upload them or request others' notes!
 </div>
 
-  <!-- Buttons Row -->
-  <div style="display:flex; gap:15px; align-items:center;">
-    <!-- Upload Button -->
-    <div style="display:flex; flex-direction:column; align-items:center;">
-      <a href="upload.html" style="
-        width:45px;
-        height:45px;
-        background: linear-gradient(135deg,#4f46e5,#3b82f6);
-        border-radius:50%;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        color:white;
-        text-decoration:none;
-        box-shadow:0 5px 12px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
-        font-size:20px;
-      " title="Upload Notes">📤</a>
-      <span style="
-        font-size:0.75rem;
-        font-weight: bolder;
-        color:#000;
-        margin-top:4px;
-        background: rgba(255,255,255,0.8);
-        padding:2px 6px;
-        border-radius:8px;
-      ">Upload</span>
-    </div>
 
-    <!-- Request Button -->
-    <div style="display:flex; flex-direction:column; align-items:center;">
-      <a href="request.html" style="
-        width:45px;
-        height:45px;
-        background: linear-gradient(135deg,#4f46e5,#3b82f6);
-        border-radius:50%;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        color:white;
-        text-decoration:none;
-        box-shadow:0 5px 12px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
-        font-size:20px;
-      " title="Request Notes">📩</a>
-      <span style="
-        font-size:0.75rem;
-        font-weight: bolder;
-        color:#000;
-        margin-top:4px;
-        background: rgba(255,255,255,0.8);
-        padding:2px 6px;
-        border-radius:8px;
-      ">Request</span>
-    </div>
-
-   <div style="display:flex; gap:15px; align-items:center;">
-  <!-- Wisdom Button -->
-  <div style="display:flex; flex-direction:column; align-items:center;">
-    <a href="wisdom.html" style="
-      width:45px;
-      height:45px;
-      background: linear-gradient(135deg,#f59e0b,#facc15);
-      border-radius:50%;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:white;
-      text-decoration:none;
-      box-shadow:0 5px 12px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-      font-size:20px;
-    " title="Wisdom">💡</a>
-    <span style="
-      font-size:0.75rem;
-      font-weight: bolder;
-      color:#000;
-      margin-top:4px;
-      background: rgba(255,255,255,0.8);
-      padding:2px 6px;
-      border-radius:8px;
-    ">Wisdom</span>
-  </div>
-
-  <div style="display:flex; gap:15px; align-items:center;">
-  <!-- Video Lessons Button -->
-  <div style="display:flex; flex-direction:column; align-items:center;">
-    <a href="videolesson.html" style="
-      width:45px;
-      height:45px;
-      background: linear-gradient(135deg,#10b981,#34d399);
-      border-radius:50%;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:white;
-      text-decoration:none;
-      box-shadow:0 5px 12px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-      font-size:20px;
-    " title="Video Lessons">🎥</a>
-    <span style="
-      font-size:0.75rem;
-      font-weight: bolder;
-      color:#000;
-      margin-top:4px;
-      background: rgba(255,255,255,0.8);
-      padding:2px 6px;
-      border-radius:8px;
-    ">Videos</span>
+</div>
+<br>
+<div class="action-menu" id="actionMenu">
+  <button class="toggle-btn" id="menuToggle">&lt;</button>
+  <div class="actions" id="actions">
+    <a href="upload.html" title="Upload Notes">📤</a>
+    <a href="request.html" title="Request Notes">📩</a>
+    <a href="wisdom.html" title="Wisdom">💡</a>
+    <a href="videolesson.html" title="Video Lessons">🎥</a>
   </div>
 </div>
 
 
-</div>
 
-
-
-  </div>
+  <br>
 </div>
 
 
@@ -246,40 +224,79 @@ async function loadPrograms() {
     const res = await fetch("/api/metadata");
     const data = await res.json();
 
-    // Only include programs that have uploaded files
-    const uploadedPrograms = (data.files || []).map(f => f.program).filter(Boolean);
-    const lowerSet = new Set();
-    allPrograms = uploadedPrograms.filter(p => {
-      const lower = p.toLowerCase();
-      if (lowerSet.has(lower)) return false;
-      lowerSet.add(lower);
-      return true;
+    const files = data.files || [];
+
+    // Count files per program
+    const counts = {};
+    files.forEach(f => {
+      if (f.program) {
+        counts[f.program] = (counts[f.program] || 0) + 1;
+      }
     });
 
-    displayPrograms(allPrograms);
+    allPrograms = Object.keys(counts);
+    displayPrograms(allPrograms, counts);
   } catch (err) {
     console.error("Failed to load programs:", err);
-    displayPrograms([]);
+    displayPrograms([], {});
   }
 }
 
-function displayPrograms(programs) {
+function displayPrograms(programs, counts) {
   const container = document.getElementById("programList");
+  container.innerHTML = "";
+
   if (!programs.length) {
-    container.innerHTML = "<p>No programs uploaded yet.</p>";
+    container.textContent = "No programs uploaded yet.";
     return;
   }
 
-  container.innerHTML = programs.map(p => `
-    <div class="program-card" onclick="openProgram('${encodeURIComponent(p)}')">
-      <h3>${p}</h3>
-    </div>
-  `).join('');
+  const seenData = JSON.parse(localStorage.getItem("programSeen") || "{}");
+
+  programs.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "program-card";
+    card.addEventListener("click", () => openProgram(p, counts[p]));
+
+    const title = document.createElement("h3");
+    title.textContent = p;
+    card.appendChild(title);
+
+    // unread count = current total - last seen
+    const lastSeen = seenData[p] || 0;
+    const unread = (counts[p] || 0) - lastSeen;
+
+    if (unread > 0) {
+      const badge = document.createElement("div");
+      badge.textContent = unread;
+      badge.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: red;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
+        padding: 5px 8px;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      `;
+      card.style.position = "relative";
+      card.appendChild(badge);
+    }
+
+    container.appendChild(card);
+  });
 }
 
-function openProgram(program) {
-  window.location.href = `program-detail.html?program=${program}`;
+function openProgram(program, currentCount) {
+  const seenData = JSON.parse(localStorage.getItem("programSeen") || "{}");
+  seenData[program] = currentCount; // mark current total as seen
+  localStorage.setItem("programSeen", JSON.stringify(seenData));
+
+  window.location.href = `program-detail.html?program=${encodeURIComponent(program)}`;
 }
+
 
 // Search filter
 document.getElementById("programSearch").addEventListener("input", function() {
@@ -287,6 +304,49 @@ document.getElementById("programSearch").addEventListener("input", function() {
   const filtered = allPrograms.filter(p => p.toLowerCase().includes(query));
   displayPrograms(filtered);
 });
+
+const actionMenu = document.querySelector(".action-menu");
+const toggleBtn = document.querySelector(".toggle-btn");
+
+toggleBtn.addEventListener("click", () => {
+  actionMenu.classList.toggle("active");
+  toggleBtn.textContent = actionMenu.classList.contains("active") ? ">" : "<";
+});
+
+/* ---- Draggable Support ---- */
+let isDragging = false;
+let offsetX, offsetY;
+
+actionMenu.addEventListener("mousedown", (e) => {
+  if (e.target === toggleBtn) return; // don’t drag when clicking toggle
+  isDragging = true;
+  offsetX = e.clientX - actionMenu.getBoundingClientRect().left;
+  offsetY = e.clientY - actionMenu.getBoundingClientRect().top;
+  actionMenu.classList.add("dragging");
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  let x = e.clientX - offsetX;
+  let y = e.clientY - offsetY;
+
+  // Keep inside screen bounds
+  const maxX = window.innerWidth - actionMenu.offsetWidth;
+  const maxY = window.innerHeight - actionMenu.offsetHeight;
+  x = Math.max(0, Math.min(x, maxX));
+  y = Math.max(0, Math.min(y, maxY));
+
+  actionMenu.style.left = x + "px";
+  actionMenu.style.top = y + "px";
+  actionMenu.style.right = "auto"; // release from fixed right
+});
+
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+  actionMenu.classList.remove("dragging");
+});
+
+
 
 loadPrograms();
 </script>
