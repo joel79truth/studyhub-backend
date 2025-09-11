@@ -80,8 +80,8 @@
     <label for="program">Program Name (or "Basics"):</label>
     <input type="text" id="program" name="program" required placeholder="e.g., Agriculture or Basics" />
 
-    <label for="semester">Semester:</label>
-    <input type="number" min="1" max="12" id="semester" name="semester" required placeholder="e.g., 1 or 2" />
+    <label for="semester">Semester (1-12) <span style="color:#ffca3a;">(optional)</span>:</label>
+    <input type="number" min="1" max="12" id="semester" name="semester" placeholder="e.g., 1 or 2" />
 
     <label for="subject">Subject:</label>
     <input type="text" id="subject" name="subject" required placeholder="e.g., Biology, Physics" />
@@ -116,15 +116,19 @@ form.addEventListener("submit", (e) => {
   messageEl.textContent = "";
   messageEl.className = "message";
 
-  if (!fileInput.files.length || !program || !semester || !subject) {
-    messageEl.textContent = "⚠️ Please fill in all fields and select a file.";
+  // Only check required fields: Program, Subject, File
+  if (!fileInput.files.length || !program || !subject) {
+    messageEl.textContent = "⚠️ Program, Subject, and File are required.";
     messageEl.classList.add("error");
     return;
   }
 
+  // Store semester as "N/A" if empty
+  const semesterValue = semester === "" ? "N/A" : semester;
+
   const formData = new FormData();
   formData.append("program", program);
-  formData.append("semester", semester);
+  formData.append("semester", semesterValue);
   formData.append("subject", subject);
   formData.append("file", fileInput.files[0]);
 
