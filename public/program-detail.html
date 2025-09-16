@@ -35,7 +35,7 @@ h1 { margin:0; font-size:2rem; }
     box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
 #fileList { margin-top:20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
-.file-card { background:white; border-radius:15px; padding:20px; box-shadow:0 8px 25px rgba(0,0,0,0.15); text-align:center; }
+.file-card { background:white; border-radius:15px; padding:20px; box-shadow:0 8px 25px rgba(0,0,0,0.15); text-align:center; position: relative; }
 .file-card h3 { margin:0 0 10px 0; font-size:1.1rem; color:#1e1e1e; }
 .file-card p { font-size:0.9rem; color:#555; margin:5px 0; }
 .file-card button { margin:5px; padding:8px 14px; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition: transform 0.2s ease; }
@@ -72,17 +72,14 @@ h1 { margin:0; font-size:2rem; }
 }
 </style>
 
-
-
- <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-0LTZS1S9W6');
-  </script>
-
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', 'G-0LTZS1S9W6');
+</script>
 
 </head>
 <body>
@@ -114,7 +111,7 @@ async function loadFiles() {
   try {
     const res = await fetch("/api/metadata");
     const metadata = await res.json();
-    const files = Array.isArray(metadata.files) ? metadata.files : [];
+    const files = Array.isArray(metadata) ? metadata : (metadata.files || []);
     allFiles = files.filter(f => f.program?.toLowerCase() === (programName||"").toLowerCase());
     displayFiles(allFiles);
   } catch (err) {
@@ -125,9 +122,13 @@ async function loadFiles() {
 
 function displayFiles(files) {
   const container = document.getElementById("fileList");
+  if (!files.length) {
+    container.innerHTML = "<p>No files available for this program.</p>";
+    return;
+  }
   container.innerHTML = files.map(f => `
     <div class="file-card">
-      <h3>${f.name}</h3>
+      <h3>${f.filename}</h3>
       <p><strong>Semester:</strong> ${f.semester}</p>
       <p><strong>Subject:</strong> ${f.subject}</p>
       <button class="view-btn" onclick="viewFile('${f.url}')">View</button>
@@ -170,7 +171,7 @@ function downloadFile(url) {
 // Search
 document.getElementById("fileSearch").addEventListener("input", function() {
     const query = this.value.toLowerCase();
-    const filtered = allFiles.filter(f => f.name.toLowerCase().includes(query) || f.subject.toLowerCase().includes(query));
+    const filtered = allFiles.filter(f => f.filename.toLowerCase().includes(query) || f.subject.toLowerCase().includes(query));
     displayFiles(filtered);
 });
 

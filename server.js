@@ -1,221 +1,160 @@
-require("dotenv").config();
+
 const express = require("express");
-const fs = require("fs");
-const path = require("path");
 const multer = require("multer");
 const cors = require("cors");
+const dotenv = require("dotenv");
+const { v4: uuidv4 } = require("uuid");
+
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// ------------------
-// Middleware
-// ------------------
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
+app.use(express.static("public"));// server.js
 
-// ------------------
-// Folders & metadata
-// ------------------
-const dataDir = path.join(__dirname, "data");
-const filesDir = path.join(__dirname, "public/files");
-fs.mkdirSync(dataDir, { recursive: true });
-fs.mkdirSync(filesDir, { recursive: true });
 
-const metadataPath = path.join(dataDir, "metadata.json");
-if (!fs.existsSync(metadataPath) || fs.readFileSync(metadataPath, "utf8").trim() === "") {
-  fs.writeFileSync(metadataPath, JSON.stringify({ files: [], basics: {}, programs: {}, messages: [] }, null, 2));
+// Configure multer (store files in memory for Supabase uploads)
+const upload = multer({ storage: multer.memoryStorage() });
+
+let db = null;
+let supabase = null;
+let storageProvider = process.env.STORAGE_PROVIDER || "local";
+
+// ------------------ LOCAL MODE (SQLite) ------------------
+if (storageProvider === "local") {
+  const sqlite3 = require("sqlite3").verbose();
+  db = new sqlite3.Database("./metadata.db");
+
+  db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS files (
+      id TEXT PRIMARY KEY,
+      program TEXT,
+      semester INTEGER,
+      subject TEXT,
+      filename TEXT,
+      path TEXT,
+      url TEXT,
+      uploaded_at TEXT
+    )`);
+  });
+
+  console.log("✅ Using LOCAL storage with SQLite");
 }
 
-// ------------------
-// Multer Storage
-// ------------------
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const program = req.body.program.trim();
-    let destDir = filesDir;
+// ------------------ SUPABASE MODE ------------------
+if (storageProvider === "supabase") {
+  const { createClient } = require("@supabase/supabase-js");
+  supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+  console.log("✅ Using SUPABASE storage");
+}
 
-    if (program.toLowerCase() !== "basics") {
-      const folderName = program.toLowerCase().replace(/\s+/g, "_");
-      destDir = path.join(filesDir, folderName);
-      fs.mkdirSync(destDir, { recursive: true });
-    }
-    cb(null, destDir);
-  },
-  filename: (req, file, cb) => {
-    const timestamp = Date.now();
-    const cleanName = file.originalname.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9._-]/g, "");
-    cb(null, `${timestamp}-${cleanName}`);
-  }
-});
-
-const upload = multer({ storage });
-
-// ------------------
-// Upload Route
-// ------------------
-app.post("/upload", upload.single("file"), (req, res) => {
+// ------------------ UPLOAD ENDPOINT ------------------
+app.post("/upload", upload.single("file"), async (req, res) => {
   const { program, semester, subject } = req.body;
   const file = req.file;
 
   if (!program || !semester || !subject || !file) {
-    return res.status(400).json({ message: "Missing fields or file." });
+    return res.status(400).json({ message: "Missing required fields or file." });
   }
 
-  // Build file URL
-  let fileUrl = `/files/${file.filename}`;
-  if (program.toLowerCase() !== "basics") {
-    const folderName = program.toLowerCase().replace(/\s+/g, "_");
-    fileUrl = `/files/${folderName}/${file.filename}`;
-  }
-
-  const fileData = {
-    name: file.originalname,
-    program,
-    semester,
-    subject,
-    url: fileUrl,
-    uploadedAt: new Date().toISOString()
-  };
-
-  // Load metadata
-  let metadata = { files: [], basics: {}, programs: {}, messages: [] };
-  try { metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8")); } 
-  catch { console.error("Error reading metadata.json"); }
-
-  metadata.files.push(fileData);
-  if (program.toLowerCase() === "basics") {
-    metadata.basics[semester] = metadata.basics[semester] || {};
-    metadata.basics[semester][subject] = metadata.basics[semester][subject] || [];
-    metadata.basics[semester][subject].push(fileData);
-  } else {
-    metadata.programs[program] = metadata.programs[program] || [];
-    metadata.programs[program].push(fileData);
-  }
+  const id = uuidv4();
+  const sanitizedName = file.originalname.replace(/\s+/g, "_");
+  const path = `${program}/${semester}/${subject}/${Date.now()}-${sanitizedName}`;
+  let publicUrl = "";
 
   try {
-    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
-    res.status(200).json({ message: "Upload successful!", file: fileData });
+    if (storageProvider === "supabase") {
+      // Upload to Supabase Storage
+      const { error } = await supabase.storage
+        .from(process.env.SUPABASE_BUCKET)
+        .upload(path, file.buffer, {
+          contentType: file.mimetype,
+        });
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data } = supabase
+        .storage
+        .from(process.env.SUPABASE_BUCKET)
+        .getPublicUrl(path);
+
+      publicUrl = data.publicUrl;
+
+      // Save metadata in Supabase Postgres
+      const { error: dbError } = await supabase.from("files").insert([
+        {
+          id,
+          program,
+          semester,
+          subject,
+          filename: file.originalname,
+          path,
+          url: publicUrl,
+        },
+      ]);
+
+      if (dbError) throw dbError;
+    } else {
+      // Save locally
+      const fs = require("fs");
+      const pathModule = require("path");
+      const uploadPath = pathModule.join(__dirname, "uploads", path);
+      fs.mkdirSync(pathModule.dirname(uploadPath), { recursive: true });
+      fs.writeFileSync(uploadPath, file.buffer);
+
+      publicUrl = `/uploads/${path}`;
+
+      db.run(
+        `INSERT INTO files (id, program, semester, subject, filename, path, url, uploaded_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          id,
+          program,
+          semester,
+          subject,
+          file.originalname,
+          path,
+          publicUrl,
+          new Date().toISOString(),
+        ]
+      );
+    }
+
+    res.status(200).json({ message: "✅ Upload successful!", id, url: publicUrl });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to update metadata." });
+    console.error("❌ Upload error:", err.message);
+    res.status(500).json({ message: "Upload failed", error: err.message });
   }
 });
 
-// ------------------
-// Metadata API
-// ------------------
-app.get("/api/metadata", (req, res) => {
+// ------------------ FETCH METADATA ENDPOINT ------------------
+app.get("/api/metadata", async (req, res) => {
   try {
-    const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
-    res.json(metadata);
+    if (storageProvider === "supabase") {
+      const { data, error } = await supabase.from("files").select("*").order("uploaded_at", { ascending: false });
+      if (error) throw error;
+      res.json(data);
+    } else {
+      db.all("SELECT * FROM files ORDER BY uploaded_at DESC", [], (err, rows) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ message: "Failed to fetch metadata" });
+        }
+        res.json(rows);
+      });
+    }
   } catch (err) {
-    console.error(err);
-    res.status(500).json({});
+    console.error("❌ Metadata fetch error:", err.message);
+    res.status(500).json({ message: "Failed to fetch metadata" });
   }
 });
 
-// ------------------
-// Requests Feature
-// ------------------
-const requestsPath = path.join(dataDir, "requests.json");
-if (!fs.existsSync(requestsPath) || fs.readFileSync(requestsPath, "utf8").trim() === "") {
-  fs.writeFileSync(requestsPath, JSON.stringify([], null, 2));
-}
-
-app.post("/submit-request", (req, res) => {
-  const { topic, course, program, semester, notes, email } = req.body;
-  if (!topic || !course || !program || !semester) return res.status(400).json({ message: "All fields are required" });
-
-  let requests = [];
-  try { requests = JSON.parse(fs.readFileSync(requestsPath, "utf8")); } catch {}
-
-  const newRequest = { topic, course, program, semester, notes: notes||"", email: email||"", createdAt: new Date().toISOString() };
-  requests.push(newRequest);
-
-  try {
-    fs.writeFileSync(requestsPath, JSON.stringify(requests, null, 2));
-    res.json({ message: "Request saved!", request: newRequest });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to save request" });
-  }
+// ------------------ START SERVER ------------------
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT} (mode=${storageProvider})`);
 });
-
-app.get("/api/requests", (req, res) => {
-  try { const requests = JSON.parse(fs.readFileSync(requestsPath, "utf8")); res.json({ requests }); }
-  catch { res.status(500).json({ requests: [] }); }
-});
-
-app.delete("/api/requests/:index", (req, res) => {
-  const index = parseInt(req.params.index, 10);
-  try {
-    let requests = JSON.parse(fs.readFileSync(requestsPath, "utf8"));
-    if (index<0||index>=requests.length) return res.status(400).json({ message: "Invalid index" });
-    requests.splice(index, 1);
-    fs.writeFileSync(requestsPath, JSON.stringify(requests, null, 2));
-    res.json({ message: "Request deleted successfully" });
-  } catch { res.status(500).json({ message: "Failed to delete request" }); }
-});
-
-// ------------------
-// Real-time Messages via SSE
-// ------------------
-let clients = [];
-
-app.get("/events", (req,res)=>{
-  res.setHeader("Content-Type","text/event-stream");
-  res.setHeader("Cache-Control","no-cache");
-  res.setHeader("Connection","keep-alive");
-  res.flushHeaders();
-
-  clients.push(res);
-
-  req.on("close", ()=>{
-    clients = clients.filter(c=>c!==res);
-  });
-});
-
-function sendMessageNotification(message){
-  clients.forEach(client=>{
-    client.write(`data: ${JSON.stringify(message)}\n\n`);
-  });
-}
-
-// Example: store chat messages in metadata.json
-app.post("/chat-message", (req,res)=>{
-  const { sender, program, text } = req.body;
-  if(!sender || !program || !text) return res.status(400).json({message:"Missing fields"});
-
-  let metadata = JSON.parse(fs.readFileSync(metadataPath,"utf8"));
-  metadata.messages = metadata.messages || [];
-  const newMessage = { sender, program, text, timestamp: new Date().toISOString() };
-  metadata.messages.push(newMessage);
-  fs.writeFileSync(metadataPath, JSON.stringify(metadata,null,2));
-
-  sendMessageNotification(newMessage);
-  res.json({ message:"Message sent!", newMessage });
-});
-
-// ------------------
-// Serve Files
-// ------------------
-app.get("/files/*", (req, res) => {
-  const relativePath = req.params[0];
-  const filePath = path.join(filesDir, relativePath);
-  if (!fs.existsSync(filePath)) return res.status(404).send("File not found");
-
-  const ext = path.extname(filePath).toLowerCase();
-  if(ext===".pdf") res.setHeader("Content-Type","application/pdf");
-  else if(ext===".pptx") res.setHeader("Content-Type","application/vnd.openxmlformats-officedocument.presentationml.presentation");
-  else res.setHeader("Content-Type","application/octet-stream");
-  res.setHeader("Content-Disposition","inline");
-  res.sendFile(filePath);
-});
-
-// ------------------
-// Start Server
-// ------------------
-app.listen(PORT, "0.0.0.0", ()=>console.log(`✅ Server running at http://localhost:${PORT}`));

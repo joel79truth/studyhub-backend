@@ -218,29 +218,68 @@
 
 <script>
 let allPrograms = [];
+let programCounts = {};
 
 async function loadPrograms() {
   try {
     const res = await fetch("/api/metadata");
     const data = await res.json();
+    const files = Array.isArray(data) ? data : (data.files || []);
 
-    const files = data.files || [];
-
-    // Count files per program
-    const counts = {};
+    programCounts = {};
     files.forEach(f => {
       if (f.program) {
-        counts[f.program] = (counts[f.program] || 0) + 1;
+        const key = f.program.trim();
+        programCounts[key] = (programCounts[key] || 0) + 1;
       }
     });
 
-    allPrograms = Object.keys(counts);
-    displayPrograms(allPrograms, counts);
+    allPrograms = Object.keys(programCounts);
+    displayPrograms(allPrograms, programCounts);
   } catch (err) {
     console.error("Failed to load programs:", err);
     displayPrograms([], {});
   }
 }
+
+// Batch-render using innerHTML (much faster)
+function displayPrograms(programs, counts) {
+  const container = document.getElementById("programList");
+  if (!programs.length) {
+    container.innerHTML = "<p>No programs uploaded yet.</p>";
+    return;
+  }
+
+  const seenData = JSON.parse(localStorage.getItem("programSeen") || "{}");
+  const cardsHTML = programs.map(p => {
+    const lastSeen = seenData[p] || 0;
+    const unread = (counts[p] || 0) - lastSeen;
+    const badgeHTML = unread > 0 
+      ? `<div style="
+          position:absolute; top:10px; right:10px;
+          background:red; color:white; font-size:0.8rem; font-weight:bold;
+          padding:5px 8px; border-radius:50%;
+          box-shadow:0 2px 6px rgba(0,0,0,0.3);
+        ">${unread}</div>` 
+      : "";
+    return `
+      <div class="program-card" onclick="openProgram('${p}', ${counts[p]})" style="position:relative;">
+        <h3>${p}</h3>
+        ${badgeHTML}
+      </div>
+    `;
+  }).join("");
+
+  container.innerHTML = cardsHTML;
+}
+
+// Search filter (pass counts!)
+document.getElementById("programSearch").addEventListener("input", function() {
+  const query = this.value.toLowerCase();
+  const filtered = allPrograms.filter(p => p.toLowerCase().includes(query));
+  displayPrograms(filtered, counts);
+});
+
 
 function displayPrograms(programs, counts) {
   const container = document.getElementById("programList");
