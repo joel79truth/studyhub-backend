@@ -101,6 +101,7 @@
   <button class="back-btn" onclick="window.location.href='index.html'" aria-label="Back to Home">🏠 Back to Home</button>
 </div>
 
+
 <script>
 const form = document.getElementById("uploadForm");
 const messageEl = document.getElementById("uploadMessage");
@@ -115,6 +116,13 @@ form.addEventListener("submit", (e) => {
 
   messageEl.textContent = "";
   messageEl.className = "message";
+
+  // ✅ Program validation: must start with Diploma or Bachelors, or be Basics
+  if (!/^Diploma|^Bachelors/i.test(program) && program.toLowerCase() !== "basics") {
+    messageEl.textContent = "⚠️ Program must start with 'Diploma' or 'Bachelors', or be 'Basics'.";
+    messageEl.classList.add("error");
+    return;
+  }
 
   // Only check required fields: Program, Subject, File
   if (!fileInput.files.length || !program || !subject) {
@@ -153,7 +161,10 @@ form.addEventListener("submit", (e) => {
       messageEl.classList.add("success");
       form.reset();
       progressBar.style.width = "100%";
-      setTimeout(() => { progressContainer.style.display = "none"; progressBar.style.width = "0%"; }, 1000);
+      setTimeout(() => { 
+        progressContainer.style.display = "none"; 
+        progressBar.style.width = "0%"; 
+      }, 1000);
     } else {
       let res = {};
       try { res = JSON.parse(xhr.responseText); } catch {}
@@ -174,5 +185,7 @@ form.addEventListener("submit", (e) => {
   xhr.send(formData);
 });
 </script>
+
+
 </body>
 </html>

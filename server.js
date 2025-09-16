@@ -52,12 +52,20 @@ if (storageProvider === "supabase") {
 }
 
 // ------------------ UPLOAD ENDPOINT ------------------
+
 app.post("/upload", upload.single("file"), async (req, res) => {
   const { program, semester, subject } = req.body;
   const file = req.file;
 
   if (!program || !semester || !subject || !file) {
     return res.status(400).json({ message: "Missing required fields or file." });
+  }
+
+  // ✅ Enforce program must start with Diploma or Bachelors, or be Basics
+  if (!/^Diploma|^Bachelors/i.test(program) && program.toLowerCase() !== "basics") {
+    return res.status(400).json({
+      message: "Program must start with 'Diploma' or 'Bachelors', or be 'Basics'."
+    });
   }
 
   const id = uuidv4();
@@ -130,6 +138,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     res.status(500).json({ message: "Upload failed", error: err.message });
   }
 });
+
 
 // ------------------ FETCH METADATA ENDPOINT ------------------
 app.get("/api/metadata", async (req, res) => {
