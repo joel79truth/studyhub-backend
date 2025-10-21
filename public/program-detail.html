@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,15 +33,209 @@ h1 { margin:0; font-size:2rem; }
     color:#1e1e1e;
     box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
-#fileList { margin-top:20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
-.file-card { background:white; border-radius:15px; padding:20px; box-shadow:0 8px 25px rgba(0,0,0,0.15); text-align:center; position: relative; }
-.file-card h3 { margin:0 0 10px 0; font-size:1.1rem; color:#1e1e1e; }
-.file-card p { font-size:0.9rem; color:#555; margin:5px 0; }
-.file-card button { margin:5px; padding:8px 14px; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition: transform 0.2s ease; }
-.view-btn { background:#3498db; color:white; }
-.download-btn { background:#2ecc71; color:white; }
-.file-card button:hover { transform:scale(1.05); }
-.back-home-btn { position:fixed; top:20px; left:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; width:55px; height:55px; background:#000; color:white; text-decoration:none; border-radius:50%; font-size:24px; box-shadow:0 6px 15px rgba(0,0,0,0.3); }
+#fileList { 
+    margin-top:20px; 
+    display:grid; 
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); 
+    gap:24px; 
+}
+
+/* Enhanced File Card */
+.file-card { 
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius:20px; 
+    padding:0;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15), 0 3px 8px rgba(0,0,0,0.1); 
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.8);
+}
+
+.file-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #3498db, #2ecc71, #3498db);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.file-card:hover { 
+    transform: translateY(-8px);
+    box-shadow:0 20px 40px rgba(0,0,0,0.2), 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.file-card-header {
+    padding: 24px 24px 16px 24px;
+    position: relative;
+}
+
+.file-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.file-icon {
+    font-size: 28px;
+}
+
+.file-card h3 { 
+    margin:0 0 12px 0; 
+    font-size:1.15rem; 
+    color:#1e1e1e;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.file-card-body {
+    padding: 0 24px 20px 24px;
+}
+
+.file-info-grid {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.file-info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(52, 152, 219, 0.08);
+    border-radius: 10px;
+    border-left: 3px solid #3498db;
+}
+
+.file-info-item.subject {
+    background: rgba(46, 204, 113, 0.08);
+    border-left-color: #2ecc71;
+}
+
+.file-info-label {
+    font-size: 0.75rem;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 70px;
+}
+
+.file-info-value {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+    flex: 1;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.file-card button { 
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-card button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.file-card button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.view-btn { 
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.view-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+}
+
+.view-btn:active {
+    transform: translateY(0);
+}
+
+.download-btn { 
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(46, 204, 113, 0.4);
+}
+
+.download-btn:active {
+    transform: translateY(0);
+}
+
+.back-home-btn { 
+    position:fixed; 
+    top:20px; 
+    left:20px; 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    justify-content:center; 
+    width:55px; 
+    height:55px; 
+    background:#000; 
+    color:white; 
+    text-decoration:none; 
+    border-radius:50%; 
+    font-size:24px; 
+    box-shadow:0 6px 15px rgba(0,0,0,0.3); 
+}
 
 /* Modal styles */
 #viewerModal {
@@ -70,6 +263,87 @@ h1 { margin:0; font-size:2rem; }
     color:white;
     cursor:pointer;
 }
+
+#youButton {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000;
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+#youButton .btn-label {
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #fileList {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+    
+    .file-card {
+        border-radius: 16px;
+    }
+    
+    .file-card-header {
+        padding: 20px 20px 12px 20px;
+    }
+    
+    .file-card-body {
+        padding: 0 20px 16px 20px;
+    }
+    
+    .file-icon-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .file-icon {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+  #youButton .profile-picture {
+    width: 40px;
+    height: 40px;
+  }
+
+  #youButton .btn-label {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  #youButton {
+    top: 5px;
+    right: 5px;
+  }
+  
+  #youButton .profile-picture {
+    width: 35px;
+    height: 35px;
+  }
+
+  #youButton .btn-label {
+    font-size: 10px;
+  }
+}
 </style>
 
 <!-- Google Analytics -->
@@ -86,6 +360,16 @@ gtag('config', 'G-0LTZS1S9W6');
 
 <header><h1 id="programTitle">Program Details</h1></header>
 <a href="program.html" class="back-home-btn" aria-label="Back to Programs">🏠</a>
+
+<div class="profile-container" id="youButton">
+  <a href="profile.html">
+    <img id="youProfilePic" 
+         src="https://cdn-icons-png.flaticon.com/512/847/847969.png" 
+         alt="Profile Picture" 
+         class="profile-picture">
+  </a>
+  <div class="btn-label">You</div>
+</div>
 
 <div class="container">
   <div class="search-bar">
@@ -107,12 +391,43 @@ document.getElementById("programTitle").textContent = programName || "Program De
 
 let allFiles = [];
 
+// Get file icon based on extension
+function getFileIcon(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  const iconMap = {
+    'pdf': '📄',
+    'doc': '📝',
+    'docx': '📝',
+    'ppt': '📊',
+    'pptx': '📊',
+    'xls': '📈',
+    'xlsx': '📈',
+    'txt': '📃',
+    'jpg': '🖼️',
+    'jpeg': '🖼️',
+    'png': '🖼️',
+    'gif': '🖼️',
+    'mp4': '🎥',
+    'mp3': '🎵',
+    'zip': '📦',
+    'rar': '📦'
+  };
+  return iconMap[ext] || '📁';
+}
+
+// Load files from metadata
 async function loadFiles() {
   try {
     const res = await fetch("/api/metadata");
     const metadata = await res.json();
-    const files = Array.isArray(metadata) ? metadata : (metadata.files || []);
-    allFiles = files.filter(f => f.program?.toLowerCase() === (programName||"").toLowerCase());
+
+    const files = Array.isArray(metadata) ? metadata : metadata.files || [];
+
+    // Filter by program
+    allFiles = files.filter(f =>
+      f.program?.toLowerCase() === (programName || "").toLowerCase()
+    );
+
     displayFiles(allFiles);
   } catch (err) {
     console.error(err);
@@ -120,63 +435,88 @@ async function loadFiles() {
   }
 }
 
+// Display file cards
 function displayFiles(files) {
   const container = document.getElementById("fileList");
   if (!files.length) {
     container.innerHTML = "<p>No files available for this program.</p>";
     return;
   }
-  container.innerHTML = files.map(f => `
-    <div class="file-card">
-      <h3>${f.filename}</h3>
-      <p><strong>Semester:</strong> ${f.semester}</p>
-      <p><strong>Subject:</strong> ${f.subject}</p>
-      <button class="view-btn" onclick="viewFile('${f.url}')">View</button>
-      <button class="download-btn" onclick="downloadFile('${f.url}')">Download</button>
-    </div>
-  `).join('');
+
+  container.innerHTML = files.map(f => {
+    // Use full URL for external links, otherwise relative
+    const filePath = f.url.startsWith("http") ? f.url : (f.url.startsWith("/") ? f.url.slice(1) : f.url);
+    const fileIcon = getFileIcon(f.filename);
+
+    return `
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-icon-wrapper">
+            <div class="file-icon">${fileIcon}</div>
+          </div>
+          <h3>${f.filename}</h3>
+        </div>
+        <div class="file-card-body">
+          <div class="file-info-grid">
+            <div class="file-info-item">
+              <div class="file-info-label">Semester</div>
+              <div class="file-info-value">${f.semester}</div>
+            </div>
+            <div class="file-info-item subject">
+              <div class="file-info-label">Subject</div>
+              <div class="file-info-value">${f.subject}</div>
+            </div>
+          </div>
+          <div class="button-group">
+            <button class="view-btn" onclick="viewFile('${filePath}')">
+              <span>👁️</span>
+              <span>View</span>
+            </button>
+            <button class="download-btn" onclick="downloadFile('${filePath}')">
+              <span>⬇️</span>
+              <span>Download</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-// Open file in modal
-function viewFile(url) {
-    const ext = url.split('.').pop().toLowerCase();
-    const iframe = document.getElementById('viewerFrame');
-
-    if (ext === "pdf") {
-        iframe.src = url;
-    } else if (ext === "pptx") {
-        iframe.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(location.origin + url)}`;
-    } else {
-        alert("Cannot preview this file type.");
-        return;
-    }
-
-    document.getElementById('viewerModal').style.display = "flex";
+// Open file — works for external URLs
+function viewFile(filePath) {
+  window.open(filePath, "_blank");
 }
 
-function closeViewer() {
-    document.getElementById('viewerModal').style.display = "none";
-    document.getElementById('viewerFrame').src = "";
-}
-
+// Download file — works for external URLs
 function downloadFile(url) {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = url.split("/").pop();
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = url.split("/").pop();
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
-// Search
+
+
+
+
+// Search functionality
 document.getElementById("fileSearch").addEventListener("input", function() {
-    const query = this.value.toLowerCase();
-    const filtered = allFiles.filter(f => f.filename.toLowerCase().includes(query) || f.subject.toLowerCase().includes(query));
-    displayFiles(filtered);
+  const query = this.value.toLowerCase();
+  const filtered = allFiles.filter(f =>
+    f.filename.toLowerCase().includes(query) ||
+    f.subject.toLowerCase().includes(query)
+  );
+  displayFiles(filtered);
 });
 
+// Initialize
 loadFiles();
 </script>
+
+
 
 </body>
 </html>
