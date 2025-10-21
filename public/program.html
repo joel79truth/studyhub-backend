@@ -3,392 +3,520 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Programs – StudyHub LUANAR</title>
-<link rel="stylesheet" href="style.css">
+<title>Program Details – StudyHub LUANAR</title>
 <style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
-    background-size: cover;
-  }
-  header {
-    text-align: center;
-    padding: 20px;
+body {
+    font-family:'Segoe UI',sans-serif;
+    margin:0;
+    padding:0;
+    background:url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
+    background-size:cover;
+}
+header {
+    text-align:center;
+    padding:20px;
     background: rgba(15,172,23,0.8);
-    color: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  }
-  h1 { margin: 0; font-size: 2rem; }
-  .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
-  .search-bar { width: 300px; margin: 20px auto; position: relative; }
-  .search-bar input {
-    width: 100%;
-    padding: 10px 40px 10px 15px;
-    border-radius: 50px;
-    border: none;
-    outline: none;
-    font-size: 14px;
+    color:white;
+    box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+h1 { margin:0; font-size:2rem; }
+.container { max-width:900px; margin:20px auto; padding:0 20px; }
+.search-bar { width:300px; margin:20px auto; }
+.search-bar input {
+    width:100%;
+    padding:10px 15px;
+    border-radius:50px;
+    border:none;
+    outline:none;
+    font-size:14px;
     background: rgba(255,255,255,0.9);
-    color: #1e1e1e;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-  }
-  #programList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-  }
-  .program-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .program-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-  }
-  .back-home-btn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
+    color:#1e1e1e;
+    box-shadow:0 6px 15px rgba(0,0,0,0.2);
+}
+#fileList { 
+    margin-top:20px; 
+    display:grid; 
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); 
+    gap:24px; 
+}
+
+/* Enhanced File Card */
+.file-card { 
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius:20px; 
+    padding:0;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15), 0 3px 8px rgba(0,0,0,0.1); 
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.8);
+}
+
+.file-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #3498db, #2ecc71, #3498db);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.file-card:hover { 
+    transform: translateY(-8px);
+    box-shadow:0 20px 40px rgba(0,0,0,0.2), 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.file-card-header {
+    padding: 24px 24px 16px 24px;
+    position: relative;
+}
+
+.file-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 14px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 55px;
-    height: 55px;
-    background: #000;
-    color: white;
-    text-decoration: none;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.file-icon {
+    font-size: 28px;
+}
+
+.file-card h3 { 
+    margin:0 0 12px 0; 
+    font-size:1.15rem; 
+    color:#1e1e1e;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.file-card-body {
+    padding: 0 24px 20px 24px;
+}
+
+.file-info-grid {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.file-info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(52, 152, 219, 0.08);
+    border-radius: 10px;
+    border-left: 3px solid #3498db;
+}
+
+.file-info-item.subject {
+    background: rgba(46, 204, 113, 0.08);
+    border-left-color: #2ecc71;
+}
+
+.file-info-label {
+    font-size: 0.75rem;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 70px;
+}
+
+.file-info-value {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+    flex: 1;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.file-card button { 
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-card button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
     border-radius: 50%;
-    font-size: 24px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.file-card button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.view-btn { 
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.view-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+}
+
+.view-btn:active {
+    transform: translateY(0);
+}
+
+.download-btn { 
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(46, 204, 113, 0.4);
+}
+
+.download-btn:active {
+    transform: translateY(0);
+}
+
+.back-home-btn { 
+    position:fixed; 
+    top:20px; 
+    left:20px; 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    justify-content:center; 
+    width:55px; 
+    height:55px; 
+    background:#000; 
+    color:white; 
+    text-decoration:none; 
+    border-radius:50%; 
+    font-size:24px; 
+    box-shadow:0 6px 15px rgba(0,0,0,0.3); 
+}
+
+/* Modal styles */
+#viewerModal {
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.8);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+#viewerModal iframe {
+    width:90%;
+    max-width:800px;
+    height:80%;
+    border:none;
+    border-radius:12px;
+    background:white;
+}
+#viewerModal .close-btn {
+    position:absolute;
+    top:20px;
+    right:20px;
+    font-size:30px;
+    color:white;
+    cursor:pointer;
+}
+
+#youButton {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000;
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+#youButton .btn-label {
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #fileList {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+    
+    .file-card {
+        border-radius: 16px;
+    }
+    
+    .file-card-header {
+        padding: 20px 20px 12px 20px;
+    }
+    
+    .file-card-body {
+        padding: 0 20px 16px 20px;
+    }
+    
+    .file-icon-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .file-icon {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+  #youButton .profile-picture {
+    width: 40px;
+    height: 40px;
   }
 
- /* Container (draggable) */
-.action-menu {
-  position: fixed;
-  top: 170px;
-  right: 80px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: grab;
-  z-index: 9999;
-  user-select: none;
+  #youButton .btn-label {
+    font-size: 12px;
+  }
 }
 
-.action-menu.dragging {
-  cursor: grabbing;
+@media (max-width: 400px) {
+  #youButton {
+    top: 5px;
+    right: 5px;
+  }
+  
+  #youButton .profile-picture {
+    width: 35px;
+    height: 35px;
+  }
+
+  #youButton .btn-label {
+    font-size: 10px;
+  }
 }
-
-/* Toggle button (< / >) */
-.toggle-btn {
-  width: 45px;
-  height: 45px;
-  border: none;
-  border-radius: 50%;
-  background: black;
-  color: white;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: transform 0.3s, background 0.3s;
-}
-
-.toggle-btn:hover {
-  background: #333;
-}
-
-/* Actions container */
-.actions {
-  display: flex;
-  gap: 12px;
-  opacity: 0;
-  transform: translateX(60px); /* hidden to the right */
-  transition: all 0.4s ease;
-  pointer-events: none;
-}
-
-/* Active state -> show */
-.action-menu.active .actions {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
-}
-
-/* Action buttons */
-.actions a {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 20px;
-  text-decoration: none;
-  box-shadow: 0 5px 12px rgba(0,0,0,0.3);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-/* Hover effect */
-.actions a:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
-}
-
-/* Button colors */
-.actions a[title="Upload Notes"] { background: linear-gradient(135deg,#4f46e5,#3b82f6); }
-.actions a[title="Request Notes"] { background: linear-gradient(135deg,#9333ea,#a855f7); }
-.actions a[title="Wisdom"] { background: linear-gradient(135deg,#f59e0b,#facc15); }
-.actions a[title="Video Lessons"] { background: linear-gradient(135deg,#10b981,#34d399); }
-
 </style>
 
-<!-- Google tag (gtag.js) -->
+<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0LTZS1S9W6');
+window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', 'G-0LTZS1S9W6');
 </script>
-
 
 </head>
 <body>
 
-<a href="index.html" class="back-home-btn" aria-label="Back to Home">🏠</a>
-<header><h1>LUANAR Programs</h1></header>
+<header><h1 id="programTitle">Program Details</h1></header>
+<a href="program.html" class="back-home-btn" aria-label="Back to Programs">🏠</a>
 
-<!-- Search & Action Buttons -->
-<div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
-
-<div style="
-  text-align:center; 
-  margin-bottom:10px; 
-  font-size:0.9rem; 
-  color:#000000; 
-  font-weight:bold;
-  background: rgba(255,255,255,0.7); 
-  padding:5px 10px; 
-  border-radius:8px;
-  display: inline-block;
-">
-  Have notes to share? Upload them or request others' notes!
+<div class="profile-container" id="youButton">
+  <a href="profile.html">
+    <img id="youProfilePic" 
+         src="https://cdn-icons-png.flaticon.com/512/847/847969.png" 
+         alt="Profile Picture" 
+         class="profile-picture">
+  </a>
+  <div class="btn-label">You</div>
 </div>
-
-
-</div>
-<br>
-<div class="action-menu" id="actionMenu">
-  <button class="toggle-btn" id="menuToggle">&lt;</button>
-  <div class="actions" id="actions">
-    <a href="upload.html" title="Upload Notes">📤</a>
-    <a href="request.html" title="Request Notes">📩</a>
-    <a href="wisdom.html" title="Wisdom">💡</a>
-    <a href="videolesson.html" title="Video Lessons">🎥</a>
-  </div>
-</div>
-
-
-
-  <br>
-</div>
-
-
-
-  
-
 
 <div class="container">
   <div class="search-bar">
-    <input type="text" id="programSearch" placeholder="Search programs...">
+    <input type="text" id="fileSearch" placeholder="Search files by subject or name...">
   </div>
-  <div id="programList"></div>
+  <div id="fileList"></div>
+</div>
+
+<!-- Modal for viewing -->
+<div id="viewerModal">
+    <span class="close-btn" onclick="closeViewer()">×</span>
+    <iframe id="viewerFrame"></iframe>
 </div>
 
 <script>
-let allPrograms = [];
-let programCounts = {};
+const params = new URLSearchParams(window.location.search);
+const programName = params.get("program");
+document.getElementById("programTitle").textContent = programName || "Program Details";
 
-async function loadPrograms() {
+let allFiles = [];
+
+// Get file icon based on extension
+function getFileIcon(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  const iconMap = {
+    'pdf': '📄',
+    'doc': '📝',
+    'docx': '📝',
+    'ppt': '📊',
+    'pptx': '📊',
+    'xls': '📈',
+    'xlsx': '📈',
+    'txt': '📃',
+    'jpg': '🖼️',
+    'jpeg': '🖼️',
+    'png': '🖼️',
+    'gif': '🖼️',
+    'mp4': '🎥',
+    'mp3': '🎵',
+    'zip': '📦',
+    'rar': '📦'
+  };
+  return iconMap[ext] || '📁';
+}
+
+// Load files from metadata
+async function loadFiles() {
   try {
     const res = await fetch("/api/metadata");
-    const data = await res.json();
-    const files = Array.isArray(data) ? data : (data.files || []);
+    const metadata = await res.json();
 
-    programCounts = {};
-    files.forEach(f => {
-      if (f.program) {
-        const key = f.program.trim();
-        programCounts[key] = (programCounts[key] || 0) + 1;
-      }
-    });
+    const files = Array.isArray(metadata) ? metadata : metadata.files || [];
 
-    allPrograms = Object.keys(programCounts);
-    displayPrograms(allPrograms, programCounts);
+    // Filter by program
+    allFiles = files.filter(f =>
+      f.program?.toLowerCase() === (programName || "").toLowerCase()
+    );
+
+    displayFiles(allFiles);
   } catch (err) {
-    console.error("Failed to load programs:", err);
-    displayPrograms([], {});
+    console.error(err);
+    document.getElementById("fileList").innerHTML = "<p>Error loading files.</p>";
   }
 }
 
-// Batch-render using innerHTML (much faster)
-function displayPrograms(programs, counts) {
-  const container = document.getElementById("programList");
-  if (!programs.length) {
-    container.innerHTML = "<p>No programs uploaded yet.</p>";
+// Display file cards
+function displayFiles(files) {
+  const container = document.getElementById("fileList");
+  if (!files.length) {
+    container.innerHTML = "<p>No files available for this program.</p>";
     return;
   }
 
-  const seenData = JSON.parse(localStorage.getItem("programSeen") || "{}");
-  const cardsHTML = programs.map(p => {
-    const lastSeen = seenData[p] || 0;
-    const unread = (counts[p] || 0) - lastSeen;
-    const badgeHTML = unread > 0 
-      ? `<div style="
-          position:absolute; top:10px; right:10px;
-          background:red; color:white; font-size:0.8rem; font-weight:bold;
-          padding:5px 8px; border-radius:50%;
-          box-shadow:0 2px 6px rgba(0,0,0,0.3);
-        ">${unread}</div>` 
-      : "";
+  container.innerHTML = files.map(f => {
+    // Use full URL for external links, otherwise relative
+    const filePath = f.url.startsWith("http") ? f.url : (f.url.startsWith("/") ? f.url.slice(1) : f.url);
+    const fileIcon = getFileIcon(f.filename);
+
     return `
-      <div class="program-card" onclick="openProgram('${p}', ${counts[p]})" style="position:relative;">
-        <h3>${p}</h3>
-        ${badgeHTML}
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-icon-wrapper">
+            <div class="file-icon">${fileIcon}</div>
+          </div>
+          <h3>${f.filename}</h3>
+        </div>
+        <div class="file-card-body">
+          <div class="file-info-grid">
+            <div class="file-info-item">
+              <div class="file-info-label">Semester</div>
+              <div class="file-info-value">${f.semester}</div>
+            </div>
+            <div class="file-info-item subject">
+              <div class="file-info-label">Subject</div>
+              <div class="file-info-value">${f.subject}</div>
+            </div>
+          </div>
+          <div class="button-group">
+            <button class="view-btn" onclick="viewFile('${filePath}')">
+              <span>👁️</span>
+              <span>View</span>
+            </button>
+            <button class="download-btn" onclick="downloadFile('${filePath}')">
+              <span>⬇️</span>
+              <span>Download</span>
+            </button>
+          </div>
+        </div>
       </div>
     `;
-  }).join("");
-
-  container.innerHTML = cardsHTML;
+  }).join('');
 }
 
-// Search filter (pass counts!)
-document.getElementById("programSearch").addEventListener("input", function() {
+// Open file — works for external URLs
+function viewFile(filePath) {
+  window.open(filePath, "_blank");
+}
+
+// Download file — works for external URLs
+function downloadFile(url) {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = url.split("/").pop();
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+
+
+
+
+// Search functionality
+document.getElementById("fileSearch").addEventListener("input", function() {
   const query = this.value.toLowerCase();
-  const filtered = allPrograms.filter(p => p.toLowerCase().includes(query));
-  displayPrograms(filtered, counts);
+  const filtered = allFiles.filter(f =>
+    f.filename.toLowerCase().includes(query) ||
+    f.subject.toLowerCase().includes(query)
+  );
+  displayFiles(filtered);
 });
 
-
-function displayPrograms(programs, counts) {
-  const container = document.getElementById("programList");
-  container.innerHTML = "";
-
-  if (!programs.length) {
-    container.textContent = "No programs uploaded yet.";
-    return;
-  }
-
-  const seenData = JSON.parse(localStorage.getItem("programSeen") || "{}");
-
-  programs.forEach(p => {
-    const card = document.createElement("div");
-    card.className = "program-card";
-    card.addEventListener("click", () => openProgram(p, counts[p]));
-
-    const title = document.createElement("h3");
-    title.textContent = p;
-    card.appendChild(title);
-
-    // unread count = current total - last seen
-    const lastSeen = seenData[p] || 0;
-    const unread = (counts[p] || 0) - lastSeen;
-
-    if (unread > 0) {
-      const badge = document.createElement("div");
-      badge.textContent = unread;
-      badge.style.cssText = `
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: red;
-        color: white;
-        font-size: 0.8rem;
-        font-weight: bold;
-        padding: 5px 8px;
-        border-radius: 50%;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      `;
-      card.style.position = "relative";
-      card.appendChild(badge);
-    }
-
-    container.appendChild(card);
-  });
-}
-
-function openProgram(program, currentCount) {
-  const seenData = JSON.parse(localStorage.getItem("programSeen") || "{}");
-  seenData[program] = currentCount; // mark current total as seen
-  localStorage.setItem("programSeen", JSON.stringify(seenData));
-
-  window.location.href = `program-detail.html?program=${encodeURIComponent(program)}`;
-}
-
-
-// Search filter
-document.getElementById("programSearch").addEventListener("input", function() {
-  const query = this.value.toLowerCase();
-  const filtered = allPrograms.filter(p => p.toLowerCase().includes(query));
-  displayPrograms(filtered);
-});
-
-const actionMenu = document.querySelector(".action-menu");
-const toggleBtn = document.querySelector(".toggle-btn");
-
-toggleBtn.addEventListener("click", () => {
-  actionMenu.classList.toggle("active");
-  toggleBtn.textContent = actionMenu.classList.contains("active") ? ">" : "<";
-});
-
-/* ---- Draggable Support ---- */
-let isDragging = false;
-let offsetX, offsetY;
-
-actionMenu.addEventListener("mousedown", (e) => {
-  if (e.target === toggleBtn) return; // don’t drag when clicking toggle
-  isDragging = true;
-  offsetX = e.clientX - actionMenu.getBoundingClientRect().left;
-  offsetY = e.clientY - actionMenu.getBoundingClientRect().top;
-  actionMenu.classList.add("dragging");
-});
-
-document.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-  let x = e.clientX - offsetX;
-  let y = e.clientY - offsetY;
-
-  // Keep inside screen bounds
-  const maxX = window.innerWidth - actionMenu.offsetWidth;
-  const maxY = window.innerHeight - actionMenu.offsetHeight;
-  x = Math.max(0, Math.min(x, maxX));
-  y = Math.max(0, Math.min(y, maxY));
-
-  actionMenu.style.left = x + "px";
-  actionMenu.style.top = y + "px";
-  actionMenu.style.right = "auto"; // release from fixed right
-});
-
-document.addEventListener("mouseup", () => {
-  isDragging = false;
-  actionMenu.classList.remove("dragging");
-});
-
-
-
-loadPrograms();
+// Initialize
+loadFiles();
 </script>
+
+
 
 </body>
 </html>
