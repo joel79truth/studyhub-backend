@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Profile – StudyHub LUANAR</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+body, html {
+  height: 100%;
+  background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+.profile-container {
+  background: rgba(20,20,20,0.5);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+  padding: 40px 30px;
+  width: 95%;
+  max-width: 650px;
+  text-align: center;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+  position: relative;
+}
+h1 { margin-bottom: 20px; font-size: 2rem; color: aliceblue; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
+.profile-picture { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #00ffff; margin-bottom: 15px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.profile-picture:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,255,255,0.5); }
+.user-email, .user-name { margin-bottom: 15px; font-weight: 600; font-size: 1.1rem; color: #00ffff; }
+.edit-btn { background: #00ffff; color: #000; border: none; padding: 8px 18px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-bottom: 25px; }
+.edit-btn:hover { background: #16ff29; }
+.edit-profile-form { display: none; margin-bottom: 25px; text-align: left; }
+.edit-profile-form input { width: 100%; padding: 8px 12px; margin-bottom: 12px; border-radius: 10px; border: none; font-size: 1rem; }
+.edit-profile-form button { background: #00ffff; color: #000; border: none; padding: 8px 18px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+.edit-profile-form button:hover { background: #16ff29; }
+.files-list { text-align: left; max-height: 300px; overflow-y: auto; padding-right: 5px; }
+.file-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s ease; }
+.file-card:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
+.file-name { font-weight: 500; color: #fff; word-break: break-word; }
+.file-link { background: #00ffff; padding: 5px 12px; border-radius: 10px; text-decoration: none; color: #000; font-weight: 600; transition: all 0.3s ease; }
+.file-link:hover { background: #16ff29; color: #000; }
+
+/* Top Buttons */
+.top-btns-container {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 12px;
+}
+.top-btn { text-decoration: none; color: white; display: flex; align-items: center; }
+.top-btn img { width: 28px; height: 28px; filter: invert(1); transition: transform 0.3s ease, filter 0.3s ease; }
+.top-btn:hover img { transform: scale(1.1); filter: drop-shadow(0 0 6px #00ffff); }
+
+/* Floating menu */
+.floating-menu-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+  position: relative;
+}
+.toggle-btn {
+  width: 50px; height: 50px; border-radius: 50%; background: #111; color: #fff; font-size: 24px;
+  cursor: pointer; display: flex; justify-content: center; align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4); transition: all 0.3s ease;
+}
+.toggle-btn:hover { background: #333; }
+.action-btns {
+  display: flex;
+  gap: 12px;
+  margin-left: 10px;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.4s ease;
+}
+.floating-menu-container.active .action-btns { opacity: 1; transform: translateX(0); }
+.action-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 14px; }
+.action-btn button {
+  width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: all 0.3s ease;
+  display: flex; justify-content: center; align-items: center;
+}
+.action-btn img { width: 24px; height: 24px; }
+.action-btn span { margin-top: 4px; font-size: 12px; font-weight: 600; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.action-btn button:hover { transform: scale(1.1); }
+
+/* Button colors */
+.action-btn[data-type="upload"] button { background: #4f46e5; }
+.action-btn[data-type="wisdom"] button { background: #000; }
+.action-btn[data-type="video"] button { background: #fff; }
+.action-btn[data-type="addfriend"] button { background: #f43f5e; }
+.action-btn[data-type="logout"] button { background: #ef4444; }
+</style>
+</head>
+<body>
+
+<div class="profile-container">
+  <h1>Your Profile</h1>
+
+  <div class="top-btns-container">
+    <a href="chat.html" class="top-btn">
+      <img src="https://cdn-icons-png.flaticon.com/512/3670/3670373.png" alt="Messages">
+    </a>
+    <a href="friend_requests.html" class="top-btn">
+      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Friend Requests">
+    </a>
+  </div>
+
+  <a href="javascript:history.back()" class="top-btn" style="position:absolute; left:15px; top:15px;">
+    <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="Back">
+  </a>
+
+  <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Profile Picture" id="profilePic" class="profile-picture" title="Click to change profile picture">
+  <input type="file" id="uploadPic" accept="image/*" style="display:none;">
+
+  <div class="user-name" id="userName">Loading...</div>
+  <div class="user-email" id="userEmail"></div>
+
+  <button class="edit-btn" id="editProfileBtn">Edit Profile</button>
+
+  <!-- Floating menu -->
+  <div class="floating-menu-container" id="floatingMenu">
+    <div class="toggle-btn" id="menuToggle">&lt;</div>
+    <div class="action-btns">
+      <div class="action-btn" data-type="upload">
+        <button title="Upload Notes"><img src="https://cdn-icons-png.flaticon.com/512/109/109035.png"></button>
+        <span>Upload</span>
+      </div>
+      <div class="action-btn" data-type="wisdom">
+        <button title="Wisdom"><img src="https://cdn-icons-png.flaticon.com/512/103/103350.png"></button>
+        <span>Wisdom</span>
+      </div>
+      <div class="action-btn" data-type="video">
+        <button title="Videos"><img src="https://cdn-icons-png.flaticon.com/512/7869/7869443.png"></button>
+        <span>Videos</span>
+      </div>
+      <div class="action-btn" data-type="addfriend">
+        <button title="Friend Requests"><img src="https://cdn-icons-png.flaticon.com/512/992/992477.png"></button>
+        <span>Requests</span>
+      </div>
+      <div class="action-btn" data-type="logout">
+        <button title="Logout"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828574.png"></button>
+        <span>Logout</span>
+      </div>
+    </div>
+  </div>
+
+  <form class="edit-profile-form" id="editProfileForm">
+    <input type="text" id="editName" placeholder="Display Name" required>
+    <input type="email" id="editEmail" placeholder="Email" required>
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <h2>Your Uploaded Files</h2>
+  <div class="files-list" id="filesList"><p style="text-align:center;">Loading...</p></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile, updateEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
+  projectId: "studyhub-backend",
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Elements
+const profilePic = document.getElementById("profilePic");
+const userNameDiv = document.getElementById("userName");
+const userEmailDiv = document.getElementById("userEmail");
+const uploadInput = document.getElementById("uploadPic");
+const editProfileBtn = document.getElementById("editProfileBtn");
+const editProfileForm = document.getElementById("editProfileForm");
+const editNameInput = document.getElementById("editName");
+const editEmailInput = document.getElementById("editEmail");
+const filesList = document.getElementById("filesList");
+
+// Load cached profile picture instantly
+const cachedPic = localStorage.getItem("userProfilePic");
+if (cachedPic) profilePic.src = cachedPic;
+
+// Auth check
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    // Keep cached image when user logs out accidentally
+    const savedPic = localStorage.getItem("userProfilePic");
+    localStorage.clear();
+    if (savedPic) localStorage.setItem("userProfilePic", savedPic);
+    window.location.replace("login.html");
+    return;
+  }
+
+  profilePic.src = user.photoURL || localStorage.getItem("userProfilePic") || "https://www.w3schools.com/howto/img_avatar.png";
+  userNameDiv.textContent = user.displayName || "No Name";
+  userEmailDiv.textContent = user.email;
+
+  try {
+    const token = await user.getIdToken();
+    const response = await fetch("/api/metadata", { headers: { "Authorization": "Bearer " + token } });
+    const data = await response.json();
+    const userFiles = data.filter(f => f.email === user.email);
+    filesList.innerHTML = userFiles.length === 0
+      ? '<p style="text-align:center;">No uploaded files yet.</p>'
+      : userFiles.map(f => `<div class="file-card"><span class="file-name">${f.filename} (${f.subject}, Sem ${f.semester})</span><a href="${f.url}" target="_blank" class="file-link">View</a></div>`).join('');
+  } catch (err) {
+    console.error(err);
+    filesList.innerHTML = '<p style="text-align:center;">Failed to load files.</p>';
+  }
+});
+
+// Profile picture change
+profilePic.addEventListener("click", () => uploadInput.click());
+uploadInput.addEventListener("change", function() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const newPhoto = e.target.result;
+      profilePic.src = newPhoto;
+      localStorage.setItem("userProfilePic", newPhoto);
+      if (auth.currentUser) updateProfile(auth.currentUser, { photoURL: newPhoto });
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Edit profile toggle
+editProfileBtn.addEventListener("click", () => {
+  editProfileForm.style.display = editProfileForm.style.display === "block" ? "none" : "block";
+  editNameInput.value = auth.currentUser?.displayName || "";
+  editEmailInput.value = auth.currentUser?.email || "";
+});
+
+// Save changes
+editProfileForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    await updateProfile(user, { displayName: editNameInput.value });
+    if (user.email !== editEmailInput.value) await updateEmail(user, editEmailInput.value);
+    userNameDiv.textContent = editNameInput.value;
+    userEmailDiv.textContent = editEmailInput.value;
+    alert("Profile updated successfully!");
+    editProfileForm.style.display = "none";
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update profile.");
+  }
+});
+
+// Floating menu
+const floatingMenu = document.getElementById("floatingMenu");
+const toggleBtn = document.getElementById("menuToggle");
+toggleBtn.addEventListener("click", () => {
+  floatingMenu.classList.toggle("active");
+  toggleBtn.textContent = floatingMenu.classList.contains("active") ? '>' : '<';
+});
+
+// Navigation buttons
+document.querySelector('.action-btn[data-type="logout"] button').addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    localStorage.clear();
+    window.location.replace("login.html");
+  } catch (error) {
+    console.error("Logout failed:", error);
+    alert("Logout failed. Try again.");
+  }
+});
+document.querySelector('.action-btn[data-type="addfriend"] button').addEventListener("click", () => window.location.href="friend_requests.html");
+document.querySelector('.action-btn[data-type="upload"] button').addEventListener("click", () => window.location.href="upload.html");
+document.querySelector('.action-btn[data-type="wisdom"] button').addEventListener("click", () => window.location.href="wisdom.html");
+document.querySelector('.action-btn[data-type="video"] button').addEventListener("click", () => window.location.href="videolesson.html");
+</script>
+</body>
+</html>

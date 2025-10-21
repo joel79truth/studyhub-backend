@@ -1,64 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Assistant – Coming Soon</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #eef2ff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
-      color: #333;
-    }
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      max-width: 500px;
-    }
-    h1 { color: #4f46e5; margin-bottom: 20px; }
-    p { font-size: 1.1rem; margin-bottom: 20px; line-height: 1.5; }
-    a {
-      display: inline-block;
-      padding: 12px 25px;
-      background: #3b82f6;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    a:hover { background: #2563eb; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Chat – StudyHub</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #eef2ff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+    margin: 0;
+  }
+  .chat-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    max-width: 600px;
+    width: 90%;
+    padding: 30px;
+  }
+  h1 {
+    text-align: center;
+    color: #4f46e5;
+    margin-bottom: 20px;
+  }
+  textarea {
+    width: 100%;
+    height: 100px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 1rem;
+    resize: vertical;
+    margin-bottom: 10px;
+  }
+  button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: #2563eb;
+  }
+  #response {
+    margin-top: 20px;
+    white-space: pre-wrap;
+    background: #f1f5ff;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 80px;
+  }
+</style>
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0LTZS1S9W6');
-</script>
-
-
 <body>
-  <div class="container">
-    <h1>🚀 AI Assistant – Coming Soon!</h1>
-    <p>We’re building something amazing that will make learning easier and faster for everyone.  
-    Your help can make it even better! If you’re passionate about education and tech, we’d love to collaborate with you.</p>
-    <p>Reach out to us via WhatsApp or call at:</p>
-    <a href="tel:0986742072">📞 0986742072</a>
-    <p style="margin-top:20px; font-size:0.9rem; color:#555;">
-      Let’s create something impactful together. Your ideas and contributions are welcome!
-    </p>
+  <div class="chat-container">
+    <h1>📚 AI Chat – StudyHub</h1>
+    <textarea id="question" placeholder="Ask anything about your course notes..."></textarea>
+    <button onclick="ask()">Ask</button>
+    <div id="response">Your AI answer will appear here...</div>
   </div>
+
+<script>
+async function ask() {
+  const question = document.getElementById("question").value.trim();
+  if (!question) return;
+
+  const responseDiv = document.getElementById("response");
+  responseDiv.innerText = "🤖 Thinking...";
+
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question })
+    });
+    const data = await res.json();
+    responseDiv.innerText = data.answer || "No answer found.";
+  } catch (err) {
+    console.error(err);
+    responseDiv.innerText = "❌ Failed to get response from AI.";
+  }
+}
+</script>
 </body>
 </html>

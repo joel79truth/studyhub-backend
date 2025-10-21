@@ -89,28 +89,27 @@ document.addEventListener('DOMContentLoaded', () => {
       fileList.innerHTML = '<p>No files found for this subject.</p>';
       return;
     }
-   files.forEach(file => {
-  const card = document.createElement('div');
-  card.className = 'file-card';
 
-  // Determine the proper file query path for view
-  let fileQueryPath = file.url;
+    files.forEach(file => {
+      const card = document.createElement('div');
+      card.className = 'file-card';
 
-  // Remove leading slash for the query param
-  if (fileQueryPath.startsWith('/')) fileQueryPath = fileQueryPath.slice(1);
+      // Clean path
+      let fileQueryPath = file.url;
+      if (fileQueryPath.startsWith('/')) fileQueryPath = fileQueryPath.slice(1);
 
-  card.innerHTML = `
-    <h3>${file.name}</h3>
-    <p><strong>Program:</strong> ${file.program}</p>
-    <p><strong>Semester:</strong> ${file.semester}</p>
-    <p><strong>Subject:</strong> ${file.subject}</p>
-    <div class="button-group">
-      <button onclick="window.open('/view?file=${encodeURIComponent(fileQueryPath)}', '_blank')">👁 View</button>
-      <a href="${file.url}" download class="btn download-btn">⬇️ Download</a>
-    </div>
-  `;
-  fileList.appendChild(card);
-});
+      card.innerHTML = `
+        <h3>${file.name}</h3>
+        <p><strong>Program:</strong> ${file.program}</p>
+        <p><strong>Semester:</strong> ${file.semester}</p>
+        <p><strong>Subject:</strong> ${file.subject}</p>
+        <div class="button-group">
+          <button onclick="window.open('view.html?file=' + encodeURIComponent('${fileQueryPath}'), '_blank')">👁 View</button>
+          <a href="${file.url}" download class="btn download-btn">⬇️ Download</a>
+        </div>
+      `;
+      fileList.appendChild(card);
+    });
   }
 
   // ----------------------
@@ -130,19 +129,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fileList.innerHTML = results.length === 0
       ? '<p>No matching notes found.</p>'
-      : results.map(f => `
-        <div class="file-card">
-          <h3>${f.name}</h3>
-          <p><strong>Program:</strong> ${f.program}</p>
-          <p><strong>Semester:</strong> ${f.semester}</p>
-          <p><strong>Subject:</strong> ${f.subject}</p>
-          <div class="button-group">
-            <button onclick="window.open('${file.url}', '_blank')">👁 View</button>
-
-            <a href="${f.url}" download class="btn download-btn">⬇️ Download</a>
-          </div>
-        </div>
-      `).join('');
+      : results.map(f => {
+          let fileQueryPath = f.url.startsWith('/') ? f.url.slice(1) : f.url;
+          return `
+            <div class="file-card">
+              <h3>${f.name}</h3>
+              <p><strong>Program:</strong> ${f.program}</p>
+              <p><strong>Semester:</strong> ${f.semester}</p>
+              <p><strong>Subject:</strong> ${f.subject}</p>
+              <div class="button-group">
+                <button onclick="window.open('view.html?file=' + encodeURIComponent('${fileQueryPath}'), '_blank')">👁 View</button>
+                <a href="${f.url}" download class="btn download-btn">⬇️ Download</a>
+              </div>
+            </div>
+          `;
+        }).join('');
   };
 
   // ----------------------

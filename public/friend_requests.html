@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friends – StudyHub LUANAR</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="module">
+// ===== FIREBASE IMPORTS =====
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+import { 
+  getFirestore, collection, query, where, onSnapshot, updateDoc, doc, addDoc, getDocs, getDoc 
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
+  databaseURL: "https://studyhub-backend-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "studyhub-backend",
+  storageBucket: "studyhub-backend.firebasestorage.app",
+  messagingSenderId: "985257842533",
+  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
+  measurementId: "G-2FHPEF5XBQ"
+};
+
+// ===== INITIALIZE =====
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const incomingContainer = document.getElementById("incomingRequests");
+const peopleContainer = document.getElementById("peopleContainer");
+
+onAuthStateChanged(auth, async user => {
+  if (!user) return window.location.replace("login.html");
+
+  // === Fetch current user's full profile ===
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  const userData = userDoc.exists() ? userDoc.data() : {};
+
+  const currentProgram = userData.program || "Unknown Program";
+  const currentSemester = userData.semester || "N/A";
+  const currentYear = userData.year || "N/A";
+  const currentName = userData.name || user.displayName || "Unknown User";
+
+  // === Fetch all users ===
+  const usersSnap = await getDocs(collection(db, "users"));
+  const users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // === Listen for friend requests sent TO current user ===
+  const requestsQuery = query(collection(db, "friend_requests"), where("toUserId", "==", user.uid));
+  onSnapshot(requestsQuery, async (snapshot) => {
+    incomingContainer.innerHTML = "";
+    const incomingIds = [];
+    const pendingRequests = [];
+
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      incomingIds.push(data.fromUserId);
+      pendingRequests.push({ id: docSnap.id, ...data });
+    });
+
+    // ==== SHOW INCOMING REQUESTS ====
+    if (pendingRequests.length === 0) {
+      incomingContainer.innerHTML = `<p class="empty">No incoming requests.</p>`;
+    } else {
+      pendingRequests.forEach(req => {
+        const card = document.createElement("div");
+        card.className = "request-card";
+        card.innerHTML = `
+          <div class="info">
+            <div class="name">${req.fromName}</div>
+            <div class="details">${req.fromProgram}, Sem ${req.fromSemester}, Year ${req.fromYear}</div>
+            <div class="status">Status: <span>${req.status}</span></div>
+          </div>
+          <div class="actions">
+            <button class="accept-btn" title="Accept">✔</button>
+            <button class="reject-btn" title="Decline">✖</button>
+          </div>
+        `;
+        const acceptBtn = card.querySelector(".accept-btn");
+        const rejectBtn = card.querySelector(".reject-btn");
+
+        acceptBtn.onclick = async () => updateDoc(doc(db, "friend_requests", req.id), { status: "accepted" });
+        rejectBtn.onclick = async () => updateDoc(doc(db, "friend_requests", req.id), { status: "rejected" });
+
+        incomingContainer.appendChild(card);
+      });
+    }
+
+    // ==== SHOW PEOPLE YOU CAN ADD ====
+    peopleContainer.innerHTML = "";
+    users.forEach(u => {
+      if (u.id === user.uid || incomingIds.includes(u.id)) return;
+
+      const card = document.createElement("div");
+      card.className = "request-card";
+      card.innerHTML = `
+        <div class="info">
+          <div class="name">${u.name}</div>
+          <div class="details">${u.program}, Sem ${u.semester}, Year ${u.year}</div>
+        </div>
+        <div class="actions">
+          <button class="add-btn" title="Add Friend">+</button>
+        </div>
+      `;
+
+      const addBtn = card.querySelector(".add-btn");
+      addBtn.onclick = async () => {
+        await addDoc(collection(db, "friend_requests"), {
+          fromUserId: user.uid,
+          fromName: currentName,
+          fromProgram: currentProgram,
+          fromSemester: currentSemester,
+          fromYear: currentYear,
+          toUserId: u.id,
+          toName: u.name,
+          toProgram: u.program,
+          toSemester: u.semester,
+          toYear: u.year,
+          status: "pending",
+          timestamp: new Date()
+        });
+        addBtn.disabled = true;
+        addBtn.textContent = "✓";
+      };
+      peopleContainer.appendChild(card);
+    });
+  });
+});
+</script>
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f3f6fc;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: #0a66c2;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.container {
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 20px;
+}
+.section-title {
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+.request-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  padding: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s;
+}
+.request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+.info .name {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.info .details {
+  color: #555;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+.actions button {
+  border: none;
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.accept-btn {
+  background: #0a66c2;
+  color: white;
+}
+.accept-btn:hover {
+  background: #004182;
+}
+.reject-btn {
+  background: #e0e0e0;
+  color: #333;
+}
+.reject-btn:hover {
+  background: #ccc;
+}
+.add-btn {
+  background: #0fba0f;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.add-btn:hover {
+  background: #0a7a0a;
+}
+.empty {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+</style>
+
+ <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-0LTZS1S9W6');
+  </script>
+
+</head>
+
+<body>
+<header>Friends & Requests</header>
+<div class="container">
+  <div class="section-title">Incoming Requests</div>
+  <div id="incomingRequests"><p class="empty">Loading...</p></div>
+
+  <div class="section-title">People You Can Add</div>
+  <div id="peopleContainer"><p class="empty">Loading...</p></div>
+</div>
+</body>
+</html>

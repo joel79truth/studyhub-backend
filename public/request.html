@@ -1,199 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Request Notes | StudyHub LUANAR</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Request Notes | StudyHub LUANAR</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+* { margin:0; padding:0; box-sizing:border-box; }
 
-  <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+body {
+  font-family: 'Inter', sans-serif;
+  min-height:100vh;
+  background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:2rem;
+  color:white;
+}
 
-    .overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: 0;
-    }
+.container {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  width:100%;
+  max-width:480px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  text-align:center;
+}
 
-    .container {
-      position: relative;
-      z-index: 1;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      border-radius: 15px;
-      padding: 30px;
-      max-width: 450px;
-      width: 90%;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    }
+h1 {
+  font-size:2.2rem;
+  margin-bottom:1rem;
+  font-weight:700;
+  letter-spacing:1px;
+  position: relative;
+}
+h1::before {
+  content:'📚';
+  display:block;
+  font-size:2.8rem;
+  margin-bottom:0.5rem;
+}
 
-    h1 {
-      color: white;
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 1.8rem;
-      letter-spacing: 1px;
-    }
+form {
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  margin-top:1rem;
+}
 
-    label {
-      display: block;
-      font-weight: 600;
-      margin: 12px 0 6px;
-      color: white;
-    }
+label {
+  font-weight:600;
+  text-align:left;
+  margin-bottom:0.25rem;
+  color:white;
+}
 
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      border: none;
-      border-radius: 8px;
-      box-sizing: border-box;
-      background: rgba(255,255,255,0.85);
-    }
+input {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border:none;
+  font-size:1rem;
+  outline:none;
+  background: rgba(255,255,255,0.2);
+  color:white;
+  transition: all 0.3s ease;
+}
+input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+input:focus {
+  background: rgba(255,255,255,0.3);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
 
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: bold;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+button {
+  margin-top:10px;
+  padding:14px;
+  font-size:1rem;
+  font-weight:600;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  background: linear-gradient(135deg,#43cea2 0%,#185a9d 100%);
+  color:white;
+  transition: all 0.3s ease;
+}
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+}
 
-    button:hover {
-      background-color: #217dbb;
-    }
+.success {
+  margin-top:15px;
+  font-weight:600;
+  color:#10b981;
+  display:none;
+  animation: fadeIn 0.5s ease forwards;
+}
 
-    .success {
-      color: #00ff90;
-      margin-top: 15px;
-      text-align: center;
-      font-weight: bold;
-      display: none;
-    }
+.back-link {
+  display:block;
+  margin-top:20px;
+  text-decoration:none;
+  font-weight:600;
+  color:white;
+  transition: all 0.3s ease;
+}
+.back-link:hover {
+  color:#dcdcdc;
+  text-decoration:underline;
+}
 
-    .back-link {
-      display: block;
-      margin-top: 20px;
-      text-align: center;
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-    }
+@keyframes fadeIn {
+  from { opacity:0; }
+  to { opacity:1; }
+}
 
-    .back-link:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 500px) {
-      .container {
-        padding: 20px;
-      }
-    }
-
-    
-  </style>
-
+@media(max-width:500px){
+  .container {
+    padding:1.8rem 1.5rem;
+  }
+}
+</style>
 </head>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0LTZS1S9W6');
-</script>
-
 <body>
 
+<div class="container">
+  <h1>Request Notes</h1>
 
+  <form id="requestForm" aria-label="Request notes form">
+    <label for="topic">Topic</label>
+    <input type="text" id="topic" name="topic" placeholder="Enter topic" required />
 
-  <div class="overlay"></div>
-  <div class="container">
-    <h1>Request Notes</h1>
+    <label for="course">Course / Subject</label>
+    <input type="text" id="course" name="course" placeholder="Enter course/subject" required />
 
-    <form id="requestForm" aria-label="Request notes form">
-      <label for="topic">Topic</label>
-      <input type="text" id="topic" name="topic" required aria-required="true" />
+    <label for="program">Your Program</label>
+    <input type="text" id="program" name="program" placeholder="Enter program" required />
 
-      <label for="course">Course / Subject</label>
-      <input type="text" id="course" name="course" required aria-required="true" />
+    <label for="semester">Semester</label>
+    <input type="text" id="semester" name="semester" placeholder="Enter semester" required />
 
-      <label for="program">Your Program</label>
-      <input type="text" id="program" name="program" required aria-required="true" />
+    <label for="notes">Additional Notes (optional)</label>
+    <input type="text" id="notes" name="notes" placeholder="Any extra info" />
 
-      <label for="semester">Semester</label>
-      <input type="text" id="semester" name="semester" required aria-required="true" />
+    <label for="email">Your Email (optional)</label>
+    <input type="email" id="email" name="email" placeholder="example@mail.com" />
 
-      <label for="notes">Additional Notes (optional)</label>
-      <input type="text" id="notes" name="notes" aria-label="Additional notes" />
-    
-      <label for="email">Your email (optional)</label>
-      <input type="text" id="email" name="email" aria-label="Your email address" />
+    <button type="submit" aria-label="Submit note request">Submit Request</button>
+    <p class="success" id="successMsg" role="alert" aria-live="polite">✅ Request sent successfully!</p>
+  </form>
 
+  <a href="index.html" class="back-link" aria-label="Back to Home">← Back to Home</a>
+</div>
 
-      <button type="submit" aria-label="Submit note request">Submit Request</button>
-      <p class="success" id="successMsg" role="alert" aria-live="polite">✅ Request sent successfully!</p>
-      
-    
-    </form>
+<script>
+document.getElementById("requestForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const topic = document.getElementById("topic").value.trim();
+  const course = document.getElementById("course").value.trim();
+  const program = document.getElementById("program").value.trim();
+  const semester = document.getElementById("semester").value.trim();
+  const notes = document.getElementById("notes").value.trim();
+  const email = document.getElementById("email").value.trim();
 
-    <a href="index.html" class="back-link" aria-label="Back to Home">← Back to Home</a>
-  </div>
+  if (!topic || !course || !program || !semester) {
+    alert("Please fill in all required fields.");
+    return;
+  }
 
-  <script>
-  document.getElementById("requestForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const topic = document.getElementById("topic").value.trim();
-    const course = document.getElementById("course").value.trim();
-    const program = document.getElementById("program").value.trim();
-    const semester = document.getElementById("semester").value.trim();
-    const notes = document.getElementById("notes").value.trim();
-    const email = document.getElementById("email").value.trim();
+  try {
+    const res = await fetch("/submit-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic, course, program, semester, notes, email })
+    });
 
-    if (!topic || !course || !program || !semester) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-
-    try {
-      const res = await fetch("/submit-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic, course, program, semester, notes, email })
-      });
-
-      if (res.ok) {
-        document.getElementById("successMsg").style.display = "block";
-        document.getElementById("requestForm").reset();
-      } else {
-        alert("❌ Failed to submit. Please try again.");
-      }
-    } catch {
+    if (res.ok) {
+      const msg = document.getElementById("successMsg");
+      msg.style.display = "block";
+      setTimeout(() => { msg.style.display = "none"; }, 3500);
+      document.getElementById("requestForm").reset();
+    } else {
       alert("❌ Failed to submit. Please try again.");
     }
-  });
+  } catch {
+    alert("❌ Failed to submit. Please try again.");
+  }
+});
 </script>
-
 
 </body>
 </html>

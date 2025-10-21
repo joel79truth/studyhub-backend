@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friends – StudyHub LUANAR</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+  body, html {
+    height: 100%;
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+
+  .friends-container {
+    background: rgba(12, 12, 12, 0.45);
+    backdrop-filter: blur(16px);
+    border-radius: 24px;
+    padding: 40px 30px;
+    width: 90%;
+    max-width: 650px;
+    text-align: center;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: aliceblue;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+  }
+
+  .friends-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    text-align: left;
+    padding-right: 5px;
+  }
+
+  .friend-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 12px 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .friend-info { display: flex; align-items: center; gap: 12px; }
+  .friend-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #00ffff; }
+  .friend-name { font-weight: 600; color: #fff; }
+
+  .friend-actions { display: flex; gap: 10px; }
+
+  .circle-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .circle-btn button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #00ffb3, #007bff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 20px;
+    transition: all 0.3s ease;
+  }
+  .circle-btn button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 255, 179, 0.5);
+  }
+
+  .circle-btn span { margin-top: 5px; font-weight: 600; color: #fff; font-size: 0.85rem; }
+
+  .friends-list::-webkit-scrollbar { width: 6px; }
+  .friends-list::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+</style>
+
+ <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-0LTZS1S9W6');
+  </script>
+
+</head>
+<body>
+<div class="friends-container">
+  <h1>Find & Add Friends</h1>
+  <div class="friends-list" id="friendsList">
+    <p style="text-align:center;">Loading users...</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  // Firebase config (for login session check)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+    authDomain: "studyhub-backend.firebaseapp.com",
+    projectId: "studyhub-backend",
+    storageBucket: "studyhub-backend.appspot.com",
+    messagingSenderId: "985257842533",
+    appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Supabase client
+  const supabaseUrl = 'https://qosudbigoxwzbdqkdecz.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ';
+  const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
+
+  const friendsList = document.getElementById("friendsList");
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Please log in first.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    // Logged-in user's email
+    const currentEmail = user.email;
+
+    try {
+      // Fetch all users except current one
+      const { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .neq('email', currentEmail)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (!users || users.length === 0) {
+        friendsList.innerHTML = '<p style="text-align:center;">No users found.</p>';
+        return;
+      }
+
+      // Render users
+      friendsList.innerHTML = users.map(u => `
+        <div class="friend-card">
+          <div class="friend-info">
+            <img src="${u.avatar_url || 'https://www.w3schools.com/howto/img_avatar.png'}" alt="Avatar" class="friend-avatar">
+            <div class="friend-name">${u.username || u.email}</div>
+          </div>
+          <div class="friend-actions">
+            <div class="circle-btn" onclick="sendFriendRequest('${currentEmail}','${u.email}')">
+              <button>➕</button>
+              <span>Add</span>
+            </div>
+            <div class="circle-btn" onclick="startChat('${u.email}')">
+              <button>💬</button>
+              <span>Chat</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+    } catch (err) {
+      console.error(err);
+      friendsList.innerHTML = '<p style="text-align:center;">Failed to load friends.</p>';
+    }
+  });
+
+  // Function to send friend request
+  window.sendFriendRequest = async (fromEmail, toEmail) => {
+    try {
+      // Check for duplicates
+      const { data: existing } = await supabase
+        .from('friend_requests')
+        .select('*')
+        .eq('from_user', fromEmail)
+        .eq('to_user', toEmail);
+
+      if (existing && existing.length > 0) {
+        alert("Friend request already sent!");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('friend_requests')
+        .insert([{ from_user: fromEmail, to_user: toEmail, status: 'pending' }]);
+
+      if (error) throw error;
+
+      alert(`Friend request sent to ${toEmail}`);
+    } catch (error) {
+      console.error('Error sending request:', error);
+      alert('Failed to send friend request.');
+    }
+  };
+
+  // Function to start chat
+  window.startChat = (friendEmail) => {
+    window.location.href = `chat.html?friend=${encodeURIComponent(friendEmail)}`;
+  };
+</script>
+</body>
+</html>

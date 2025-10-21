@@ -1,135 +1,678 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>View Book</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View File – StudyHub LUANAR</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 50%, #e3f2fd 100%);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-<style>
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+    /* Header Styles */
+    header {
+      background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+      color: white;
+      padding: 12px 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
 
-body::before {
-    content: '';
-    position: absolute;
-    top:0; left:0;
-    width:100%; height:100%;
-    background: rgba(0,0,0,0.45);
-    z-index: 0;
-}
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
 
-.toolbar {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(12px);
-    color: #fff;
-}
+    .header-title {
+      flex: 1;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 16px;
+    }
 
-.toolbar h2 {
-    font-size: 20px;
-    margin: 0;
-    font-weight: 600;
-}
+    /* Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
 
-.toolbar button {
-    padding: 8px 14px;
-    margin-left: 10px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 500;
-    background: rgba(255,255,255,0.2);
-    color: #fff;
-    transition: all 0.3s ease;
-}
+    .btn-back {
+      background: white;
+      color: #1976d2;
+      border: 2px solid white;
+    }
 
-.toolbar button:hover {
-    background: rgba(255,255,255,0.35);
-}
+    .btn-back:hover {
+      background: #f5f5f5;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-.pdf-container {
-    flex: 1;
-    padding: 0;
-    margin: 0;
-    position: relative;
-}
+    .btn-download {
+      background: white;
+      color: #1976d2;
+      border: 2px solid white;
+    }
 
-.pdf-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    transition: all 0.3s ease;
-}
-</style>
+    .btn-download:hover {
+      background: #f5f5f5;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background: #1976d2;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1565c0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* File Info Bar */
+    .file-info {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 12px 16px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .file-info-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .file-name {
+      flex: 1;
+      text-align: center;
+      font-size: 1rem;
+      color: #333;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Viewer Container */
+    .viewer-container {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background: #fafafa;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Image Viewer */
+    .image-viewer {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .image-viewer img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    /* Video Viewer */
+    .video-viewer {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #000;
+    }
+
+    .video-viewer video {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Audio Viewer */
+    .audio-viewer {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 32px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .audio-icon {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .audio-icon svg {
+      width: 64px;
+      height: 64px;
+      fill: white;
+    }
+
+    .audio-info {
+      text-align: center;
+      color: white;
+    }
+
+    .audio-info h3 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+
+    .audio-info p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .audio-viewer audio {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Text Viewer */
+    .text-viewer {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background: #ffffff;
+    }
+
+    .text-viewer pre {
+      padding: 24px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      color: #333;
+    }
+
+    /* Error/Message Container */
+    .message-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .message-icon {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .message-icon svg {
+      width: 64px;
+      height: 64px;
+    }
+
+    .message-content {
+      max-width: 500px;
+    }
+
+    .message-content h3 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .message-content p {
+      font-size: 1rem;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .code-example {
+      background: #f5f5f5;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      margin-top: 16px;
+    }
+
+    .code-example p {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .code-example code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      color: #1976d2;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #1976d2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Icons */
+    .icon {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-title {
+        font-size: 0.95rem;
+        padding: 0 8px;
+      }
+
+      .file-name {
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+
+      .message-content h3 {
+        font-size: 1.25rem;
+      }
+
+      .message-content p {
+        font-size: 0.9rem;
+      }
+
+      .audio-icon {
+        width: 100px;
+        height: 100px;
+      }
+
+      .audio-icon svg {
+        width: 52px;
+        height: 52px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-content {
+        gap: 8px;
+      }
+
+      .header-title {
+        font-size: 0.85rem;
+      }
+
+      .file-info-content {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .file-name {
+        font-size: 0.85rem;
+      }
+
+      .spacer {
+        display: none;
+      }
+    }
+
+    .spacer {
+      width: 80px;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
-
-<div class="toolbar">
-    <button onclick="goBack()">← Back</button>
-    <h2 id="bookTitle">Book Title</h2>
-    <div>
-        <button onclick="zoomIn()">🔍+</button>
-        <button onclick="zoomOut()">🔍-</button>
-        <button onclick="toggleFullscreen()">⛶</button>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <button class="btn btn-back" onclick="goBack()">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back
+      </button>
+      <h1 class="header-title">📘 StudyHub LUANAR – File Viewer</h1>
+      <div class="spacer"></div>
     </div>
-</div>
+  </header>
 
-<div class="pdf-container">
-    <iframe id="pdfViewer" src=""></iframe>
-</div>
+  <!-- File Info Bar -->
+  <div class="file-info" id="fileInfo" style="display: none;">
+    <div class="file-info-content">
+      <p class="file-name" id="fileName"></p>
+      <button class="btn btn-download" onclick="downloadFile()">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        Download
+      </button>
+    </div>
+  </div>
 
-<script>
-// --- Get file from query string ---
-const params = new URLSearchParams(window.location.search);
-const file = params.get('file');
-if(file) {
-    document.getElementById('pdfViewer').src = `wisdom/${file}`;
-    document.getElementById('bookTitle').innerText = file.replace(/_/g, ' ').replace('.pdf','');
-}
+  <!-- Viewer Container -->
+  <div class="viewer-container" id="viewerContainer">
+    <div class="message-container">
+      <div class="spinner"></div>
+      <p style="color: #666;">Loading file...</p>
+    </div>
+  </div>
 
-// --- Toolbar Functions ---
-function goBack() {
-    window.history.back();
-}
+  <script>
+    // Global variables
+    let currentFileUrl = '';
+    let currentFileName = '';
 
-let scale = 1;
-function zoomIn() {
-    scale += 0.1;
-    document.getElementById('pdfViewer').style.transform = `scale(${scale})`;
-    document.getElementById('pdfViewer').style.transformOrigin = 'top center';
-}
-function zoomOut() {
-    if(scale > 0.3){
-        scale -= 0.1;
-        document.getElementById('pdfViewer').style.transform = `scale(${scale})`;
-        document.getElementById('pdfViewer').style.transformOrigin = 'top center';
+    // Get URL parameters
+    function getUrlParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
     }
-}
 
-function toggleFullscreen() {
-    const elem = document.documentElement;
-    if (!document.fullscreenElement) {
-        elem.requestFullscreen().catch(err => console.log(err));
-    } else {
-        document.exitFullscreen();
+    // Get file extension
+    function getFileExtension(filename) {
+      return filename.split('.').pop().toLowerCase();
     }
-}
-</script>
 
+    // Go back function
+    function goBack() {
+      window.history.back();
+    }
+
+    // Download file function
+    function downloadFile() {
+      const a = document.createElement('a');
+      a.href = currentFileUrl;
+      a.download = currentFileName;
+      a.click();
+    }
+
+    // Render PDF
+    function renderPDF(url, container) {
+      container.innerHTML = '<iframe src="' + url + '" title="PDF Viewer"></iframe>';
+    }
+
+    // Render Office Documents
+    function renderOfficeDoc(url, container, fileName) {
+      container.innerHTML = `
+        <div class="message-container">
+          <div class="message-icon">
+            <svg fill="none" stroke="#ff9800" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <h3>Office Document Detected</h3>
+            <p>Office documents (DOCX, PPTX, XLSX) require external viewer services or specialized software. You can download the file to view it with Microsoft Office or compatible applications.</p>
+            <button class="btn btn-primary" onclick="downloadFile()">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+              Download File
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render Image
+    function renderImage(url, container, fileName) {
+      container.innerHTML = `
+        <div class="image-viewer">
+          <img src="${url}" alt="${fileName}">
+        </div>
+      `;
+    }
+
+    // Render Video
+    function renderVideo(url, container) {
+      container.innerHTML = `
+        <div class="video-viewer">
+          <video controls>
+            <source src="${url}">
+            Your browser does not support video playback.
+          </video>
+        </div>
+      `;
+    }
+
+    // Render Audio
+    function renderAudio(url, container, fileName) {
+      container.innerHTML = `
+        <div class="audio-viewer">
+          <div class="audio-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+          </div>
+          <div class="audio-info">
+            <h3>Audio File</h3>
+            <p>${fileName}</p>
+          </div>
+          <audio controls>
+            <source src="${url}">
+            Your browser does not support audio playback.
+          </audio>
+        </div>
+      `;
+    }
+
+    // Render Text File
+    function renderTextFile(url, container) {
+      fetch(url)
+        .then(response => response.text())
+        .then(text => {
+          container.innerHTML = `
+            <div class="text-viewer">
+              <pre>${escapeHtml(text)}</pre>
+            </div>
+          `;
+        })
+        .catch(error => {
+          showError('Failed to load text file', container);
+        });
+    }
+
+    // Escape HTML for text display
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Show unsupported file type
+    function showUnsupported(extension, container) {
+      container.innerHTML = `
+        <div class="message-container">
+          <div class="message-icon">
+            <svg fill="none" stroke="#ffc107" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <h3>Preview Not Available</h3>
+            <p>This file type (.${extension}) cannot be previewed in the browser. Please download the file to view it with appropriate software.</p>
+            <button class="btn btn-primary" onclick="downloadFile()">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+              Download File
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Show error
+    function showError(message, container) {
+      container.innerHTML = `
+        <div class="message-container">
+          <div class="message-icon">
+            <svg fill="none" stroke="#f44336" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <h3>Error</h3>
+            <p>${message}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Show no file selected
+    function showNoFile(container) {
+      container.innerHTML = `
+        <div class="message-container">
+          <div class="message-icon">
+            <svg fill="none" stroke="#ffc107" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <h3>No File Selected</h3>
+            <p>No file parameter found in the URL. Please provide a file path using the query parameter.</p>
+            <div class="code-example">
+              <p>Example URL format:</p>
+              <code>view.html?file=uploads/document.pdf</code>
+            </div>
+            <button class="btn btn-primary" onclick="goBack()" style="margin-top: 20px;">
+              Go Back
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Main function to load and display file
+    function loadFile() {
+      const fileParam = getUrlParameter('file');
+      const container = document.getElementById('viewerContainer');
+      const fileInfo = document.getElementById('fileInfo');
+      const fileNameDisplay = document.getElementById('fileName');
+
+      if (!fileParam) {
+        showNoFile(container);
+        return;
+      }
+
+      // Decode and set file info
+      currentFileUrl = decodeURIComponent(fileParam);
+      currentFileName = currentFileUrl.split('/').pop();
+      const extension = getFileExtension(currentFileName);
+
+      // Display file name
+      fileNameDisplay.textContent = decodeURIComponent(currentFileName);
+      fileInfo.style.display = 'block';
+
+      // Render based on file type
+      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'];
+      const videoExtensions = ['mp4', 'webm', 'ogg', 'mov'];
+      const audioExtensions = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
+      const textExtensions = ['txt', 'json', 'xml', 'html', 'css', 'js', 'ts', 'tsx', 'jsx', 'md', 'csv', 'log'];
+      const officeExtensions = ['docx', 'doc', 'pptx', 'ppt', 'xlsx', 'xls'];
+
+      if (extension === 'pdf') {
+        renderPDF(currentFileUrl, container);
+      } else if (officeExtensions.includes(extension)) {
+        renderOfficeDoc(currentFileUrl, container, currentFileName);
+      } else if (imageExtensions.includes(extension)) {
+        renderImage(currentFileUrl, container, currentFileName);
+      } else if (videoExtensions.includes(extension)) {
+        renderVideo(currentFileUrl, container);
+      } else if (audioExtensions.includes(extension)) {
+        renderAudio(currentFileUrl, container, currentFileName);
+      } else if (textExtensions.includes(extension)) {
+        renderTextFile(currentFileUrl, container);
+      } else {
+        showUnsupported(extension, container);
+      }
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', loadFile);
+  </script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
@@ -10,10 +9,9 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));// server.js
+app.use(express.static("public"));
 
-
-// Configure multer (store files in memory for Supabase uploads)
+// Configure multer (store files in memory)
 const upload = multer({ storage: multer.memoryStorage() });
 
 let db = null;
@@ -34,6 +32,7 @@ if (storageProvider === "local") {
       filename TEXT,
       path TEXT,
       url TEXT,
+      email TEXT,
       uploaded_at TEXT
     )`);
   });
@@ -52,16 +51,15 @@ if (storageProvider === "supabase") {
 }
 
 // ------------------ UPLOAD ENDPOINT ------------------
-
 app.post("/upload", upload.single("file"), async (req, res) => {
-  const { program, semester, subject } = req.body;
+  const { program, semester, subject, email } = req.body; // include email
   const file = req.file;
 
-  if (!program || !semester || !subject || !file) {
+  if (!program || !semester || !subject || !file || !email) {
     return res.status(400).json({ message: "Missing required fields or file." });
   }
 
-  // ✅ Enforce program must start with Diploma or Bachelors, or be Basics
+  // Enforce program rule
   if (!/^Diploma|^Bachelors/i.test(program) && program.toLowerCase() !== "basics") {
     return res.status(400).json({
       message: "Program must start with 'Diploma' or 'Bachelors', or be 'Basics'."
@@ -75,39 +73,32 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
   try {
     if (storageProvider === "supabase") {
-      // Upload to Supabase Storage
+      // Upload file to Supabase Storage
       const { error } = await supabase.storage
         .from(process.env.SUPABASE_BUCKET)
-        .upload(path, file.buffer, {
-          contentType: file.mimetype,
-        });
-
+        .upload(path, file.buffer, { contentType: file.mimetype });
       if (error) throw error;
 
       // Get public URL
-      const { data } = supabase
-        .storage
-        .from(process.env.SUPABASE_BUCKET)
-        .getPublicUrl(path);
-
+      const { data } = supabase.storage.from(process.env.SUPABASE_BUCKET).getPublicUrl(path);
       publicUrl = data.publicUrl;
 
-      // Save metadata in Supabase Postgres
-      const { error: dbError } = await supabase.from("files").insert([
-        {
-          id,
-          program,
-          semester,
-          subject,
-          filename: file.originalname,
-          path,
-          url: publicUrl,
-        },
-      ]);
-
+      // Save metadata in Supabase table including email and uploaded_at
+      const { error: dbError } = await supabase.from("files").insert([{
+        id,
+        program,
+        semester,
+        subject,
+        filename: file.originalname,
+        path,
+        url: publicUrl,
+        email,
+        uploaded_at: new Date().toISOString()
+      }]);
       if (dbError) throw dbError;
+
     } else {
-      // Save locally
+      // Local storage fallback
       const fs = require("fs");
       const pathModule = require("path");
       const uploadPath = pathModule.join(__dirname, "uploads", path);
@@ -117,18 +108,9 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       publicUrl = `/uploads/${path}`;
 
       db.run(
-        `INSERT INTO files (id, program, semester, subject, filename, path, url, uploaded_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          id,
-          program,
-          semester,
-          subject,
-          file.originalname,
-          path,
-          publicUrl,
-          new Date().toISOString(),
-        ]
+        `INSERT INTO files (id, program, semester, subject, filename, path, url, email, uploaded_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, program, semester, subject, file.originalname, path, publicUrl, email, new Date().toISOString()]
       );
     }
 
@@ -139,20 +121,19 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-
 // ------------------ FETCH METADATA ENDPOINT ------------------
 app.get("/api/metadata", async (req, res) => {
   try {
     if (storageProvider === "supabase") {
-      const { data, error } = await supabase.from("files").select("*").order("uploaded_at", { ascending: false });
+      const { data, error } = await supabase
+        .from("files")
+        .select("*")
+        .order("uploaded_at", { ascending: false });
       if (error) throw error;
       res.json(data);
     } else {
       db.all("SELECT * FROM files ORDER BY uploaded_at DESC", [], (err, rows) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ message: "Failed to fetch metadata" });
-        }
+        if (err) return res.status(500).json({ message: "Failed to fetch metadata" });
         res.json(rows);
       });
     }
