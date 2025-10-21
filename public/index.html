@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StudyHub LUANAR</title>
   <link rel="stylesheet" href="style.css">
+  
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
@@ -253,7 +254,7 @@ h3::before {
   content: '';
   position: absolute;
   top: -50%;
-  left: -100%;
+  left: -80%;
   width: 200%;
   height: 200%;
   background: conic-gradient(from 0deg, #00ffff, #0044ff, #00ffff);
@@ -287,6 +288,60 @@ h3::after {
   backdrop-filter: blur(5px); /* gives a glass look */
 }
 
+#youButton {
+  position: fixed;        /* Fixes it relative to viewport */
+  top: 10px;              /* Space from top */
+  right: 10px;            /* Space from right */
+  display: flex;
+  flex-direction: column; /* Image on top, label below */
+  align-items: center;
+  z-index: 1000;          /* Stay above other elements */
+}
+
+/* Profile picture styling */
+#youButton .profile-picture {
+  width: 50px;            
+  height: 50px;
+  border-radius: 50%;     
+  object-fit: cover;
+}
+
+/* Label styling */
+#youButton .btn-label {
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+
+/* Adjust size for smaller screens */
+@media (max-width: 600px) {
+  #youButton .profile-picture {
+    width: 40px;
+    height: 40px;
+  }
+
+  #youButton .btn-label {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  #youButton {
+    top: 5px;
+    right: 5px;
+  }
+  
+  #youButton .profile-picture {
+    width: 35px;
+    height: 35px;
+  }
+
+  #youButton .btn-label {
+    font-size: 10px;
+  }
+}
 
 </style>
 
@@ -332,7 +387,8 @@ window.onload = () => {
 
 <body>
   <header>
-    <h1>StudyHub LUANAR</h1>
+  <h1>StudyHub 
+    <br>LUANAR</h1>
   </header>
 
  
@@ -346,6 +402,7 @@ window.onload = () => {
     <button id="closeSidebarBtn" class="close-btn">&times;</button>
     <ul class="nav-list">
       <li><a href="index.html">🏠 Home</a></li>
+      <li><a href="profile.html"> your profile</a></li>
       <li><a href="upload.html">📤 Upload Notes</a></li>
       <li><a href="request.html">📩 Request Notes</a></li>
       <li><a href="developer.html">👤 About the Developer</a></li>
@@ -354,7 +411,23 @@ window.onload = () => {
     </ul>
     <button id="toggleDarkMode" class="dark-mode-btn" aria-pressed="false">🌙 Toggle Dark Mode</button>
   </nav>
+<div class="profile-container" id="youButton">
+  <a href="profile.html">
+    <img id="youProfilePic" 
+         src="https://cdn-icons-png.flaticon.com/512/847/847969.png" 
+         alt="Profile Picture" 
+         class="profile-picture">
+  </a>
+  <div class="btn-label">You</div>
+</div>
 
+<script>
+// 🔹 Load saved profile picture from localStorage (set in profile.html)
+window.addEventListener("load", () => {
+  const savedPic = localStorage.getItem("userProfilePic");
+  if (savedPic) document.getElementById("youProfilePic").src = savedPic;
+});
+</script>
 
   <!-- Glass Buttons -->
   <main class="container">
@@ -367,20 +440,53 @@ window.onload = () => {
   <br>
 HOME FOR NOTES. 3.7 GPA target</h3>
 
-    <div class="glass-btn-row">
-      <div class="glass-button">
-        <a href="message.html" class="icon-btn">💬</a>
-        <div class="btn-label">Message</div>
-      </div>
-      <div class="glass-button">
-        <a href="program.html" class="icon-btn">📚</a>
-        <div class="btn-label">Program</div>
-      </div>
-      <div class="glass-button">
-        <a href="ai.html" class="icon-btn">🤖</a>
-        <div class="btn-label">AI</div>
-      </div>
-    </div>
+<div class="glass-btn-row">
+  <!-- Message -->
+  <div class="glass-button">
+    <a href="message.html" class="icon-btn">
+      <svg width="40" height="40" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#4CAF50" stroke="#2E7D32" stroke-width="2">
+          <rect x="8" y="12" width="48" height="36" rx="6" ry="6"/>
+          <polygon points="8,48 32,36 56,48" fill="#81C784"/>
+        </g>
+      </svg>
+    </a>
+    <div class="btn-label">class</div>
+  </div>
+
+  <!-- Program -->
+  <div class="glass-button">
+    <a href="program.html" class="icon-btn">
+      <svg width="40" height="40" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#2196F3" stroke="#1565C0" stroke-width="2">
+          <rect x="8" y="12" width="48" height="40" rx="4" ry="4"/>
+          <line x1="16" y1="20" x2="48" y2="20" stroke="#BBDEFB" stroke-width="2"/>
+          <line x1="16" y1="28" x2="48" y2="28" stroke="#BBDEFB" stroke-width="2"/>
+          <line x1="16" y1="36" x2="48" y2="36" stroke="#BBDEFB" stroke-width="2"/>
+        </g>
+      </svg>
+    </a>
+    <div class="btn-label">Programs</div>
+  </div>
+
+  <!-- AI -->
+  <div class="glass-button">
+    <a href="ai.html" class="icon-btn">
+      <svg width="40" height="40" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#FF9800" stroke="#EF6C00" stroke-width="2">
+          <circle cx="32" cy="32" r="20"/>
+          <circle cx="32" cy="32" r="8" fill="#FFF3E0"/>
+          <line x1="32" y1="12" x2="32" y2="20" stroke="#EF6C00" stroke-width="2"/>
+          <line x1="32" y1="44" x2="32" y2="52" stroke="#EF6C00" stroke-width="2"/>
+          <line x1="12" y1="32" x2="20" y2="32" stroke="#EF6C00" stroke-width="2"/>
+          <line x1="44" y1="32" x2="52" y2="32" stroke="#EF6C00" stroke-width="2"/>
+        </g>
+      </svg>
+    </a>
+    <div class="btn-label">AI</div>
+  </div>
+</div>
+
 
 <!-- LUANAR Image Carousel -->
 <div class="carousel-container">
@@ -434,12 +540,12 @@ HOME FOR NOTES. 3.7 GPA target</h3>
 <script>
   // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey: "AIzaSyDMGA6lbQw5ky1chyZYUJda7nPD6FZq-Z4",
-    authDomain: "truth-chart.firebaseapp.com",
-    projectId: "truth-chart",
-    storageBucket: "truth-chart.appspot.com",
-    messagingSenderId: "69225001860",  
-    appId: "1:69225001860:web:0620e79ed8ddfad8bc63d1"
+  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
+  projectId: "studyhub-backend",
+  storageBucket: "studyhub-backend.firebasestorage.app",
+  messagingSenderId: "985257842533",
+  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
   };
 
   // Initialize Firebase
