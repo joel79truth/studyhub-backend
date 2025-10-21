@@ -212,21 +212,31 @@
     });
 
     // Detect login state
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const snap = await getDoc(userRef);
-        if (snap.exists()) {
-          window.location.href = "index.html";
-        } else {
-          googleLogin.style.display = "none";
-          programForm.style.display = "block";
-        }
+   onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (snap.exists()) {
+      const data = snap.data();
+      const isComplete = data.role && (data.role === "lecturer" || (data.program && data.year && data.semester));
+
+      if (isComplete) {
+        window.location.href = "index.html"; // fully registered
       } else {
-        googleLogin.style.display = "block";
-        programForm.style.display = "none";
+        googleLogin.style.display = "none";
+        programForm.style.display = "block"; // incomplete details
       }
-    });
+    } else {
+      googleLogin.style.display = "none";
+      programForm.style.display = "block"; // first time login
+    }
+  } else {
+    googleLogin.style.display = "block";
+    programForm.style.display = "none";
+  }
+});
+
 
     // Google login
     googleLogin.addEventListener("click", async () => {
