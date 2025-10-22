@@ -1,175 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>StudyHub LUANAR – Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg,#1f1f1f,#2c2c2c);
-      color:#fff;
-      padding: 20px;
-    }
-    .container {
-      background:#1e1e1e;
-      padding:40px 30px;
-      border-radius:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.5);
-      text-align:center;
-      width:100%;
-      max-width:420px;
-      animation:fadeIn .8s ease;
-      border:1px solid rgba(255,255,255,.05);
-    }
-    @keyframes fadeIn {
-      from {opacity:0;transform:translateY(20px);}
-      to {opacity:1;transform:translateY(0);}
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>StudyHub LUANAR – Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+  body {
+    min-height:100vh; display:flex; justify-content:center; align-items:center;
+    background:linear-gradient(135deg,#1f1f1f,#2c2c2c); color:#fff; padding:20px;
+  }
+  .container {
+    background:#1e1e1e; padding:40px 30px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    text-align:center; width:100%; max-width:420px; animation:fadeIn .8s ease; border:1px solid rgba(255,255,255,.05);
+  }
+  @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+  h1 { font-size:1.4rem; margin-bottom:8px; }
+  p { font-size:0.95rem; margin-bottom:25px; color:#ccc; }
+  .google-btn {
+    display:flex; align-items:center; justify-content:center; background:#fff; color:#333;
+    border:none; padding:14px 18px; border-radius:12px; font-size:1rem; font-weight:600;
+    cursor:pointer; transition:.3s; width:100%; box-shadow:0 5px 15px rgba(0,0,0,.2);
+  }
+  .google-btn:hover { transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,0,0,.25); }
+  .google-btn img { height:22px; margin-right:12px; }
 
-    h1 {font-size:1.4rem;margin-bottom:8px;}
-    p {font-size:0.95rem;margin-bottom:25px;color:#ccc;}
+  .program-input { margin-top:25px; display:none; text-align:left; }
+  .program-input input, .program-input select {
+    width:100%; padding:12px; border-radius:10px; border:none; outline:none; font-size:1rem; margin-bottom:12px; text-align:center;
+  }
+  .submit-btn {
+    background:linear-gradient(135deg,#6C63FF,#00CFFF); border:none; padding:12px 20px;
+    border-radius:10px; font-size:1rem; font-weight:600; cursor:pointer; color:#fff; width:100%; transition:.3s;
+  }
+  .submit-btn:hover { opacity:.9; }
+  #logoutBtn { background:#444; margin-top:10px; }
 
-    .google-btn {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#fff;
-      color:#333;
-      border:none;
-      padding:14px 18px;
-      border-radius:12px;
-      font-size:1rem;
-      font-weight:600;
-      cursor:pointer;
-      transition:.3s;
-      width:100%;
-      box-shadow:0 5px 15px rgba(0,0,0,.2);
-    }
-    .google-btn:hover {transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.25);}
-    .google-btn img {height:22px;margin-right:12px;}
-
-    .program-input {
-      margin-top:25px;
-      display:none;
-      text-align:left;
-    }
-    .program-input input, .program-input select {
-      width:100%;
-      padding:12px;
-      border-radius:10px;
-      border:none;
-      outline:none;
-      font-size:1rem;
-      margin-bottom:12px;
-      text-align:center;
-    }
-
-    .submit-btn {
-      background:linear-gradient(135deg,#6C63FF,#00CFFF);
-      border:none;
-      padding:12px 20px;
-      border-radius:10px;
-      font-size:1rem;
-      font-weight:600;
-      cursor:pointer;
-      color:#fff;
-      width:100%;
-      transition:.3s;
-    }
-    .submit-btn:hover {opacity:.9;}
-    #logoutBtn {background:#444;margin-top:10px;}
-
-    /* Mobile responsiveness */
-    @media (max-width: 600px) {
-      .container {
-        padding:30px 20px;
-        border-radius:15px;
-      }
-      h1 {font-size:1.2rem;}
-      p {font-size:0.9rem;}
-      .google-btn {font-size:0.95rem;padding:12px;}
-    }
-  </style>
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-0LTZS1S9W6');
-  </script>
+  @media (max-width:600px) {
+    .container { padding:30px 20px; border-radius:15px; }
+    h1 { font-size:1.2rem; }
+    p { font-size:0.9rem; }
+    .google-btn { font-size:0.95rem; padding:12px; }
+  }
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>Welcome to StudyHub LUANAR</h1>
-    <p>Access your student or lecturer resources securely.</p>
+<div class="container">
+  <h1>Welcome to StudyHub LUANAR</h1>
+  <p>Access your student or lecturer resources securely.</p>
 
-    <button id="googleLogin" class="google-btn">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
-      Continue with Google
-    </button>
+  <button id="googleLogin" class="google-btn">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+    Continue with Google
+  </button>
 
-    <!-- Role + Program Form -->
-    <div id="programForm" class="program-input">
-      <select id="role">
-        <option value="">Are you a Lecturer or Student?</option>
-        <option value="student">Student</option>
-        <option value="lecturer">Lecturer</option>
+  <div id="programForm" class="program-input">
+    <select id="role">
+      <option value="">Are you a Lecturer or Student?</option>
+      <option value="student">Student</option>
+      <option value="lecturer">Lecturer</option>
+    </select>
+
+    <input type="password" id="securityCode" placeholder="Enter Security Code (Lecturers only)" style="display:none;" />
+
+    <div id="studentFields">
+      <input type="text" id="programName" placeholder="Enter your Program Name..." />
+      <select id="year">
+        <option value="">Select Year</option>
+        <option value="Year 1">Year 1</option>
+        <option value="Year 2">Year 2</option>
+        <option value="Year 3">Year 3</option>
+        <option value="Year 4">Year 4</option>
       </select>
-
-      <input type="password" id="securityCode" placeholder="Enter Security Code (Lecturers only)" style="display:none;" />
-
-      <div id="studentFields">
-        <input type="text" id="programName" placeholder="Enter your Program Name..." />
-        <select id="year">
-          <option value="">Select Year</option>
-          <option value="Year 1">Year 1</option>
-          <option value="Year 2">Year 2</option>
-          <option value="Year 3">Year 3</option>
-          <option value="Year 4">Year 4</option>
-        </select>
-        <select id="semester">
-          <option value="">Select Semester</option>
-          <option value="Semester 1">Semester 1</option>
-          <option value="Semester 2">Semester 2</option>
-        </select>
-      </div>
-
-      <button id="saveProgram" class="submit-btn">Save Details</button>
-      <button id="logoutBtn" class="submit-btn">Logout</button>
+      <select id="semester">
+        <option value="">Select Semester</option>
+        <option value="Semester 1">Semester 1</option>
+        <option value="Semester 2">Semester 2</option>
+      </select>
     </div>
-  </div>
 
-  <script type="module">
+    <button id="saveProgram" class="submit-btn">Save Details</button>
+    <button id="logoutBtn" class="submit-btn">Logout</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { 
-  initializeApp 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { 
-  getAuth, 
-  signInWithPopup, 
-  signInWithRedirect, 
-  GoogleAuthProvider, 
-  getRedirectResult, 
-  onAuthStateChanged, 
-  signOut, 
-  setPersistence, 
-  browserLocalPersistence 
+  getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, 
+  getRedirectResult, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence 
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  getDoc 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -182,7 +105,6 @@ const firebaseConfig = {
   measurementId: "G-2FHPEF5XBQ"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -197,104 +119,72 @@ const roleSelect = document.getElementById("role");
 const securityCodeInput = document.getElementById("securityCode");
 const studentFields = document.getElementById("studentFields");
 
-// Set persistence
-try {
-  await setPersistence(auth, browserLocalPersistence);
-} catch (err) {
-  console.warn("Persistence failed:", err);
-}
+// Helpers
+const showProgramForm = () => { googleLogin.style.display="none"; programForm.style.display="block"; }
+const hideProgramForm = () => { googleLogin.style.display="block"; programForm.style.display="none"; }
 
-// Show/hide fields based on role
+// Role selection
 roleSelect.addEventListener("change", () => {
-  if (roleSelect.value === "lecturer") {
-    securityCodeInput.style.display = "block";
-    studentFields.style.display = "none";
-  } else if (roleSelect.value === "student") {
-    securityCodeInput.style.display = "none";
-    studentFields.style.display = "block";
-  } else {
-    securityCodeInput.style.display = "none";
-    studentFields.style.display = "none";
+  if(roleSelect.value==="lecturer"){ 
+    securityCodeInput.style.display="block"; 
+    studentFields.style.display="none"; 
+  } else if(roleSelect.value==="student"){ 
+    securityCodeInput.style.display="none"; 
+    studentFields.style.display="block"; 
+  } else { 
+    securityCodeInput.style.display="none"; 
+    studentFields.style.display="none"; 
   }
 });
 
-// Show program form helper
-function showProgramForm() {
-  googleLogin.style.display = "none";
-  programForm.style.display = "block";
-}
-
-// Handle redirect result (for mobile users)
-try {
-  const redirectResult = await getRedirectResult(auth);
-  if (redirectResult?.user) {
-    showProgramForm();
-  }
-} catch (err) {
-  console.error("Redirect login failed:", err);
-}
-
-// Auth state listener
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    try {
-      const userRef = doc(db, "users", user.uid);
-      const snap = await getDoc(userRef);
-
-      if (snap.exists()) {
-        const data = snap.data();
-        const isComplete =
-          data.role &&
-          (data.role === "lecturer" || (data.program && data.year && data.semester));
-        if (isComplete) {
-          window.location.href = "index.html";
-        } else {
-          showProgramForm();
-        }
-      } else {
-        showProgramForm();
-      }
-    } catch (err) {
-      console.error("Error fetching user data:", err);
-      showProgramForm();
-    }
-  } else {
-    googleLogin.style.display = "block";
-    programForm.style.display = "none";
-  }
-});
-
-// Google login button
-googleLogin.addEventListener("click", async () => {
+// Initialize Auth
+async function initAuth(){
   try {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      // Use redirect on mobile
-      await signInWithRedirect(auth, provider);
-    } else {
-      // Use popup on desktop
-      const result = await signInWithPopup(auth, provider);
-      if (result.user) showProgramForm();
+    await setPersistence(auth, browserLocalPersistence);
+
+    const redirectResult = await getRedirectResult(auth);
+    if(redirectResult?.user) showProgramForm();
+
+    onAuthStateChanged(auth, async user=>{
+      if(user){
+        try{
+          const snap = await getDoc(doc(db,"users",user.uid));
+          if(snap.exists()){
+            const data = snap.data();
+            const complete = data.role && (data.role==="lecturer" || (data.program && data.year && data.semester));
+            if(complete) window.location.href="index.html";
+            else showProgramForm();
+          } else showProgramForm();
+        } catch(err){ console.error(err); showProgramForm(); }
+      } else hideProgramForm();
+    });
+  } catch(err){ console.error("Firebase init error:",err); }
+}
+initAuth();
+
+// Google login
+googleLogin.addEventListener("click", async ()=>{
+  try{
+    const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if(isMobile) await signInWithRedirect(auth,provider);
+    else { 
+      const res = await signInWithPopup(auth,provider); 
+      if(res.user) showProgramForm(); 
     }
-  } catch (err) {
-    console.error("Google login failed:", err);
-    alert("Google login failed: " + err.message);
-  }
+  } catch(err){ console.error(err); alert("Google login failed: "+err.message); }
 });
 
 // Logout
-logoutBtn.addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-    alert("You have been logged out.");
-    window.location.reload();
-  } catch (err) {
-    console.error("Logout failed:", err);
-  }
+logoutBtn.addEventListener("click", async ()=>{
+  try{ 
+    await signOut(auth); 
+    alert("Logged out."); 
+    window.location.reload(); 
+  } catch(err){ console.error(err); alert("Logout failed."); }
 });
 
 // Save user details
-document.getElementById("saveProgram").addEventListener("click", async () => {
+document.getElementById("saveProgram").addEventListener("click", async ()=>{
   const role = roleSelect.value;
   const code = securityCodeInput.value.trim();
   const programName = document.getElementById("programName").value.trim();
@@ -302,37 +192,28 @@ document.getElementById("saveProgram").addEventListener("click", async () => {
   const semester = document.getElementById("semester").value;
   const validStart = /^(Bachelors|Diploma|Masters|Basics)/i;
 
-  if (!role) return alert("Please select your role.");
-  if (role === "lecturer" && code !== LECTURER_CODE)
-    return alert("Invalid lecturer security code.");
-  if (role === "student") {
-    if (!validStart.test(programName))
-      return alert("Program must start with 'Bachelors', 'Diploma', 'Masters', or 'Basics'.");
-    if (!year || !semester)
-      return alert("Please select your year and semester.");
+  if(!role) return alert("Select role.");
+  if(role==="lecturer" && code!==LECTURER_CODE) return alert("Invalid lecturer code.");
+  if(role==="student"){
+    if(!validStart.test(programName)) return alert("Program must start with Bachelors/Diploma/Masters/Basics.");
+    if(!year||!semester) return alert("Select year and semester.");
   }
 
   const user = auth.currentUser;
-  if (!user) return alert("You must be logged in first.");
+  if(!user) return alert("Login first.");
 
-  try {
-    await setDoc(doc(db, "users", user.uid), {
-      name: user.displayName,
-      email: user.email,
+  try{
+    await setDoc(doc(db,"users",user.uid),{
+      name:user.displayName,
+      email:user.email,
       role,
-      ...(role === "student"
-        ? { program: programName, year, semester }
-        : { program: "Lecturer", year: "-", semester: "-" }),
-      createdAt: new Date().toISOString()
+      ...(role==="student"?{program:programName,year,semester}:{program:"Lecturer",year:"-",semester:"-"}),
+      createdAt:new Date().toISOString()
     });
-    alert("Details saved successfully!");
-    window.location.href = "index.html";
-  } catch (e) {
-    console.error(e);
-    alert("Failed to save. Try again.");
-  }
+    alert("Details saved!");
+    window.location.href="index.html";
+  } catch(e){ console.error(e); alert("Failed to save details."); }
 });
 </script>
-
 </body>
 </html>
