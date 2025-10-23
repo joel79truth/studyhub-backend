@@ -1,62 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StudyHub LUANAR – Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif;}
-  body {
-    min-height:100vh; display:flex; justify-content:center; align-items:center;
-    background:linear-gradient(135deg,#1f1f1f,#2c2c2c); color:#fff; padding:20px;
-  }
-  .container {
-    background:#1e1e1e; padding:40px 30px; border-radius:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.5); text-align:center;
-    width:100%; max-width:420px; border:1px solid rgba(255,255,255,.05);
-    animation:fadeIn .8s ease;
-  }
-  @keyframes fadeIn {from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+  body{min-height:100vh;display:flex;justify-content:center;align-items:center;
+    background:linear-gradient(135deg,#1f1f1f,#2c2c2c);color:#fff;padding:20px;}
+  .container{background:#1e1e1e;padding:40px 30px;border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);text-align:center;width:100%;max-width:420px;
+    border:1px solid rgba(255,255,255,.05);}
   h1{font-size:1.4rem;margin-bottom:8px;}
   p{font-size:0.95rem;margin-bottom:25px;color:#ccc;}
-  .google-btn{
-    display:flex;align-items:center;justify-content:center;
+  .google-btn{display:flex;align-items:center;justify-content:center;
     background:#fff;color:#333;border:none;padding:14px 18px;border-radius:12px;
     font-size:1rem;font-weight:600;cursor:pointer;transition:.3s;width:100%;
-    box-shadow:0 5px 15px rgba(0,0,0,.2);
-  }
+    box-shadow:0 5px 15px rgba(0,0,0,.2);}
   .google-btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.25);}
   .google-btn img{height:22px;margin-right:12px;}
 </style>
 </head>
-
 <body>
 <div class="container">
   <h1>Welcome to StudyHub LUANAR</h1>
   <p>Access your student or lecturer resources securely.</p>
-
   <button id="googleLogin" class="google-btn">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
     Continue with Google
   </button>
 </div>
 
 <script type="module">
-import { 
-  initializeApp 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
-import { 
-  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
-  getRedirectResult, onAuthStateChanged, setPersistence, browserLocalPersistence 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-
-import { 
-  getFirestore, doc, getDoc 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
-
-// 🔥 Firebase Config
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
   authDomain: "studyhub-backend.firebaseapp.com",
@@ -72,50 +53,65 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// Check redirect results first (mobile)
-getRedirectResult(auth).then(async (result) => {
-  if (result?.user) handleUser(result.user);
-}).catch(console.error);
-
-// Handle signed-in state
-onAuthStateChanged(auth, async (user) => {
-  if (user) handleUser(user);
-});
-
-// Main login button
-document.getElementById("googleLogin").addEventListener("click", async () => {
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  await setPersistence(auth, browserLocalPersistence);
-  if (isMobile) await signInWithRedirect(auth, provider);
-  else {
-    const res = await signInWithPopup(auth, provider);
-    if (res.user) handleUser(res.user);
-  }
-});
-
-// After login
-async function handleUser(user) {
-  try {
-    const snap = await getDoc(doc(db, "users", user.uid));
-    if (snap.exists()) {
-      const data = snap.data();
-      const complete =
-        data.role &&
-        (data.role === "lecturer" ||
-          (data.program && data.year && data.semester));
-      if (complete) {
-        window.location.href = "index.html";
-      } else {
-        window.location.href = "details.html";
-      }
-    } else {
+// ---- Helper function to check user profile
+async function checkUserProfile(user){
+  try{
+    const snap = await getDoc(doc(db,"users",user.uid));
+    if(!snap.exists()){
+      // first-time user
       window.location.href = "details.html";
+      return;
     }
-  } catch (e) {
-    console.error(e);
+    const data = snap.data();
+    const complete = data.role && (data.role==="lecturer" || (data.program && data.year && data.semester));
+    if(complete) window.location.href = "index.html";
+    else window.location.href = "details.html";
+  } catch(e){
+    console.error("Firestore error:",e);
     window.location.href = "details.html";
   }
 }
+
+// ---- Initialize Auth
+async function initAuth(){
+  try{
+    await setPersistence(auth,browserLocalPersistence);
+
+    // 1️⃣ Check redirect result (important for mobile)
+    try{
+      const redirectResult = await getRedirectResult(auth);
+      if(redirectResult?.user){
+        await checkUserProfile(redirectResult.user);
+        return; // stop further checks
+      }
+    } catch(e){ console.error("Redirect error:",e); }
+
+    // 2️⃣ Listen to auth state changes (desktop / popup)
+    onAuthStateChanged(auth, async (user)=>{
+      if(user){
+        await checkUserProfile(user);
+      }
+    });
+  } catch(e){
+    console.error("Auth init error:",e);
+  }
+}
+
+// ---- Google Login Button
+document.getElementById("googleLogin").addEventListener("click", async ()=>{
+  const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  try{
+    if(isMobile) await signInWithRedirect(auth,provider);
+    else await signInWithPopup(auth,provider);
+  } catch(e){
+    console.error("Google login error:",e);
+    alert("Login failed: "+e.message);
+  }
+});
+
+// Call initAuth immediately
+initAuth();
+
 </script>
 </body>
 </html>
