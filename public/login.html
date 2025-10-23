@@ -1,117 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StudyHub LUANAR – Login</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-  body{min-height:100vh;display:flex;justify-content:center;align-items:center;
-    background:linear-gradient(135deg,#1f1f1f,#2c2c2c);color:#fff;padding:20px;}
-  .container{background:#1e1e1e;padding:40px 30px;border-radius:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.5);text-align:center;width:100%;max-width:420px;
-    border:1px solid rgba(255,255,255,.05);}
-  h1{font-size:1.4rem;margin-bottom:8px;}
-  p{font-size:0.95rem;margin-bottom:25px;color:#ccc;}
-  .google-btn{display:flex;align-items:center;justify-content:center;
-    background:#fff;color:#333;border:none;padding:14px 18px;border-radius:12px;
-    font-size:1rem;font-weight:600;cursor:pointer;transition:.3s;width:100%;
-    box-shadow:0 5px 15px rgba(0,0,0,.2);}
-  .google-btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.25);}
-  .google-btn img{height:22px;margin-right:12px;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>StudyHub LUANAR – Login</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: linear-gradient(135deg, #0077ff, #00c6ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #333;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 30px 25px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      width: 92%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    h2 {
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #003366;
+    }
+    p {
+      margin-bottom: 20px;
+      color: #666;
+    }
+    button {
+      background: #0077ff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 500;
+    }
+    button:hover {
+      background: #005fd4;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    .hidden {
+      display: none;
+    }
+    .footer {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #888;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>Welcome to StudyHub LUANAR</h1>
-  <p>Access your student or lecturer resources securely.</p>
-  <button id="googleLogin" class="google-btn">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
-    Continue with Google
-  </button>
-</div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+  <div class="card" id="loginCard">
+    <h2>Welcome to StudyHub LUANAR</h2>
+    <p>Sign in with your Google account to continue</p>
+    <button id="googleSignInBtn">Continue with Google</button>
+    <div class="footer">© 2025 StudyHub LUANAR</div>
+  </div>
 
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-  authDomain: "studyhub-backend.firebaseapp.com",
-  projectId: "studyhub-backend",
-  storageBucket: "studyhub-backend.appspot.com",
-  messagingSenderId: "985257842533",
-  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
-  measurementId: "G-2FHPEF5XBQ"
-};
+  <div class="card hidden" id="detailsCard">
+    <h2>Enter Your Details</h2>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
+    <select id="program">
+      <option value="">Select Program</option>
+      <option value="Agriculture">Agriculture</option>
+      <option value="Animal Science">Animal Science</option>
+      <option value="Environmental Science">Environmental Science</option>
+      <option value="Food Science">Food Science</option>
+      <option value="ICT">ICT</option>
+    </select>
 
-// ---- Helper function to check user profile
-async function checkUserProfile(user){
-  try{
-    const snap = await getDoc(doc(db,"users",user.uid));
-    if(!snap.exists()){
-      // first-time user
-      window.location.href = "details.html";
-      return;
-    }
-    const data = snap.data();
-    const complete = data.role && (data.role==="lecturer" || (data.program && data.year && data.semester));
-    if(complete) window.location.href = "index.html";
-    else window.location.href = "details.html";
-  } catch(e){
-    console.error("Firestore error:",e);
-    window.location.href = "details.html";
-  }
-}
+    <select id="semester">
+      <option value="">Select Semester</option>
+      <option value="Semester 1">Semester 1</option>
+      <option value="Semester 2">Semester 2</option>
+    </select>
 
-// ---- Initialize Auth
-async function initAuth(){
-  try{
-    await setPersistence(auth,browserLocalPersistence);
+    <select id="year">
+      <option value="">Select Year of Study</option>
+      <option value="Year 1">Year 1</option>
+      <option value="Year 2">Year 2</option>
+      <option value="Year 3">Year 3</option>
+      <option value="Year 4">Year 4</option>
+    </select>
 
-    // 1️⃣ Check redirect result (important for mobile)
-    try{
-      const redirectResult = await getRedirectResult(auth);
-      if(redirectResult?.user){
-        await checkUserProfile(redirectResult.user);
-        return; // stop further checks
-      }
-    } catch(e){ console.error("Redirect error:",e); }
+    <select id="role">
+      <option value="">Select Role</option>
+      <option value="Student">Student</option>
+      <option value="Lecturer">Lecturer</option>
+    </select>
 
-    // 2️⃣ Listen to auth state changes (desktop / popup)
-    onAuthStateChanged(auth, async (user)=>{
-      if(user){
-        await checkUserProfile(user);
+    <input type="password" id="lectureCode" class="hidden" placeholder="Enter Lecturer Code" />
+
+    <button id="continueBtn">Continue</button>
+  </div>
+
+  <script type="module">
+    // Import Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+      authDomain: "studyhub-backend.firebaseapp.com",
+      databaseURL: "https://studyhub-backend-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "studyhub-backend",
+      storageBucket: "studyhub-backend.firebasestorage.app",
+      messagingSenderId: "985257842533",
+      appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
+      measurementId: "G-2FHPEF5XBQ"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginCard = document.getElementById("loginCard");
+    const detailsCard = document.getElementById("detailsCard");
+    const googleSignInBtn = document.getElementById("googleSignInBtn");
+    const continueBtn = document.getElementById("continueBtn");
+    const lectureCodeInput = document.getElementById("lectureCode");
+    const roleSelect = document.getElementById("role");
+
+    // Auto redirect if already logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user && localStorage.getItem("userDetails")) {
+        window.location.href = "index.html";
       }
     });
-  } catch(e){
-    console.error("Auth init error:",e);
-  }
-}
 
-// ---- Google Login Button
-document.getElementById("googleLogin").addEventListener("click", async ()=>{
-  const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  try{
-    if(isMobile) await signInWithRedirect(auth,provider);
-    else await signInWithPopup(auth,provider);
-  } catch(e){
-    console.error("Google login error:",e);
-    alert("Login failed: "+e.message);
-  }
-});
+    // Google Sign-In
+    googleSignInBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
 
-// Call initAuth immediately
-initAuth();
+        const storedDetails = localStorage.getItem("userDetails");
+        if (storedDetails) {
+          window.location.href = "index.html";
+        } else {
+          loginCard.classList.add("hidden");
+          detailsCard.classList.remove("hidden");
+        }
+      } catch (error) {
+        alert("Login failed: " + error.message);
+      }
+    });
 
-</script>
+    // Show lecturer code input if lecturer selected
+    roleSelect.addEventListener("change", () => {
+      if (roleSelect.value === "Lecturer") {
+        lectureCodeInput.classList.remove("hidden");
+      } else {
+        lectureCodeInput.classList.add("hidden");
+      }
+    });
+
+    // Continue Button (after entering details)
+    continueBtn.addEventListener("click", () => {
+      const program = document.getElementById("program").value;
+      const semester = document.getElementById("semester").value;
+      const year = document.getElementById("year").value;
+      const role = document.getElementById("role").value;
+      const lectureCode = document.getElementById("lectureCode").value;
+
+      if (!program || !semester || !year || !role) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      if (role === "Lecturer" && lectureCode !== "7907") {
+        alert("Incorrect lecturer code.");
+        return;
+      }
+
+      const userDetails = { program, semester, year, role };
+      localStorage.setItem("userDetails", JSON.stringify(userDetails));
+
+      window.location.href = "index.html";
+    });
+  </script>
+
 </body>
 </html>
