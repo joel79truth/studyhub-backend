@@ -101,14 +101,20 @@
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { 
-  getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, 
-  getRedirectResult, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+  initializeApp 
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 
-// Firebase config
+import { 
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
+  getRedirectResult, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+import { 
+  getFirestore, doc, setDoc, getDoc 
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+// 🔥 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
   authDomain: "studyhub-backend.firebaseapp.com",
@@ -123,9 +129,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
+
 const LECTURER_CODE = "7907";
 
-// DOM Elements
+// DOM elements
 const googleLogin = document.getElementById("googleLogin");
 const programForm = document.getElementById("programForm");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -133,101 +140,136 @@ const roleSelect = document.getElementById("role");
 const securityCodeInput = document.getElementById("securityCode");
 const studentFields = document.getElementById("studentFields");
 
-// Helpers
-const showProgramForm = () => { googleLogin.style.display="none"; programForm.style.display="block"; }
-const hideProgramForm = () => { googleLogin.style.display="block"; programForm.style.display="none"; }
+const showProgramForm = () => {
+  googleLogin.style.display = "none";
+  programForm.style.display = "block";
+};
+const hideProgramForm = () => {
+  googleLogin.style.display = "block";
+  programForm.style.display = "none";
+};
 
-// Role selection
-roleSelect.addEventListener("change", () => {
-  if(roleSelect.value==="lecturer"){ 
-    securityCodeInput.style.display="block"; 
-    studentFields.style.display="none"; 
-  } else if(roleSelect.value==="student"){ 
-    securityCodeInput.style.display="none"; 
-    studentFields.style.display="block"; 
-  } else { 
-    securityCodeInput.style.display="none"; 
-    studentFields.style.display="none"; 
+// 👇 Immediately check redirect result on page load
+getRedirectResult(auth)
+  .then(async (result) => {
+    if (result && result.user) {
+      showProgramForm();
+    }
+  })
+  .catch((err) => console.error("Redirect error:", err));
+
+// 👇 Initialize Auth State
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (snap.exists()) {
+        const data = snap.data();
+        const complete =
+          data.role &&
+          (data.role === "lecturer" ||
+            (data.program && data.year && data.semester));
+
+        if (complete) {
+          window.location.href = "index.html";
+        } else {
+          showProgramForm();
+        }
+      } else {
+        showProgramForm();
+      }
+    } catch (err) {
+      console.error(err);
+      showProgramForm();
+    }
+  } else {
+    hideProgramForm();
   }
 });
 
-// Initialize Auth
-async function initAuth(){
+// 👇 Role selection
+roleSelect.addEventListener("change", () => {
+  if (roleSelect.value === "lecturer") {
+    securityCodeInput.style.display = "block";
+    studentFields.style.display = "none";
+  } else if (roleSelect.value === "student") {
+    securityCodeInput.style.display = "none";
+    studentFields.style.display = "block";
+  } else {
+    securityCodeInput.style.display = "none";
+    studentFields.style.display = "none";
+  }
+});
+
+// 👇 Google Login
+googleLogin.addEventListener("click", async () => {
   try {
     await setPersistence(auth, browserLocalPersistence);
-
-    const redirectResult = await getRedirectResult(auth);
-    if(redirectResult?.user) showProgramForm();
-
-    onAuthStateChanged(auth, async user=>{
-      if(user){
-        try{
-          const snap = await getDoc(doc(db,"users",user.uid));
-          if(snap.exists()){
-            const data = snap.data();
-            const complete = data.role && (data.role==="lecturer" || (data.program && data.year && data.semester));
-            if(complete) window.location.href="index.html";
-            else showProgramForm();
-          } else showProgramForm();
-        } catch(err){ console.error(err); showProgramForm(); }
-      } else hideProgramForm();
-    });
-  } catch(err){ console.error("Firebase init error:",err); }
-}
-initAuth();
-
-// Google login
-googleLogin.addEventListener("click", async ()=>{
-  try{
-    const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if(isMobile) await signInWithRedirect(auth,provider);
-    else { 
-      const res = await signInWithPopup(auth,provider); 
-      if(res.user) showProgramForm(); 
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      await signInWithRedirect(auth, provider);
+    } else {
+      const res = await signInWithPopup(auth, provider);
+      if (res.user) showProgramForm();
     }
-  } catch(err){ console.error(err); alert("Google login failed: "+err.message); }
+  } catch (err) {
+    console.error(err);
+    alert("Google login failed: " + err.message);
+  }
 });
 
-// Logout
-logoutBtn.addEventListener("click", async ()=>{
-  try{ 
-    await signOut(auth); 
-    alert("Logged out."); 
-    window.location.reload(); 
-  } catch(err){ console.error(err); alert("Logout failed."); }
+// 👇 Logout
+logoutBtn.addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    alert("Logged out.");
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert("Logout failed.");
+  }
 });
 
-// Save user details
-document.getElementById("saveProgram").addEventListener("click", async ()=>{
+// 👇 Save User Details
+document.getElementById("saveProgram").addEventListener("click", async () => {
   const role = roleSelect.value;
   const code = securityCodeInput.value.trim();
   const programName = document.getElementById("programName").value.trim();
   const year = document.getElementById("year").value;
   const semester = document.getElementById("semester").value;
+
   const validStart = /^(Bachelors|Diploma|Masters|Basics)/i;
 
-  if(!role) return alert("Select role.");
-  if(role==="lecturer" && code!==LECTURER_CODE) return alert("Invalid lecturer code.");
-  if(role==="student"){
-    if(!validStart.test(programName)) return alert("Program must start with Bachelors/Diploma/Masters/Basics.");
-    if(!year||!semester) return alert("Select year and semester.");
+  if (!role) return alert("Select role.");
+  if (role === "lecturer" && code !== LECTURER_CODE)
+    return alert("Invalid lecturer code.");
+  if (role === "student") {
+    if (!validStart.test(programName))
+      return alert("Program must start with Bachelors/Diploma/Masters/Basics.");
+    if (!year || !semester) return alert("Select year and semester.");
   }
 
   const user = auth.currentUser;
-  if(!user) return alert("Login first.");
+  if (!user) return alert("Login first.");
 
-  try{
-    await setDoc(doc(db,"users",user.uid),{
-      name:user.displayName,
-      email:user.email,
+  try {
+    await setDoc(doc(db, "users", user.uid), {
+      name: user.displayName,
+      email: user.email,
       role,
-      ...(role==="student"?{program:programName,year,semester}:{program:"Lecturer",year:"-",semester:"-"}),
-      createdAt:new Date().toISOString()
+      ...(role === "student"
+        ? { program: programName, year, semester }
+        : { program: "Lecturer", year: "-", semester: "-" }),
+      createdAt: new Date().toISOString(),
     });
     alert("Details saved!");
-    window.location.href="index.html";
-  } catch(e){ console.error(e); alert("Failed to save details."); }
+    window.location.href = "index.html";
+  } catch (e) {
+    console.error(e);
+    alert("Failed to save details.");
+  }
 });
 </script>
+
 </body>
 </html>
