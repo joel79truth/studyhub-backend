@@ -82,6 +82,7 @@
 </head>
 <body>
 
+  <!-- Step 1: Google Sign-In -->
   <div class="card" id="loginCard">
     <h2>Welcome to StudyHub LUANAR</h2>
     <p>Sign in with your Google account to continue</p>
@@ -89,23 +90,12 @@
     <div class="footer">© 2025 StudyHub LUANAR</div>
   </div>
 
+  <!-- Step 2: User Details -->
   <div class="card hidden" id="detailsCard">
     <h2>Enter Your Details</h2>
 
-    <select id="program">
-      <option value="">Select Program</option>
-      <option value="Agriculture">Agriculture</option>
-      <option value="Animal Science">Animal Science</option>
-      <option value="Environmental Science">Environmental Science</option>
-      <option value="Food Science">Food Science</option>
-      <option value="ICT">ICT</option>
-    </select>
-
-    <select id="semester">
-      <option value="">Select Semester</option>
-      <option value="Semester 1">Semester 1</option>
-      <option value="Semester 2">Semester 2</option>
-    </select>
+    <input type="text" id="program" placeholder="Enter Program (e.g., Bachelor of Science)" />
+    <input type="text" id="semester" placeholder="Enter Semester (e.g., Semester 1)" />
 
     <select id="year">
       <option value="">Select Year of Study</option>
@@ -189,16 +179,24 @@
       }
     });
 
-    // Continue Button (after entering details)
+    // Continue Button
     continueBtn.addEventListener("click", () => {
-      const program = document.getElementById("program").value;
-      const semester = document.getElementById("semester").value;
+      const program = document.getElementById("program").value.trim();
+      const semester = document.getElementById("semester").value.trim();
       const year = document.getElementById("year").value;
       const role = document.getElementById("role").value;
-      const lectureCode = document.getElementById("lectureCode").value;
+      const lectureCode = document.getElementById("lectureCode").value.trim();
+
+      const validStartWords = ["bachelor", "diploma", "masters", "basics"];
+      const programStart = program.toLowerCase().split(" ")[0];
 
       if (!program || !semester || !year || !role) {
         alert("Please fill in all fields.");
+        return;
+      }
+
+      if (!validStartWords.includes(programStart)) {
+        alert("Program must start with Bachelor, Diploma, Masters, or Basics.");
         return;
       }
 
