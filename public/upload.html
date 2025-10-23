@@ -6,8 +6,6 @@
 <title>Upload Notes – StudyHub LUANAR</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  /* (keep all your same styles here — unchanged for design) */
-  
   *, *::before, *::after { box-sizing: border-box; }
   body, html {
     margin: 0; padding: 0; height: 100%;
@@ -18,8 +16,6 @@
     color: #fff;
     overflow: hidden;
   }
-
-  /* Container */
   .container {
     background: rgba(5, 5, 5, 0.322);
     backdrop-filter: blur(16px);
@@ -35,7 +31,6 @@
     transform: translateY(-5px);
     box-shadow: 0 16px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.2);
   }
-
   h2 {
     text-align: center;
     position: relative;
@@ -49,8 +44,6 @@
     overflow: hidden;
     z-index: 0;
   }
-
-  /* Rotating glowing light */
   h2::before {
     content: '';
     position: absolute;
@@ -62,7 +55,6 @@
     animation: spin 5s linear infinite;
     z-index: -2;
   }
-
   h2::after {
     content: '';
     position: absolute;
@@ -71,13 +63,8 @@
     border-radius: 8px;
     z-index: -1;
   }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  /* Inputs */
   label {
     display: block;
     text-align: left;
@@ -96,8 +83,6 @@
     box-shadow: 0 0 12px 2px #ff813f;
     transform: scale(1.02);
   }
-
-  /* Icon Buttons with Labels */
   .icon-button-container {
     display: inline-block;
     margin: 15px 10px;
@@ -115,14 +100,8 @@
     box-shadow: 0 4px 12px rgba(255,129,63,0.6);
     transition: all 0.3s ease;
   }
-  .icon-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(255,129,63,0.7);
-  }
-  .icon-button:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(255,129,63,0.6);
-  }
+  .icon-button:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,129,63,0.7); }
+  .icon-button:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(255,129,63,0.6); }
   .back-btn {
     background: linear-gradient(135deg, #078818, #209204);
   }
@@ -138,8 +117,6 @@
     color: #fff;
     text-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
-
-  /* Progress Bar */
   #progressContainer {
     margin-top: 20px;
     height: 18px;
@@ -165,8 +142,6 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
-
-  /* Messages */
   .message {
     margin-top: 12px;
     font-weight: 600;
@@ -179,29 +154,25 @@
   .message.error { color: #e74c3c; text-shadow: 0 1px 3px rgba(0,0,0,0.3);}
 </style>
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-0LTZS1S9W6');
+</script>
 
-
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-0LTZS1S9W6');
-  </script>
-  
 </head>
 <body>
 <div class="container">
   <h2>Upload Notes</h2>
 
   <form id="uploadForm" enctype="multipart/form-data">
-    <label for="program">Program Name (Diploma / Bachelors / Basics):</label>
+    <label for="program">Program Name (Diploma / Bachelors / Masters / Basics):</label>
     <input type="text" id="program" name="program" required placeholder="e.g., Diploma in Agriculture" />
 
     <label for="semester">Semester (1-12):</label>
-    <input type="number" id="semester" name="semester" placeholder="e.g., 1 or 2" />
+    <input type="number" id="semester" name="semester" min="1" max="12" required placeholder="e.g., 1 or 2" />
 
     <label for="subject">Subject:</label>
     <input type="text" id="subject" name="subject" required placeholder="e.g., Biology, Physics" />
@@ -236,11 +207,10 @@
     authDomain: "studyhub-backend.firebaseapp.com",
     projectId: "studyhub-backend",
   };
-
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // Ensure user is logged in
+  // Check login
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       alert("Please log in first before uploading files.");
@@ -256,14 +226,41 @@
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Program validation
+    const programInput = document.getElementById("program").value.trim();
+    const validPrograms = ["Diploma", "Bachelors", "Masters", "Basics"];
+    if (!validPrograms.some(p => programInput.startsWith(p))) {
+      alert("Program name must start with Diploma, Bachelors, Masters, or Basics.");
+      return;
+    }
+
+    // Semester validation
+    const semesterInput = document.getElementById("semester").value;
+    if (!semesterInput || semesterInput < 1 || semesterInput > 12) {
+      alert("Semester must be between 1 and 12.");
+      return;
+    }
+
+    // File validation
     const file = document.getElementById("file").files[0];
     if (!file) return alert("Please choose a file first.");
-
-    const formData = new FormData(form);
+    const allowedTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    ];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only PDF or PPTX files are allowed!");
+      return;
+    }
 
     try {
-      const token = await auth.currentUser.getIdToken();
+      if (!auth.currentUser) {
+        alert("User not logged in");
+        return;
+      }
 
+      const token = await auth.currentUser.getIdToken();
+      const formData = new FormData(form);
       const xhr = new XMLHttpRequest();
       xhr.open("POST", "/upload");
       xhr.setRequestHeader("Authorization", "Bearer " + token);
@@ -281,6 +278,7 @@
           messageBox.textContent = "✅ Upload successful!";
           messageBox.className = "message success show";
           form.reset();
+          setTimeout(() => progressContainer.style.display = "none", 1500);
           progressBar.style.width = "0%";
         } else {
           messageBox.textContent = "❌ Upload failed: " + xhr.responseText;
@@ -288,7 +286,13 @@
         }
       };
 
+      xhr.onerror = () => {
+        messageBox.textContent = "❌ Upload error. Please try again.";
+        messageBox.className = "message error show";
+      };
+
       xhr.send(formData);
+
     } catch (error) {
       console.error(error);
       messageBox.textContent = "❌ Upload error. Try again.";
