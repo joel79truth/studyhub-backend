@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>StudyHub LUANAR – Complete Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+  body{
+    min-height:100vh;display:flex;justify-content:center;align-items:center;
+    background:linear-gradient(135deg,#1f1f1f,#2c2c2c);color:#fff;padding:20px;
+  }
+  .container{
+    background:#1e1e1e;padding:40px 30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    width:100%;max-width:420px;text-align:center;border:1px solid rgba(255,255,255,.05);
+    animation:fadeIn .8s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  h2{margin-bottom:20px;font-size:1.3rem;}
+  select,input{
+    width:100%;padding:12px;margin-bottom:12px;border:none;border-radius:10px;
+    outline:none;font-size:1rem;text-align:center;
+  }
+  .submit-btn{
+    background:linear-gradient(135deg,#6C63FF,#00CFFF);border:none;padding:12px 20px;
+    border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;color:#fff;width:100%;
+    transition:.3s;margin-top:10px;
+  }
+  .submit-btn:hover{opacity:.9;}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h2>Complete Your Profile</h2>
+  <select id="role">
+    <option value="">Are you a Lecturer or Student?</option>
+    <option value="student">Student</option>
+    <option value="lecturer">Lecturer</option>
+  </select>
+
+  <input type="password" id="securityCode" placeholder="Lecturer Security Code" style="display:none;" />
+
+  <div id="studentFields">
+    <input type="text" id="programName" placeholder="Enter your Program Name..." />
+    <select id="year">
+      <option value="">Select Year</option>
+      <option value="Year 1">Year 1</option>
+      <option value="Year 2">Year 2</option>
+      <option value="Year 3">Year 3</option>
+      <option value="Year 4">Year 4</option>
+    </select>
+    <select id="semester">
+      <option value="">Select Semester</option>
+      <option value="Semester 1">Semester 1</option>
+      <option value="Semester 2">Semester 2</option>
+    </select>
+  </div>
+
+  <button id="saveBtn" class="submit-btn">Save Details</button>
+  <button id="logoutBtn" class="submit-btn" style="background:#444;">Logout</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
+  projectId: "studyhub-backend",
+  storageBucket: "studyhub-backend.appspot.com",
+  messagingSenderId: "985257842533",
+  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
+  measurementId: "G-2FHPEF5XBQ"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const LECTURER_CODE = "7907";
+
+const roleSelect = document.getElementById("role");
+const studentFields = document.getElementById("studentFields");
+const securityCode = document.getElementById("securityCode");
+
+roleSelect.addEventListener("change", ()=>{
+  if(roleSelect.value==="lecturer"){
+    securityCode.style.display="block"; studentFields.style.display="none";
+  } else if(roleSelect.value==="student"){
+    securityCode.style.display="none"; studentFields.style.display="block";
+  } else {
+    securityCode.style.display="none"; studentFields.style.display="none";
+  }
+});
+
+let currentUser = null;
+onAuthStateChanged(auth, user=>{
+  if(!user){
+    window.location.href="login.html";
+  } else currentUser=user;
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async ()=>{
+  await signOut(auth);
+  window.location.href="login.html";
+});
+
+document.getElementById("saveBtn").addEventListener("click", async ()=>{
+  const role=roleSelect.value;
+  const code=securityCode.value.trim();
+  const program=document.getElementById("programName").value.trim();
+  const year=document.getElementById("year").value;
+  const semester=document.getElementById("semester").value;
+  const validStart=/^(Bachelors|Diploma|Masters|Basics)/i;
+
+  if(!role) return alert("Select role.");
+  if(role==="lecturer" && code!==LECTURER_CODE) return alert("Invalid lecturer code.");
+  if(role==="student"){
+    if(!validStart.test(program)) return alert("Program must start with Bachelors/Diploma/Masters/Basics.");
+    if(!year||!semester) return alert("Select year and semester.");
+  }
+
+  try{
+    await setDoc(doc(db,"users",currentUser.uid),{
+      name:currentUser.displayName,
+      email:currentUser.email,
+      role,
+      ...(role==="student"?{program,year,semester}:{program:"Lecturer",year:"-",semester:"-"}),
+      createdAt:new Date().toISOString()
+    });
+    alert("Profile saved successfully!");
+    window.location.href="index.html";
+  } catch(e){
+    console.error(e);
+    alert("Error saving details.");
+  }
+});
+</script>
+</body>
+</html>
