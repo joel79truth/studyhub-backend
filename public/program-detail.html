@@ -383,6 +383,19 @@ gtag('config', 'G-0LTZS1S9W6');
     <span class="close-btn" onclick="closeViewer()">×</span>
     <iframe id="viewerFrame"></iframe>
 </div>
+<div id="toast" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: none;
+    padding: 12px 20px;
+    background: #2ecc71;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 9999;
+"></div>
 
 <script>
 // Get program name from URL
@@ -496,6 +509,71 @@ document.getElementById("fileSearch").addEventListener("input", function() {
 
 // Initialize
 loadFiles();
+// Request browser notification permission
+if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
+
+function showBrowserNotification(program, semester, filename) {
+    if (Notification.permission === "granted") {
+        new Notification("New file uploaded!", {
+            body: `${program} – ${semester} – ${filename}`,
+            icon: "/icon.png" // optional, you can add your logo path
+        });
+    }
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 5000);
+}
+
+// Polling for new files
+let knownFiles = [...allFiles]; // copy of current files
+
+async function checkForNewFiles() {
+    try {
+        const res = await fetch("/api/metadata");
+        const metadata = await res.json();
+        const files = Array.isArray(metadata) ? metadata : metadata.files || [];
+
+        // Filter files for this program only
+        const programFiles = files.filter(f =>
+            f.program?.trim().toLowerCase() === programName.toLowerCase()
+        );
+
+        // Detect new files
+        const newFiles = programFiles.filter(f =>
+            !knownFiles.some(kf => kf.url === f.url)
+        );
+
+        // Show notifications and update list
+        newFiles.forEach(f => {
+            const message = `${f.program} – ${f.semester} – New file uploaded: ${f.filename}`;
+            showToast(message);
+            showBrowserNotification(f.program, f.semester, f.filename);
+
+            // Add to knownFiles so we don't notify again
+            knownFiles.push(f);
+            allFiles.push(f);
+        });
+
+        // Refresh UI if new files
+        if (newFiles.length > 0) {
+            displayFiles(allFiles);
+        }
+    } catch (err) {
+        console.error("Error checking new files:", err);
+    }
+}
+
+// Start polling every 10 seconds
+setInterval(checkForNewFiles, 10000);
+
+
+    
 </script>
 
 
