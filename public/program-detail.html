@@ -385,8 +385,43 @@ gtag('config', 'G-0LTZS1S9W6');
 </div>
 
 <script>
+const publicVapidKey = "BGrGNgr-o1fgQqLaDwdFugHhqUIwjwqB6Fr-Bk79C1OpAQt2l1mAzTs746LNfQvHe-ncR7gypDI0eyxk_FQHYiQ";
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then(async reg => {
+      console.log("Service Worker registered!");
+
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        const subscription = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+        });
+
+        await fetch("/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(subscription)
+        });
+        console.log("User subscribed for push notifications!");
+      }
+    });
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
+  const rawData = atob(base64);
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+}
+</script>
+
+
+<script>
+// Get program name from URL
 const params = new URLSearchParams(window.location.search);
-const programName = params.get("program");
+const programName = (params.get("program") || "").trim();
 document.getElementById("programTitle").textContent = programName || "Program Details";
 
 let allFiles = [];
@@ -395,22 +430,10 @@ let allFiles = [];
 function getFileIcon(filename) {
   const ext = filename.split('.').pop().toLowerCase();
   const iconMap = {
-    'pdf': '📄',
-    'doc': '📝',
-    'docx': '📝',
-    'ppt': '📊',
-    'pptx': '📊',
-    'xls': '📈',
-    'xlsx': '📈',
-    'txt': '📃',
-    'jpg': '🖼️',
-    'jpeg': '🖼️',
-    'png': '🖼️',
-    'gif': '🖼️',
-    'mp4': '🎥',
-    'mp3': '🎵',
-    'zip': '📦',
-    'rar': '📦'
+    'pdf': '📄', 'doc': '📝', 'docx': '📝',
+    'ppt': '📊', 'pptx': '📊', 'xls': '📈', 'xlsx': '📈',
+    'txt': '📃', 'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️',
+    'mp4': '🎥', 'mp3': '🎵', 'zip': '📦', 'rar': '📦'
   };
   return iconMap[ext] || '📁';
 }
@@ -423,10 +446,13 @@ async function loadFiles() {
 
     const files = Array.isArray(metadata) ? metadata : metadata.files || [];
 
-    // Filter by program
-    allFiles = files.filter(f =>
-      f.program?.toLowerCase() === (programName || "").toLowerCase()
-    );
+    console.log("Program in URL:", programName);
+    console.log("Programs in metadata:", files.map(f => f.program));
+
+    // Filter files by program name (case-insensitive, trim spaces)
+    allFiles = files.filter(f => {
+      return f.program?.trim().toLowerCase() === programName.toLowerCase();
+    });
 
     displayFiles(allFiles);
   } catch (err) {
@@ -435,7 +461,7 @@ async function loadFiles() {
   }
 }
 
-// Display file cards
+// Display files
 function displayFiles(files) {
   const container = document.getElementById("fileList");
   if (!files.length) {
@@ -444,7 +470,6 @@ function displayFiles(files) {
   }
 
   container.innerHTML = files.map(f => {
-    // Use full URL for external links, otherwise relative
     const filePath = f.url.startsWith("http") ? f.url : (f.url.startsWith("/") ? f.url.slice(1) : f.url);
     const fileIcon = getFileIcon(f.filename);
 
@@ -468,14 +493,8 @@ function displayFiles(files) {
             </div>
           </div>
           <div class="button-group">
-            <button class="view-btn" onclick="viewFile('${filePath}')">
-              <span>👁️</span>
-              <span>View</span>
-            </button>
-            <button class="download-btn" onclick="downloadFile('${filePath}')">
-              <span>⬇️</span>
-              <span>Download</span>
-            </button>
+            <button class="view-btn" onclick="viewFile('${filePath}')">👁️ View</button>
+            <button class="download-btn" onclick="downloadFile('${filePath}')">⬇️ Download</button>
           </div>
         </div>
       </div>
@@ -483,12 +502,12 @@ function displayFiles(files) {
   }).join('');
 }
 
-// Open file — works for external URLs
+// Open file in new tab
 function viewFile(filePath) {
   window.open(filePath, "_blank");
 }
 
-// Download file — works for external URLs
+// Download file
 function downloadFile(url) {
   const link = document.createElement("a");
   link.href = url;
@@ -498,22 +517,22 @@ function downloadFile(url) {
   document.body.removeChild(link);
 }
 
-
-
-
-
-// Search functionality
+// Search files
 document.getElementById("fileSearch").addEventListener("input", function() {
-  const query = this.value.toLowerCase();
+  const query = this.value.trim().toLowerCase();
   const filtered = allFiles.filter(f =>
     f.filename.toLowerCase().includes(query) ||
-    f.subject.toLowerCase().includes(query)
+    f.subject.toLowerCase().includes(query) ||
+    f.program?.toLowerCase().includes(query)
   );
   displayFiles(filtered);
 });
 
 // Initialize
 loadFiles();
+
+
+    
 </script>
 
 

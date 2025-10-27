@@ -5,100 +5,83 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>StudyHub LUANAR – Login</title>
+
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg,#1f1f1f,#2c2c2c);
-      color:#fff;
-      padding: 20px;
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
     }
-    .container {
-      background:#1e1e1e;
-      padding:40px 30px;
-      border-radius:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.5);
-      text-align:center;
-      width:100%;
-      max-width:420px;
-      animation:fadeIn .8s ease;
-      border:1px solid rgba(255,255,255,.05);
+    body {
+      background: linear-gradient(135deg, #0077ff, #00c6ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #333;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 30px 25px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      width: 92%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
     }
     @keyframes fadeIn {
-      from {opacity:0;transform:translateY(20px);}
-      to {opacity:1;transform:translateY(0);}
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
     }
-
-    h1 {font-size:1.4rem;margin-bottom:8px;}
-    p {font-size:0.95rem;margin-bottom:25px;color:#ccc;}
-
-    .google-btn {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#fff;
-      color:#333;
-      border:none;
-      padding:14px 18px;
-      border-radius:12px;
-      font-size:1rem;
-      font-weight:600;
-      cursor:pointer;
-      transition:.3s;
-      width:100%;
-      box-shadow:0 5px 15px rgba(0,0,0,.2);
+    h2 {
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #003366;
     }
-    .google-btn:hover {transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.25);}
-    .google-btn img {height:22px;margin-right:12px;}
-
-    .program-input {
-      margin-top:25px;
-      display:none;
-      text-align:left;
+    p {
+      margin-bottom: 20px;
+      color: #666;
     }
-    .program-input input, .program-input select {
-      width:100%;
-      padding:12px;
-      border-radius:10px;
-      border:none;
-      outline:none;
-      font-size:1rem;
-      margin-bottom:12px;
-      text-align:center;
+    button {
+      background: #0077ff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 500;
     }
-
-    .submit-btn {
-      background:linear-gradient(135deg,#6C63FF,#00CFFF);
-      border:none;
-      padding:12px 20px;
-      border-radius:10px;
-      font-size:1rem;
-      font-weight:600;
-      cursor:pointer;
-      color:#fff;
-      width:100%;
-      transition:.3s;
+    button:hover {
+      background: #005fd4;
     }
-    .submit-btn:hover {opacity:.9;}
-    #logoutBtn {background:#444;margin-top:10px;}
-
-    /* Mobile responsiveness */
-    @media (max-width: 600px) {
-      .container {
-        padding:30px 20px;
-        border-radius:15px;
-      }
-      h1 {font-size:1.2rem;}
-      p {font-size:0.9rem;}
-      .google-btn {font-size:0.95rem;padding:12px;}
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    .hidden {
+      display: none;
+    }
+    .footer {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #888;
     }
   </style>
 
- <!-- Google Analytics -->
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -106,59 +89,54 @@
     gtag('js', new Date());
     gtag('config', 'G-0LTZS1S9W6');
   </script>
-
+  
 </head>
-
 <body>
-  <div class="container">
-    <h1>Welcome to StudyHub LUANAR</h1>
-    <p>Access your student or lecturer resources securely.</p>
 
-    <button id="googleLogin" class="google-btn">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-           alt="Google logo" />
-      Continue with Google
-    </button>
+  <!-- Step 1: Google Sign-In -->
+  <div class="card" id="loginCard">
+    <h2>Welcome to StudyHub LUANAR</h2>
+    <p>Sign in with your Google account to continue</p>
+    <button id="googleSignInBtn">Continue with Google</button>
+    <div class="footer">© 2025 StudyHub LUANAR</div>
+  </div>
 
-    <!-- Role + Security/Program Form -->
-    <div id="programForm" class="program-input">
-      <select id="role">
-        <option value="">Are you a Lecturer or Student?</option>
-        <option value="student">Student</option>
-        <option value="lecturer">Lecturer</option>
-      </select>
+  <!-- Step 2: User Details -->
+  <div class="card hidden" id="detailsCard">
+    <h2>Enter Your Details</h2>
 
-      <input type="password" id="securityCode" placeholder="Enter Security Code (Lecturers only)" style="display:none;" />
+    <input type="text" id="program" placeholder="Enter Program (e.g., Bachelor of Science)" />
+    <input type="text" id="semester" placeholder="Enter Semester (e.g., Semester 1)" />
 
-      <div id="studentFields">
-        <input type="text" id="programName" placeholder="Enter your Program Name..." />
-        <select id="year">
-          <option value="">Select Year</option>
-          <option value="Year 1">Year 1</option>
-          <option value="Year 2">Year 2</option>
-          <option value="Year 3">Year 3</option>
-          <option value="Year 4">Year 4</option>
-        </select>
-        <select id="semester">
-          <option value="">Select Semester</option>
-          <option value="Semester 1">Semester 1</option>
-          <option value="Semester 2">Semester 2</option>
-        </select>
-      </div>
+    <select id="year">
+      <option value="">Select Year of Study</option>
+      <option value="Year 1">Year 1</option>
+      <option value="Year 2">Year 2</option>
+      <option value="Year 3">Year 3</option>
+      <option value="Year 4">Year 4</option>
+    </select>
 
-      <button id="saveProgram" class="submit-btn">Save Details</button>
-      <button id="logoutBtn" class="submit-btn">Logout</button>
-    </div>
+    <select id="role">
+      <option value="">Select Role</option>
+      <option value="Student">Student</option>
+      <option value="Lecturer">Lecturer</option>
+    </select>
+
+    <input type="password" id="lectureCode" class="hidden" placeholder="Enter Lecturer Code" />
+
+    <button id="continueBtn">Continue</button>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+    // Import Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
       authDomain: "studyhub-backend.firebaseapp.com",
+      databaseURL: "https://studyhub-backend-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "studyhub-backend",
       storageBucket: "studyhub-backend.firebasestorage.app",
       messagingSenderId: "985257842533",
@@ -166,128 +144,84 @@
       measurementId: "G-2FHPEF5XBQ"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
-    const LECTURER_CODE = "7907";
 
-    const googleLogin = document.getElementById("googleLogin");
-    const programForm = document.getElementById("programForm");
-    const logoutBtn = document.getElementById("logoutBtn");
+    const loginCard = document.getElementById("loginCard");
+    const detailsCard = document.getElementById("detailsCard");
+    const googleSignInBtn = document.getElementById("googleSignInBtn");
+    const continueBtn = document.getElementById("continueBtn");
+    const lectureCodeInput = document.getElementById("lectureCode");
     const roleSelect = document.getElementById("role");
-    const securityCodeInput = document.getElementById("securityCode");
-    const studentFields = document.getElementById("studentFields");
 
-    // Toggle inputs
-    roleSelect.addEventListener("change", () => {
-      if (roleSelect.value === "lecturer") {
-        securityCodeInput.style.display = "block";
-        studentFields.style.display = "none";
-      } else if (roleSelect.value === "student") {
-        securityCodeInput.style.display = "none";
-        studentFields.style.display = "block";
-      } else {
-        securityCodeInput.style.display = "none";
-        studentFields.style.display = "none";
+    // Auto redirect if already logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user && localStorage.getItem("userDetails")) {
+        window.location.href = "index.html";
       }
     });
 
-    // Handle redirect result (mobile login)
-    getRedirectResult(auth).then((result) => {
-      if (result && result.user) {
+    // Google Sign-In
+    googleSignInBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
         const user = result.user;
-        const userRef = doc(db, "users", user.uid);
-        getDoc(userRef).then(snap => {
-          if (snap.exists()) {
-            window.location.href = "index.html";
-          } else {
-            googleLogin.style.display = "none";
-            programForm.style.display = "block";
-          }
-        });
-      }
-    }).catch((error) => {
-      console.error("Redirect login failed:", error);
-    });
 
-    // Detect login state
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const snap = await getDoc(userRef);
-        if (snap.exists()) {
+        const storedDetails = localStorage.getItem("userDetails");
+        if (storedDetails) {
           window.location.href = "index.html";
         } else {
-          googleLogin.style.display = "none";
-          programForm.style.display = "block";
+          loginCard.classList.add("hidden");
+          detailsCard.classList.remove("hidden");
         }
+      } catch (error) {
+        alert("Login failed: " + error.message);
+      }
+    });
+
+    // Show lecturer code input if lecturer selected
+    roleSelect.addEventListener("change", () => {
+      if (roleSelect.value === "Lecturer") {
+        lectureCodeInput.classList.remove("hidden");
       } else {
-        googleLogin.style.display = "block";
-        programForm.style.display = "none";
+        lectureCodeInput.classList.add("hidden");
       }
     });
 
-    // Google login
-    googleLogin.addEventListener("click", async () => {
-      try {
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-          await signInWithRedirect(auth, provider);
-        } else {
-          await signInWithPopup(auth, provider);
-        }
-      } catch (err) {
-        alert("Login failed: " + err.message);
-      }
-    });
-
-    // Logout
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      alert("You have been logged out.");
-      window.location.reload();
-    });
-
-    // Save details
-    document.getElementById("saveProgram").addEventListener("click", async () => {
-      const role = roleSelect.value;
-      const code = securityCodeInput.value.trim();
-      const programName = document.getElementById("programName").value.trim();
+    // Continue Button
+    continueBtn.addEventListener("click", () => {
+      const program = document.getElementById("program").value.trim();
+      const semester = document.getElementById("semester").value.trim();
       const year = document.getElementById("year").value;
-      const semester = document.getElementById("semester").value;
-      const validStart = /^(Bachelors|Diploma|Masters|Basics)/i;
+      const role = document.getElementById("role").value;
+      const lectureCode = document.getElementById("lectureCode").value.trim();
 
-      if (!role) return alert("Please select your role.");
-      if (role === "lecturer" && code !== LECTURER_CODE)
-        return alert("Invalid lecturer security code.");
-      if (role === "student") {
-        if (!validStart.test(programName))
-          return alert("Program must start with 'Bachelors', 'Diploma', 'Masters', or 'Basics'.");
-        if (!year || !semester)
-          return alert("Please select your year and semester.");
+      const validStartWords = ["bachelor", "diploma", "masters", "basics"];
+      const programStart = program.toLowerCase().split(" ")[0];
+
+      if (!program || !semester || !year || !role) {
+        alert("Please fill in all fields.");
+        return;
       }
 
-      const user = auth.currentUser;
-      if (!user) return alert("You must be logged in first.");
-
-      try {
-        await setDoc(doc(db, "users", user.uid), {
-          name: user.displayName,
-          email: user.email,
-          role,
-          ...(role === "student"
-            ? { program: programName, year, semester }
-            : { program: "Lecturer", year: "-", semester: "-" }),
-          createdAt: new Date().toISOString()
-        });
-        alert("Details saved successfully!");
-        window.location.href = "index.html";
-      } catch (e) {
-        console.error(e);
-        alert("Failed to save. Try again.");
+      if (!validStartWords.includes(programStart)) {
+        alert("Program must start with Bachelor, Diploma, Masters, or Basics.");
+        return;
       }
+
+      if (role === "Lecturer" && lectureCode !== "7907") {
+        alert("Incorrect lecturer code.");
+        return;
+      }
+
+      const userDetails = { program, semester, year, role };
+      localStorage.setItem("userDetails", JSON.stringify(userDetails));
+
+      window.location.href = "index.html";
     });
   </script>
+
 </body>
 </html>

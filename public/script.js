@@ -1,3 +1,53 @@
+
+// Import Firebase (make sure version matches your Firebase SDK)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
+
+// 1️⃣ Initialize Firebase
+const firebaseConfig = {
+ apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
+   projectId: "studyhub-backend",
+  storageBucket: "studyhub-backend.firebasestorage.app",
+  messagingSenderId: "985257842533",
+  appId: "1:985257842533:web:cdba8c4138b3f7a3ad338c",
+};
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
+
+// 2️⃣ Request notification permission
+Notification.requestPermission().then((permission) => {
+  if (permission === "granted") {
+    console.log("Notification permission granted.");
+
+    // 3️⃣ Get FCM token for this user
+    getToken(messaging, { vapidKey: "YOUR_PUBLIC_VAPID_KEY" }).then((currentToken) => {
+      if (currentToken) {
+        console.log("FCM Token:", currentToken);
+        // TODO: save this token in Firebase Firestore to send notifications later
+      } else {
+        console.log("No registration token available. Request permission to generate one.");
+      }
+    }).catch((err) => {
+      console.error("An error occurred while retrieving token. ", err);
+    });
+  } else {
+    console.log("Notification permission denied.");
+  }
+});
+
+// 4️⃣ Handle foreground messages
+onMessage(messaging, (payload) => {
+  console.log("Message received. ", payload);
+  alert(payload.notification.title + "\n" + payload.notification.body); // simple demo
+});
+
+
+
+
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
   let allFiles = [];
   let selectedSemester = '';
