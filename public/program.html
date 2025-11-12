@@ -286,21 +286,40 @@
 let allPrograms = [];
 let programCounts = {};
 
+// Normalize program names for comparison
+function normalizeName(name) {
+  return name.trim().toLowerCase();
+}
+
+// Merge similar program names to avoid duplicate cards
+function mergeSimilarPrograms(files) {
+  const mergedCounts = {};
+
+  files.forEach(f => {
+    if (!f.program) return;
+    const normName = normalizeName(f.program);
+
+    // Try to find existing key that includes or is included by current name
+    let existingKey = Object.keys(mergedCounts).find(k => normalizeName(k).includes(normName) || normName.includes(normalizeName(k)));
+
+    if (!existingKey) existingKey = f.program.trim();
+
+    mergedCounts[existingKey] = (mergedCounts[existingKey] || 0) + 1;
+  });
+
+  return mergedCounts;
+}
+
+// Load programs from backend
 async function loadPrograms() {
   try {
     const res = await fetch("/api/metadata");
     const data = await res.json();
     const files = Array.isArray(data) ? data : (data.files || []);
 
-    programCounts = {};
-    files.forEach(f => {
-      if (f.program) {
-        const key = f.program.trim();
-        programCounts[key] = (programCounts[key] || 0) + 1;
-      }
-    });
-
+    programCounts = mergeSimilarPrograms(files);
     allPrograms = Object.keys(programCounts);
+
     displayPrograms(allPrograms, programCounts);
   } catch (err) {
     console.error("Failed to load programs:", err);
@@ -308,45 +327,7 @@ async function loadPrograms() {
   }
 }
 
-// Batch-render using innerHTML (much faster)
-function displayPrograms(programs, counts) {
-  const container = document.getElementById("programList");
-  if (!programs.length) {
-    container.innerHTML = "<p>No programs uploaded yet.</p>";
-    return;
-  }
-
-  const seenData = JSON.parse(localStorage.getItem("programSeen") || "{}");
-  const cardsHTML = programs.map(p => {
-    const lastSeen = seenData[p] || 0;
-    const unread = (counts[p] || 0) - lastSeen;
-    const badgeHTML = unread > 0 
-      ? `<div style="
-          position:absolute; top:10px; right:10px;
-          background:red; color:white; font-size:0.8rem; font-weight:bold;
-          padding:5px 8px; border-radius:50%;
-          box-shadow:0 2px 6px rgba(0,0,0,0.3);
-        ">${unread}</div>` 
-      : "";
-    return `
-      <div class="program-card" onclick="openProgram('${p}', ${counts[p]})" style="position:relative;">
-        <h3>${p}</h3>
-        ${badgeHTML}
-      </div>
-    `;
-  }).join("");
-
-  container.innerHTML = cardsHTML;
-}
-
-// Search filter (pass counts!)
-document.getElementById("programSearch").addEventListener("input", function() {
-  const query = this.value.toLowerCase();
-  const filtered = allPrograms.filter(p => p.toLowerCase().includes(query));
-  displayPrograms(filtered, counts);
-});
-
-
+// Display program cards
 function displayPrograms(programs, counts) {
   const container = document.getElementById("programList");
   container.innerHTML = "";
@@ -361,15 +342,16 @@ function displayPrograms(programs, counts) {
   programs.forEach(p => {
     const card = document.createElement("div");
     card.className = "program-card";
+    card.style.position = "relative";
     card.addEventListener("click", () => openProgram(p, counts[p]));
 
     const title = document.createElement("h3");
     title.textContent = p;
     card.appendChild(title);
 
-    // unread count = current total - last seen
+    // unread badge
     const lastSeen = seenData[p] || 0;
-    const unread = (counts[p] || 0) - lastSeen;
+    const unread = Math.max(0, (counts[p] || 0) - lastSeen);
 
     if (unread > 0) {
       const badge = document.createElement("div");
@@ -386,7 +368,6 @@ function displayPrograms(programs, counts) {
         border-radius: 50%;
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       `;
-      card.style.position = "relative";
       card.appendChild(badge);
     }
 
@@ -394,22 +375,26 @@ function displayPrograms(programs, counts) {
   });
 }
 
+// Mark program as seen and open detail
 function openProgram(program, currentCount) {
   const seenData = JSON.parse(localStorage.getItem("programSeen") || "{}");
-  seenData[program] = currentCount; // mark current total as seen
+  seenData[program] = currentCount;
   localStorage.setItem("programSeen", JSON.stringify(seenData));
-
   window.location.href = `program-detail.html?program=${encodeURIComponent(program)}`;
 }
 
-
-// Search filter
+// Debounced search filter
+let debounceTimer;
 document.getElementById("programSearch").addEventListener("input", function() {
-  const query = this.value.toLowerCase();
-  const filtered = allPrograms.filter(p => p.toLowerCase().includes(query));
-  displayPrograms(filtered);
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    const query = normalizeName(this.value);
+    const filtered = allPrograms.filter(p => normalizeName(p).includes(query));
+    displayPrograms(filtered, programCounts);
+  }, 200);
 });
 
+// Action menu toggle
 const actionMenu = document.querySelector(".action-menu");
 const toggleBtn = document.querySelector(".toggle-btn");
 
@@ -418,32 +403,26 @@ toggleBtn.addEventListener("click", () => {
   toggleBtn.textContent = actionMenu.classList.contains("active") ? ">" : "<";
 });
 
-/* ---- Draggable Support ---- */
-let isDragging = false;
-let offsetX, offsetY;
+// Draggable support
+let isDragging = false, offsetX, offsetY;
 
-actionMenu.addEventListener("mousedown", (e) => {
-  if (e.target === toggleBtn) return; // don’t drag when clicking toggle
+actionMenu.addEventListener("mousedown", e => {
+  if (e.target === toggleBtn) return;
   isDragging = true;
   offsetX = e.clientX - actionMenu.getBoundingClientRect().left;
   offsetY = e.clientY - actionMenu.getBoundingClientRect().top;
   actionMenu.classList.add("dragging");
 });
 
-document.addEventListener("mousemove", (e) => {
+document.addEventListener("mousemove", e => {
   if (!isDragging) return;
   let x = e.clientX - offsetX;
   let y = e.clientY - offsetY;
-
-  // Keep inside screen bounds
-  const maxX = window.innerWidth - actionMenu.offsetWidth;
-  const maxY = window.innerHeight - actionMenu.offsetHeight;
-  x = Math.max(0, Math.min(x, maxX));
-  y = Math.max(0, Math.min(y, maxY));
-
+  x = Math.max(0, Math.min(x, window.innerWidth - actionMenu.offsetWidth));
+  y = Math.max(0, Math.min(y, window.innerHeight - actionMenu.offsetHeight));
   actionMenu.style.left = x + "px";
   actionMenu.style.top = y + "px";
-  actionMenu.style.right = "auto"; // release from fixed right
+  actionMenu.style.right = "auto";
 });
 
 document.addEventListener("mouseup", () => {
@@ -451,10 +430,10 @@ document.addEventListener("mouseup", () => {
   actionMenu.classList.remove("dragging");
 });
 
-
-
+// Initial load
 loadPrograms();
 </script>
+
 
 </body>
 </html>
