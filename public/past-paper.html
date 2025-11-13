@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Past Papers – StudyHub LUANAR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+    h1 { text-align: center; color: #333; }
+    .program-card {
+      background: white;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 700px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .program-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #007bff;
+    }
+    .paper-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .paper-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .paper-list li a {
+      text-decoration: none;
+      color: #333;
+    }
+    .paper-list li a:hover {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Past Exam Papers</h1>
+  <div id="programs-container">Loading...</div>
+
+  <script>
+    async function loadPastPapers() {
+      const container = document.getElementById('programs-container');
+      container.innerHTML = "Loading past papers...";
+
+      try {
+        const res = await fetch('/api/metadata');
+        const data = await res.json();
+
+        // Group papers by program
+        const grouped = {};
+        data.forEach(paper => {
+          if (!paper.program) return;
+          const key = paper.program.trim().toLowerCase();
+          if (!grouped[key]) grouped[key] = { name: paper.program, papers: [] };
+          grouped[key].papers.push(paper);
+        });
+
+        container.innerHTML = '';
+
+        Object.values(grouped).forEach(group => {
+          const card = document.createElement('div');
+          card.className = 'program-card';
+          card.innerHTML = `
+            <div class="program-title">${group.name}</div>
+            <ul class="paper-list">
+              ${group.papers.map(p => `
+                <li>
+                  <a href="${p.fileUrl}" target="_blank">
+                    ${p.course || 'Untitled Course'} (${p.year || 'Unknown Year'})
+                  </a>
+                </li>`).join('')}
+            </ul>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "Failed to load past papers.";
+      }
+    }
+
+    loadPastPapers();
+  </script>
+</body>
+</html>
