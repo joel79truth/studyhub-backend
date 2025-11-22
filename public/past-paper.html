@@ -674,8 +674,8 @@ async function uploadPaper() {
 
   const file = fileInput.files[0];
   
-  if (file.size > 10 * 1024 * 1024) {
-    showToast("File size must be less than 10MB", true);
+  if (file.size > 80 * 1024 * 1024) {
+    showToast("File size must be less than 80MB", true);
     return;
   }
 
