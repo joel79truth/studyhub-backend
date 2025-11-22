@@ -1,96 +1,914 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Past Papers – StudyHub LUANAR</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Past Papers</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+    min-height: 100vh;
+    padding-top: 80px;
+  }
+
+  /* Header */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 100;
+    animation: slideDown 0.5s ease-out;
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .header-title h1 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  /* Buttons */
+  button {
+    padding: 12px 24px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fab {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+
+  .fab::before {
+    content: '➕';
+    font-size: 18px;
+  }
+
+  .fab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+  }
+
+  .fab:active {
+    transform: translateY(0);
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    padding: 0 40px;
+    margin: 20px 0;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .breadcrumb.active {
+    display: flex;
+  }
+
+  .breadcrumb button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .breadcrumb button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-3px);
+  }
+
+  .breadcrumb-text {
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .modal.active {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-content h3 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 12px 16px;
+    margin: 5px 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
+    background: white;
+    color: #333;
+  }
+
+  input:focus, select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  input::placeholder {
+    color: #999;
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  input[type="file"] {
+    padding: 40px 20px;
+    border: 2px dashed #667eea;
+    background: #f8f9ff;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  input[type="file"]:hover {
+    border-color: #764ba2;
+    background: #f0f2ff;
+  }
+
+  input[type="file"]::file-selector-button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 15px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  .modal-actions button {
+    flex: 1;
+    padding: 14px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+  }
+
+  .btn-secondary {
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid #e0e0e0;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-secondary:hover {
+    background: #ebebeb;
+  }
+
+  /* Cards Container */
+  .cards {
+    padding: 20px 40px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.4s ease-out;
+    animation-fill-mode: both;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+  }
+
+  .card-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+  }
+
+  .card-link {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .card-link:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .card-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #999;
+    font-size: 13px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* Loading */
+  .loading {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px 20px;
+    color: white;
+  }
+
+  .spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  .loading-text {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Empty State */
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    color: white;
+  }
+
+  .empty-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+  }
+
+  .empty-text {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+
+  .empty-subtext {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+    z-index: 2000;
+    display: none;
+    font-weight: 600;
+    animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .toast.active {
+    display: block;
+  }
+
+  .toast.error {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    header {
+      flex-direction: column;
+      padding: 15px 20px;
+      gap: 15px;
+    }
+
+    .header-title h1 {
+      font-size: 1.2rem;
+    }
+
+    .fab {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .cards {
       padding: 20px;
-      background: #f5f7fa;
+      grid-template-columns: 1fr;
     }
-    h1 { text-align: center; color: #333; }
-    .program-card {
-      background: white;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 700px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+    .breadcrumb {
+      padding: 0 20px;
+      flex-wrap: wrap;
     }
-    .program-title {
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #007bff;
+
+    .modal-content {
+      padding: 25px;
     }
-    .paper-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+
+    .toast {
+      bottom: 20px;
+      right: 20px;
+      left: 20px;
     }
-    .paper-list li {
-      padding: 8px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .paper-list li a {
-      text-decoration: none;
-      color: #333;
-    }
-    .paper-list li a:hover {
-      color: #007bff;
-    }
-  </style>
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 5px;
+  }
+</style>
 </head>
 <body>
-  <h1>Past Exam Papers</h1>
-  <div id="programs-container">Loading...</div>
 
-  <script>
-    async function loadPastPapers() {
-      const container = document.getElementById('programs-container');
-      container.innerHTML = "Loading past papers...";
+<header>
+  <div class="header-title">
+    <div class="logo">📚</div>
+    <h1>Past Papers Library</h1>
+  </div>
+  <button class="fab" id="addPaperBtn">Add Past Paper</button>
+</header>
 
-      try {
-        const res = await fetch('/api/metadata');
-        const data = await res.json();
+<div class="breadcrumb" id="breadcrumb">
+  <button id="backBtn">← Back</button>
+  <span class="breadcrumb-text" id="breadcrumbText"></span>
+</div>
 
-        // Group papers by program
-        const grouped = {};
-        data.forEach(paper => {
-          if (!paper.program) return;
-          const key = paper.program.trim().toLowerCase();
-          if (!grouped[key]) grouped[key] = { name: paper.program, papers: [] };
-          grouped[key].papers.push(paper);
-        });
+<div class="cards" id="programContainer">
+  <div class="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading past papers...</div>
+  </div>
+</div>
 
-        container.innerHTML = '';
+<!-- Modal for uploading -->
+<div class="modal" id="uploadModal">
+  <div class="modal-content">
+    <h3>📤 Upload Past Paper</h3>
+    
+    <div class="form-group">
+      <label>Program:</label>
+      <input type="text" id="programInput" placeholder="e.g., BSc Agriculture" required>
+    </div>
 
-        Object.values(grouped).forEach(group => {
-          const card = document.createElement('div');
-          card.className = 'program-card';
-          card.innerHTML = `
-            <div class="program-title">${group.name}</div>
-            <ul class="paper-list">
-              ${group.papers.map(p => `
-                <li>
-                  <a href="${p.fileUrl}" target="_blank">
-                    ${p.course || 'Untitled Course'} (${p.year || 'Unknown Year'})
-                  </a>
-                </li>`).join('')}
-            </ul>
-          `;
-          container.appendChild(card);
-        });
-      } catch (err) {
-        console.error(err);
-        container.innerHTML = "Failed to load past papers.";
-      }
+    <div class="form-group">
+      <label>Course:</label>
+      <input type="text" id="courseInput" placeholder="e.g., Crop Production" required>
+    </div>
+
+    <div class="form-group">
+      <label>Mid sem or end sem:</label>
+      <input type="text" id="midInput" placeholder="e.g.,Mid sem " required>
+    </div>
+
+
+    <div class="form-group">
+      <label>Semester:</label>
+      <select id="semesterInput" required>
+        <option value="">Select Semester</option>
+        <option value="Semester 1">Semester 1</option>
+        <option value="Semester 2">Semester 2</option>
+        <option value="Semester 3">Semester 3</option>    
+        <option value="Semester 4">Semester 4</option>
+        <option value="Semester 5">Semester 5</option>
+        <option value="Semester 6">Semester 6</option>
+
+
+
+
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>File:</label>
+      <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" required>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="uploadPaper()">Upload</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const supabaseUrl = 'https://qosudbigoxwzbdqkdecz.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ';
+
+const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+const addPaperBtn = document.getElementById('addPaperBtn');
+const uploadModal = document.getElementById('uploadModal');
+const programContainer = document.getElementById('programContainer');
+const breadcrumb = document.getElementById('breadcrumb');
+const breadcrumbText = document.getElementById('breadcrumbText');
+const backBtn = document.getElementById('backBtn');
+const toast = document.getElementById('toast');
+
+let currentView = 'programs';
+let currentProgram = null;
+let currentData = [];
+
+// Event Listeners
+addPaperBtn.onclick = () => uploadModal.classList.add('active');
+backBtn.onclick = navigateBack;
+
+uploadModal.onclick = (e) => {
+  if (e.target === uploadModal) closeModal();
+};
+
+function closeModal() {
+  uploadModal.classList.remove('active');
+  document.getElementById('programInput').value = '';
+  document.getElementById('courseInput').value = '';
+   document.getElementById('midInput').value = '';
+  document.getElementById('semesterInput').value = '';
+  document.getElementById('fileInput').value = '';
+}
+
+function showToast(message, isError = false) {
+  toast.textContent = message;
+  toast.className = 'toast active';
+  if (isError) toast.classList.add('error');
+  
+  setTimeout(() => {
+    toast.classList.remove('active');
+  }, 3500);
+}
+async function uploadPaper() {
+  const program = document.getElementById('programInput').value.trim();
+  const course = document.getElementById('courseInput').value.trim();
+  const mid = document.getElementById("midInput").value.trim(); // fixed ID
+
+  const semester = document.getElementById('semesterInput').value;
+  const fileInput = document.getElementById('fileInput');
+
+  if(!program || !course || !mid || !semester || fileInput.files.length === 0){
+    showToast("All fields are required", true);
+    return;
+  }
+
+  const file = fileInput.files[0];
+  
+  if (file.size > 10 * 1024 * 1024) {
+    showToast("File size must be less than 10MB", true);
+    return;
+  }
+
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${file.name}`;
+  const filePath = `${program}/${course}/${semester}/${fileName}`;
+
+  const uploadBtn = document.querySelector('.btn-primary');
+  uploadBtn.textContent = 'Uploading...';
+  uploadBtn.disabled = true;
+
+  try {
+    const { data, error } = await client
+      .storage
+      .from('past-paper')
+      .upload(filePath, file);
+    if(error) throw error;
+
+    const file_url = client
+      .storage
+      .from('past-paper')
+      .getPublicUrl(filePath).data.publicUrl;
+
+    const { error: insertError } = await client
+      .from('past_papers')
+      .insert([
+        { program, course, semester, Mid: mid, file_name: fileName, file_url, file_type: fileExt }
+      ]);
+    if(insertError) throw insertError;
+
+    showToast("✅ Upload successful!");
+    closeModal();
+    loadPrograms();
+
+  } catch(error) {
+    console.error('Upload error:', error);
+    showToast("❌ Upload failed: " + error.message, true);
+  } finally {
+    uploadBtn.textContent = 'Upload';
+    uploadBtn.disabled = false;
+  }
+}
+
+// Load programs dynamically
+async function loadPrograms() {
+  programContainer.innerHTML = '<div class="loading"><div class="spinner"></div><div class="loading-text">Loading past papers...</div></div>';
+  currentView = 'programs';
+  currentProgram = null;
+  breadcrumb.classList.remove('active');
+
+  try {
+    const { data, error } = await client
+      .from('past_papers')
+      .select('*')
+      .order('uploaded_at', { ascending: false });
+
+    if(error) throw error;
+
+    currentData = data || [];
+
+    if (currentData.length === 0) {
+      programContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📚</div>
+          <div class="empty-text">No past papers yet</div>
+          <div class="empty-subtext">Be the first to upload!</div>
+        </div>
+      `;
+      return;
     }
 
-    loadPastPapers();
-  </script>
+    const programs = [...new Set(data.map(d => d.program))];
+    programContainer.innerHTML = '';
+
+    programs.forEach((prog, index) => {
+      const paperCount = data.filter(d => d.program === prog).length;
+      const progCard = document.createElement('div');
+      progCard.className = 'card';
+      progCard.style.animationDelay = `${index * 0.1}s`;
+      
+      progCard.innerHTML = `
+        <div class="card-icon">${getProgramIcon(prog)}</div>
+        <div class="card-title">${prog}</div>
+        <div class="card-subtitle">${paperCount} past paper${paperCount !== 1 ? 's' : ''} available</div>
+        <div class="card-info">
+          <span>📖</span>
+          <span>Click to view semesters</span>
+        </div>
+      `;
+      
+      progCard.onclick = () => showSemesters(prog, data);
+      programContainer.appendChild(progCard);
+    });
+
+  } catch(error) {
+    console.error('Load error:', error);
+    programContainer.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-text">Failed to load past papers</div>
+        <div class="empty-subtext">${error.message}</div>
+      </div>
+    `;
+  }
+}
+
+function showSemesters(program, allData) {
+  currentView = 'semesters';
+  currentProgram = program;
+  programContainer.innerHTML = '';
+
+  const semesters = [...new Set(
+    allData.filter(d => d.program === program).map(d => d.semester)
+  )];
+
+  semesters.forEach((sem, index) => {
+    const paperCount = allData.filter(d => d.program === program && d.semester === sem).length;
+    const semCard = document.createElement('div');
+    semCard.className = 'card';
+    semCard.style.animationDelay = `${index * 0.1}s`;
+    
+    semCard.innerHTML = `
+      <div class="card-icon">📅</div>
+      <div class="card-title">${sem}</div>
+      <div class="card-subtitle">${paperCount} past paper${paperCount !== 1 ? 's' : ''}</div>
+      <div class="card-info">
+        <span>📄</span>
+        <span>Click to view papers</span>
+      </div>
+    `;
+    
+    semCard.onclick = () => showPapers(program, sem, allData);
+    programContainer.appendChild(semCard);
+  });
+
+  breadcrumb.classList.add('active');
+  breadcrumbText.textContent = program;
+}
+
+function showPapers(program, semester, allData) {
+  currentView = 'papers';
+  programContainer.innerHTML = '';
+
+  const papers = allData.filter(d =>
+    d.program === program && d.semester === semester
+  );
+
+  papers.forEach((p, index) => {
+    const paperCard = document.createElement('div');
+    paperCard.className = 'card';
+    paperCard.style.animationDelay = `${index * 0.1}s`;
+    
+    const fileIcon = getFileIcon(p.file_type);
+    const uploadDate = p.uploaded_at ? formatDate(p.uploaded_at) : 'Recently';
+    
+    paperCard.innerHTML = `
+      <div class="card-icon">${fileIcon}</div>
+      <div class="card-title">${p.course}</div>
+      <div class="card-subtitle">${p.file_type?.toUpperCase() || 'FILE'} Document</div>
+      <a href="${p.file_url}" target="_blank" class="card-link" onclick="event.stopPropagation()">
+        📥 View / Download
+      </a>
+      <div class="card-info">
+        <span>🕒</span>
+        <span>${uploadDate}</span>
+      </div>
+    `;
+    
+    programContainer.appendChild(paperCard);
+  });
+
+  breadcrumb.classList.add('active');
+  breadcrumbText.textContent = `${program} > ${semester}`;
+}
+
+function navigateBack() {
+  if (currentView === 'papers') {
+    showSemesters(currentProgram, currentData);
+  } else if (currentView === 'semesters') {
+    loadPrograms();
+  }
+}
+
+// Helper Functions
+function getProgramIcon(program) {
+  const icons = {
+    'Agriculture': '🌾',
+    'Agribusiness': '💼',
+    'Animal Science': '🐄',
+    'Environmental': '🌍',
+    'Food Science': '🍎',
+    'Aquaculture': '🐟',
+    'Nutrition': '🥗'
+  };
+  
+  for (let key in icons) {
+    if (program.toLowerCase().includes(key.toLowerCase())) {
+      return icons[key];
+    }
+  }
+  return '📚';
+}
+
+function getFileIcon(fileType) {
+  const icons = {
+    'pdf': '📕',
+    'docx': '📘',
+    'doc': '📘',
+    'pptx': '📙',
+    'ppt': '📙',
+    'jpg': '🖼️',
+    'jpeg': '🖼️',
+    'png': '🖼️'
+  };
+  return icons[fileType?.toLowerCase()] || '📄';
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Initialize
+window.onload = loadPrograms;
+</script>
+
 </body>
 </html>
