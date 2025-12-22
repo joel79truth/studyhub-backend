@@ -155,8 +155,6 @@
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-
-
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
@@ -203,48 +201,14 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js";
+
   const firebaseConfig = {
-     apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-  authDomain: "studyhub-backend.firebaseapp.com",
-  projectId: "studyhub-backend",
-  messagingSenderId: "985257842533",
-  appId:"1:985257842533:web:cdba8c4138b3f7a3ad338c", 
+    apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+    authDomain: "studyhub-backend.firebaseapp.com",
+    projectId: "studyhub-backend",
   };
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-const messaging = getMessaging(app);
-
-async function setupPushNotifications() {
-  if (!("serviceWorker" in navigator)) return;
-
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") {
-    console.log("🔕 Notifications blocked");
-    return;
-  }
-
-  const registration = await navigator.serviceWorker.register(
-    "/firebase-messaging-sw.js"
-  );
-
-  const fcmToken = await getToken(messaging, {
-    vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
-    serviceWorkerRegistration: registration
-  });
-
-  if (fcmToken) {
-    await fetch("/save-token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: fcmToken })
-    });
-
-    console.log("✅ Push notifications enabled");
-  }
-}
-
-setupPushNotifications();
 
   // Check login
   onAuthStateChanged(auth, (user) => {
