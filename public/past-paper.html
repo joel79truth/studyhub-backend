@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Past Papers - StudyHub LUANAR</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #000000 0%, #000000 50%, #1b1b1b 100%);
+    min-height: 100vh;
+    padding-top: 120px;
+  }
+
+  /* Header */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 100;
+    animation: slideDown 0.5s ease-out;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #29304d, #764ba2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .header-title h1 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .search-container {
+    width: 100%;
+    position: relative;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 14px 50px 14px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .search-input:focus {
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    pointer-events: none;
+  }
+
+  /* Floating Action Button */
+  .fab-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: slideDown 0.5s ease-out 0.2s both;
+  }
+
+  .fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+    margin: 0;
+  }
+
+  .fab:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.7);
+  }
+
+  .fab:active {
+    transform: scale(0.95);
+  }
+
+  .fab-label {
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+  }
+
+  /* Buttons */
+  button {
+    padding: 12px 24px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    padding: 0 20px;
+    margin: 20px 0;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .breadcrumb.active {
+    display: flex;
+  }
+
+  .breadcrumb button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .breadcrumb button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-3px);
+  }
+
+  .breadcrumb-text {
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+    overflow-y: auto;
+  }
+
+  .modal.active {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 20px;
+  }
+
+  .modal-content h3 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 12px 16px;
+    margin: 5px 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
+    background: white;
+    color: #333;
+  }
+
+  input:focus, select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  input::placeholder {
+    color: #999;
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  .file-upload-zone {
+    padding: 40px 20px;
+    border: 3px dashed #667eea;
+    background: #f8f9ff;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .file-upload-zone:hover {
+    border-color: #764ba2;
+    background: #f0f2ff;
+    transform: scale(1.02);
+  }
+
+  .file-upload-zone.dragover {
+    border-color: #764ba2;
+    background: #e8ebff;
+    transform: scale(1.05);
+  }
+
+  #fileInput {
+    display: none;
+  }
+
+  .upload-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+
+  .upload-text {
+    font-size: 16px;
+    color: #667eea;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  .upload-subtext {
+    font-size: 13px;
+    color: #999;
+  }
+
+  .file-preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .file-preview {
+    position: relative;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 10px;
+    background: #f9f9f9;
+    transition: all 0.3s ease;
+  }
+
+  .file-preview:hover {
+    border-color: #667eea;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .file-preview-image {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .file-preview-icon {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .file-preview-name {
+    font-size: 12px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+
+  .file-preview-size {
+    font-size: 11px;
+    color: #999;
+  }
+
+  .file-preview-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #f5576c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+    margin: 0;
+  }
+
+  .file-preview-remove:hover {
+    transform: scale(1.1);
+    background: #e04055;
+  }
+
+  .file-preview-status {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-top: 5px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .status-verified {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-invalid {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .status-checking {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  .modal-actions button {
+    flex: 1;
+    padding: 14px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+  }
+
+  .btn-secondary {
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid #e0e0e0;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-secondary:hover {
+    background: #ebebeb;
+  }
+
+  .btn-primary:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Cards Container */
+  .cards {
+    padding: 10px 20px 40px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .card {
+    background: rgb(0, 0, 0);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.4s ease-out;
+    animation-fill-mode: both;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+  }
+
+  /* Card Preview Area */
+  .card-preview {
+    width: 100%;
+    flex: 1;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .card-preview img {
+    transform: scale(1.05);
+  }
+
+  .card-preview-icon {
+    font-size: 64px;
+    filter: brightness(1.5);
+  }
+
+  .card-preview-pdf {
+    width: 100%;
+    height: 100%;
+    border: none;
+    pointer-events: none;
+  }
+
+  /* Card Content */
+  .card-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-exam-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #2a2a2e, #1d1b1f);
+    color: white;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    align-self: flex-start;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .card-subtitle {
+    font-size: 0.75rem;
+    color: #929191;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .card-download-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #1d2342, #392849);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .card-download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(98, 123, 235, 0.4);
+    background: linear-gradient(135deg, #242b52, #4a3159);
+  }
+
+  .card-stats {
+    display: flex;
+    gap: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #999;
+  }
+
+  .stat-icon {
+    font-size: 0.9rem;
+  }
+
+  .like-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #999;
+    transition: all 0.2s ease;
+  }
+
+  .like-button:hover {
+    color: #f5576c;
+    transform: scale(1.1);
+  }
+
+  .like-button.liked {
+    color: #f5576c;
+  }
+
+  .like-button .stat-icon {
+    font-size: 0.9rem;
+  }
+
+  /* Lightbox Viewer */
+  .lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 2000;
+    animation: fadeIn 0.3s ease-out;
+    touch-action: pan-y;
+  }
+
+  .lightbox.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+  }
+
+  .lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+  }
+
+  .lightbox-content-wrapper {
+    position: relative;
+    max-width: 90%;
+    max-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+  }
+
+  .lightbox-content {
+    max-width: 100%;
+    max-height: 85vh;
+    position: relative;
+  }
+
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 8px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+  }
+
+  .lightbox-pdf {
+    width: 90vw;
+    height: 85vh;
+    border: none;
+    border-radius: 8px;
+    background: white;
+  }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 28px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+  }
+
+  .lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .lightbox-nav.prev {
+    left: 20px;
+  }
+
+  .lightbox-nav.next {
+    right: 20px;
+  }
+
+  .lightbox-info {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    z-index: 10;
+    max-width: 90%;
+    text-align: center;
+  }
+
+  /* Loading */
+  .loading {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px 20px;
+    color: white;
+  }
+
+  .spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  .loading-text {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Empty State */
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    color: white;
+  }
+
+  .empty-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+  }
+
+  .empty-text {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+
+  .empty-subtext {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+    z-index: 2000;
+    display: none;
+    font-weight: 600;
+    animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .toast.active {
+    display: block;
+  }
+
+  .toast.error {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    body {
+      padding-top: 140px;
+    }
+
+    .header-top {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .header-title h1 {
+      font-size: 1.2rem;
+    }
+
+    .fab-container {
+      top: 15px;
+      right: 15px;
+    }
+
+    .fab {
+      width: 55px;
+      height: 55px;
+      font-size: 24px;
+    }
+
+    .fab-label {
+      font-size: 11px;
+    }
+
+    .cards {
+      padding: 20px 15px;
+      gap: 15px;
+    }
+
+    .breadcrumb {
+      padding: 0 15px;
+      flex-wrap: wrap;
+    }
+
+    .modal-content {
+      padding: 25px;
+      margin: 10px;
+    }
+
+    .toast {
+      bottom: 20px;
+      right: 20px;
+      left: 20px;
+    }
+
+    .lightbox-nav {
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+    }
+
+    .lightbox-nav.prev {
+      left: 10px;
+    }
+
+    .lightbox-nav.next {
+      right: 10px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.7rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-title">
+      <div class="logo">📚</div>
+      <h1>Past Papers Library</h1>
+    </div>
+  </div>
+  <div class="search-container">
+    <input type="text" class="search-input" id="searchInput" placeholder="Search past papers by program, course, semester...">
+    <span class="search-icon">🔍</span>
+  </div>
+</header>
+
+<!-- Floating Action Button -->
+<div class="fab-container">
+  <button class="fab" id="addPaperBtn" title="Add Past Paper">+</button>
+  <span class="fab-label">Add Past Paper</span>
+</div>
+
+<div class="breadcrumb" id="breadcrumb">
+  <button id="backBtn">← Back</button>
+  <span class="breadcrumb-text" id="breadcrumbText"></span>
+</div>
+
+<div class="cards" id="programContainer">
+  <div class="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading past papers...</div>
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal" id="uploadModal">
+  <div class="modal-content">
+    <h3>📤 Upload Past Papers</h3>
+    
+    <div class="form-group">
+      <label>Program:</label>
+      <input type="text" id="programInput" placeholder="e.g., BSc Agriculture" required>
+    </div>
+
+    <div class="form-group">
+      <label>Course:</label>
+      <input type="text" id="courseInput" placeholder="e.g., Crop Production" required>
+    </div>
+
+    <div class="form-group">
+      <label>Exam Type:</label>
+      <input type="text" id="midInput" placeholder="e.g., Mid Sem, End Sem" required>
+    </div>
+
+    <div class="form-group">
+      <label>Semester:</label>
+      <select id="semesterInput" required>
+        <option value="">Select Semester</option>
+        <option value="Semester 1">Semester 1</option>
+        <option value="Semester 2">Semester 2</option>
+        <option value="Semester 3">Semester 3</option>    
+        <option value="Semester 4">Semester 4</option>
+        <option value="Semester 5">Semester 5</option>
+        <option value="Semester 6">Semester 6</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Files (Maximum 7 files, Images will be verified):</label>
+      <div class="file-upload-zone" id="fileUploadZone">
+        <div class="upload-icon">📁</div>
+        <div class="upload-text">Click to browse or drag & drop files</div>
+        <div class="upload-subtext">PDF, DOCX, PPTX, Images (Max 10MB each, up to 7 files)</div>
+      </div>
+      <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" multiple>
+    </div>
+
+    <div id="filePreviewContainer" class="file-preview-container"></div>
+
+    <div class="modal-actions">
+      <button class="btn-primary" id="uploadBtn" onclick="uploadPapers()">Upload</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox Viewer -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <button class="lightbox-nav prev" onclick="navigateLightbox(-1)">‹</button>
+  <div class="lightbox-content-wrapper" id="lightboxContentWrapper">
+    <div class="lightbox-content" id="lightboxContent"></div>
+  </div>
+  <button class="lightbox-nav next" onclick="navigateLightbox(1)">›</button>
+  <div class="lightbox-info" id="lightboxInfo"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const supabaseUrl = 'https://qosudbigoxwzbdqkdecz.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ';
+
+const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+const addPaperBtn = document.getElementById('addPaperBtn');
+const uploadModal = document.getElementById('uploadModal');
+const programContainer = document.getElementById('programContainer');
+const breadcrumb = document.getElementById('breadcrumb');
+const breadcrumbText = document.getElementById('breadcrumbText');
+const backBtn = document.getElementById('backBtn');
+const toast = document.getElementById('toast');
+const lightbox = document.getElementById('lightbox');
+const lightboxContent = document.getElementById('lightboxContent');
+const lightboxContentWrapper = document.getElementById('lightboxContentWrapper');
+const lightboxInfo = document.getElementById('lightboxInfo');
+const searchInput = document.getElementById('searchInput');
+const fileUploadZone = document.getElementById('fileUploadZone');
+const fileInput = document.getElementById('fileInput');
+const filePreviewContainer = document.getElementById('filePreviewContainer');
+
+let currentView = 'programs';
+let currentProgram = null;
+let currentSemester = null;
+let currentData = [];
+let currentPapers = [];
+let currentLightboxIndex = 0;
+let selectedFiles = [];
+let searchQuery = '';
+let likedPapers = JSON.parse(localStorage.getItem('likedPapers') || '{}');
+
+// Touch/Swipe variables
+let touchStartX = 0;
+let touchEndX = 0;
+
+// Event Listeners
+addPaperBtn.onclick = () => uploadModal.classList.add('active');
+backBtn.onclick = navigateBack;
+
+uploadModal.onclick = (e) => {
+  if (e.target === uploadModal) closeModal();
+};
+
+lightbox.onclick = (e) => {
+  if (e.target === lightbox) closeLightbox();
+};
+
+// File upload zone
+fileUploadZone.onclick = () => fileInput.click();
+
+fileUploadZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  fileUploadZone.classList.add('dragover');
+});
+
+fileUploadZone.addEventListener('dragleave', () => {
+  fileUploadZone.classList.remove('dragover');
+});
+
+fileUploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  fileUploadZone.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', (e) => {
+  handleFiles(e.target.files);
+});
+
+// Search functionality
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value.toLowerCase();
+  if (currentView === 'papers') {
+    showPapers(currentProgram, currentSemester, currentData, true);
+  } else {
+    loadPrograms();
+  }
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (lightbox.classList.contains('active')) {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navigateLightbox(-1);
+    if (e.key === 'ArrowRight') navigateLightbox(1);
+  }
+});
+
+// Touch/Swipe navigation for lightbox
+lightboxContentWrapper.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+}, false);
+
+lightboxContentWrapper.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+}, false);
+
+function handleSwipe() {
+  const swipeThreshold = 50;
+  const diff = touchStartX - touchEndX;
+  
+  if (Math.abs(diff) > swipeThreshold) {
+    if (diff > 0) {
+      // Swipe left - next
+      navigateLightbox(1);
+    } else {
+      // Swipe right - previous
+      navigateLightbox(-1);
+    }
+  }
+}
+
+function handleFiles(files) {
+  const maxFiles = 7;
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  
+  if (selectedFiles.length + files.length > maxFiles) {
+    showToast(`Maximum ${maxFiles} files allowed`, true);
+    return;
+  }
+  
+  Array.from(files).forEach(async (file) => {
+    if (file.size > maxSize) {
+      showToast(`${file.name} exceeds 10MB limit`, true);
+      return;
+    }
+    
+    if (selectedFiles.length >= maxFiles) return;
+    
+    const fileData = {
+      file: file,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      preview: null,
+      verified: 'checking',
+      id: Date.now() + Math.random()
+    };
+    
+    // Create preview for images
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        fileData.preview = e.target.result;
+        verifyImage(fileData);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      fileData.verified = 'verified';
+    }
+    
+    selectedFiles.push(fileData);
+    renderFilePreviews();
+  });
+}
+
+async function verifyImage(fileData) {
+  // Simulated image verification (checking if it contains text/documents)
+  // In a real app, this would use OCR or AI to detect text vs faces
+  const img = new Image();
+  img.onload = () => {
+    // Simple heuristic: check image aspect ratio and size
+    // Documents tend to have specific aspect ratios
+    const aspectRatio = img.width / img.height;
+    const isLikelyDocument = (aspectRatio > 0.6 && aspectRatio < 1.5) || img.width > 800;
+    
+    // Simulate processing time
+    setTimeout(() => {
+      fileData.verified = isLikelyDocument ? 'verified' : 'invalid';
+      renderFilePreviews();
+    }, 1000 + Math.random() * 1000);
+  };
+  img.src = fileData.preview;
+}
+
+function renderFilePreviews() {
+  filePreviewContainer.innerHTML = '';
+  
+  selectedFiles.forEach((fileData, index) => {
+    const preview = document.createElement('div');
+    preview.className = 'file-preview';
+    
+    let previewContent = '';
+    if (fileData.preview) {
+      previewContent = `<img src="${fileData.preview}" class="file-preview-image" alt="${fileData.name}">`;
+    } else {
+      const icon = getFileIcon(fileData.name.split('.').pop());
+      previewContent = `<div class="file-preview-icon">${icon}</div>`;
+    }
+    
+    let statusHTML = '';
+    if (fileData.type.startsWith('image/')) {
+      if (fileData.verified === 'checking') {
+        statusHTML = '<div class="file-preview-status status-checking">⏳ Verifying...</div>';
+      } else if (fileData.verified === 'verified') {
+        statusHTML = '<div class="file-preview-status status-verified">✓ Verified</div>';
+      } else {
+        statusHTML = '<div class="file-preview-status status-invalid">✗ Invalid</div>';
+      }
+    }
+    
+    preview.innerHTML = `
+      ${previewContent}
+      <div class="file-preview-name" title="${fileData.name}">${fileData.name}</div>
+      <div class="file-preview-size">${formatFileSize(fileData.size)}</div>
+      ${statusHTML}
+      <button class="file-preview-remove" onclick="removeFile(${index})">×</button>
+    `;
+    
+    filePreviewContainer.appendChild(preview);
+  });
+  
+  // Update upload button state
+  const uploadBtn = document.getElementById('uploadBtn');
+  const hasInvalidImages = selectedFiles.some(f => f.verified === 'invalid');
+  const isChecking = selectedFiles.some(f => f.verified === 'checking');
+  
+  if (hasInvalidImages) {
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = 'Remove Invalid Images';
+  } else if (isChecking) {
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = 'Verifying Images...';
+  } else {
+    uploadBtn.disabled = false;
+    uploadBtn.textContent = selectedFiles.length > 0 ? `Upload ${selectedFiles.length} File${selectedFiles.length > 1 ? 's' : ''}` : 'Upload';
+  }
+}
+
+function removeFile(index) {
+  selectedFiles.splice(index, 1);
+  renderFilePreviews();
+}
+
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+function closeModal() {
+  uploadModal.classList.remove('active');
+  document.getElementById('programInput').value = '';
+  document.getElementById('courseInput').value = '';
+  document.getElementById('midInput').value = '';
+  document.getElementById('semesterInput').value = '';
+  fileInput.value = '';
+  selectedFiles = [];
+  renderFilePreviews();
+}
+
+function showToast(message, isError = false) {
+  toast.textContent = message;
+  toast.className = 'toast active';
+  if (isError) toast.classList.add('error');
+  
+  setTimeout(() => {
+    toast.classList.remove('active');
+  }, 3500);
+}
+
+async function uploadPapers() {
+  const program = document.getElementById('programInput').value.trim();
+  const course = document.getElementById('courseInput').value.trim();
+  const mid = document.getElementById("midInput").value.trim();
+  const semester = document.getElementById('semesterInput').value;
+
+  if(!program || !course || !mid || !semester || selectedFiles.length === 0){
+    showToast("All fields are required", true);
+    return;
+  }
+  
+  const hasInvalidImages = selectedFiles.some(f => f.verified === 'invalid');
+  if (hasInvalidImages) {
+    showToast("Please remove invalid images", true);
+    return;
+  }
+
+  const uploadBtn = document.getElementById('uploadBtn');
+  uploadBtn.textContent = `Uploading 0/${selectedFiles.length}...`;
+  uploadBtn.disabled = true;
+
+  try {
+    let successCount = 0;
+    
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const fileData = selectedFiles[i];
+      const file = fileData.file;
+      
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${i}_${file.name}`;
+      const filePath = `${program}/${course}/${semester}/${fileName}`;
+
+      const { data, error } = await client
+        .storage
+        .from('past-paper')
+        .upload(filePath, file);
+        
+      if(error) throw error;
+
+      const file_url = client
+        .storage
+        .from('past-paper')
+        .getPublicUrl(filePath).data.publicUrl;
+
+      const { error: insertError } = await client
+        .from('past_papers')
+        .insert([
+          { 
+            program, 
+            course, 
+            semester, 
+            Mid: mid, 
+            file_name: fileName, 
+            file_url, 
+            file_type: fileExt,
+            views: 0,
+            likes: 0
+          }
+        ]);
+        
+      if(insertError) throw insertError;
+      
+      successCount++;
+      uploadBtn.textContent = `Uploading ${successCount}/${selectedFiles.length}...`;
+    }
+
+    showToast(`✅ ${successCount} file${successCount > 1 ? 's' : ''} uploaded successfully!`);
+    closeModal();
+    loadPrograms();
+
+  } catch(error) {
+    console.error('Upload error:', error);
+    showToast("❌ Upload failed: " + error.message, true);
+  } finally {
+    uploadBtn.textContent = 'Upload';
+    uploadBtn.disabled = false;
+  }
+}
+
+// Load programs dynamically
+async function loadPrograms() {
+  programContainer.innerHTML = '<div class="loading"><div class="spinner"></div><div class="loading-text">Loading past papers...</div></div>';
+  currentView = 'programs';
+  currentProgram = null;
+  currentSemester = null;
+  breadcrumb.classList.remove('active');
+
+  try {
+    const { data, error } = await client
+      .from('past_papers')
+      .select('*')
+      .order('uploaded_at', { ascending: false });
+
+    if(error) throw error;
+
+    currentData = data || [];
+
+    // Apply search filter
+    let filteredData = currentData;
+    if (searchQuery) {
+      filteredData = currentData.filter(d => 
+        d.program?.toLowerCase().includes(searchQuery) ||
+        d.course?.toLowerCase().includes(searchQuery) ||
+        d.semester?.toLowerCase().includes(searchQuery) ||
+        d.Mid?.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    if (filteredData.length === 0) {
+      programContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📚</div>
+          <div class="empty-text">${searchQuery ? 'No matching papers found' : 'No past papers yet'}</div>
+          <div class="empty-subtext">${searchQuery ? 'Try a different search term' : 'Be the first to upload!'}</div>
+        </div>
+      `;
+      return;
+    }
+
+    const programs = [...new Set(filteredData.map(d => d.program))];
+    programContainer.innerHTML = '';
+
+    programs.forEach((prog, index) => {
+      const paperCount = filteredData.filter(d => d.program === prog).length;
+      const progCard = document.createElement('div');
+      progCard.className = 'card';
+      progCard.style.animationDelay = `${index * 0.05}s`;
+      
+      progCard.innerHTML = `
+        <div class="card-preview">
+          <div class="card-preview-icon">${getProgramIcon(prog)}</div>
+        </div>
+        <div class="card-content">
+          <div class="card-title">${prog}</div>
+          <div class="card-subtitle">📄 ${paperCount} past paper${paperCount !== 1 ? 's' : ''} available</div>
+        </div>
+      `;
+      
+      progCard.onclick = () => showSemesters(prog, data);
+      programContainer.appendChild(progCard);
+    });
+
+  } catch(error) {
+    console.error('Load error:', error);
+    programContainer.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-text">Failed to load past papers</div>
+        <div class="empty-subtext">${error.message}</div>
+      </div>
+    `;
+  }
+}
+
+function showSemesters(program, allData) {
+  currentView = 'semesters';
+  currentProgram = program;
+  currentSemester = null;
+  programContainer.innerHTML = '';
+
+  const semesters = [...new Set(
+    allData.filter(d => d.program === program).map(d => d.semester)
+  )];
+
+  semesters.forEach((sem, index) => {
+    const paperCount = allData.filter(d => d.program === program && d.semester === sem).length;
+    const semCard = document.createElement('div');
+    semCard.className = 'card';
+    semCard.style.animationDelay = `${index * 0.05}s`;
+    
+    semCard.innerHTML = `
+      <div class="card-preview">
+        <div class="card-preview-icon">📅</div>
+      </div>
+      <div class="card-content">
+        <div class="card-title">${sem}</div>
+        <div class="card-subtitle">📄 ${paperCount} past paper${paperCount !== 1 ? 's' : ''}</div>
+      </div>
+    `;
+    
+    semCard.onclick = () => showPapers(program, sem, allData);
+    programContainer.appendChild(semCard);
+  });
+
+  breadcrumb.classList.add('active');
+  breadcrumbText.textContent = program;
+}
+
+function showPapers(program, semester, allData, isSearchUpdate = false) {
+  if (!isSearchUpdate) {
+    currentView = 'papers';
+    currentSemester = semester;
+  }
+  programContainer.innerHTML = '';
+
+  let papers = allData.filter(d =>
+    d.program === program && d.semester === semester
+  );
+  
+  // Apply search filter
+  if (searchQuery) {
+    papers = papers.filter(p =>
+      p.course?.toLowerCase().includes(searchQuery) ||
+      p.Mid?.toLowerCase().includes(searchQuery) ||
+      p.program?.toLowerCase().includes(searchQuery)
+    );
+  }
+
+  currentPapers = papers;
+
+  if (papers.length === 0) {
+    programContainer.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-text">No papers found</div>
+        <div class="empty-subtext">${searchQuery ? 'Try a different search term' : 'No papers available'}</div>
+      </div>
+    `;
+    return;
+  }
+
+  papers.forEach((p, index) => {
+    const paperCard = document.createElement('div');
+    paperCard.className = 'card';
+    paperCard.style.animationDelay = `${index * 0.05}s`;
+    
+    const fileIcon = getFileIcon(p.file_type);
+    const uploadDate = p.uploaded_at ? formatDate(p.uploaded_at) : 'Recently';
+    const isImage = isImageFile(p.file_type);
+    const isPDF = p.file_type?.toLowerCase() === 'pdf';
+    const views = p.views || 0;
+    const likes = p.likes || 0;
+    const isLiked = likedPapers[p.id] || false;
+    
+    // Create preview HTML
+    let previewHTML = '';
+    if (isImage) {
+      previewHTML = `<img src="${p.file_url}" alt="${p.course}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'card-preview-icon\\'>${fileIcon}</div>';">`;
+    } else if (isPDF) {
+      previewHTML = `<iframe src="${p.file_url}#toolbar=0&navpanes=0&scrollbar=0" class="card-preview-pdf"></iframe>`;
+    } else {
+      previewHTML = `<div class="card-preview-icon">${fileIcon}</div>`;
+    }
+    
+    paperCard.innerHTML = `
+      <div class="card-preview" onclick="openLightbox(${index})">
+        ${previewHTML}
+      </div>
+      <div class="card-content">
+        <div class="card-exam-badge">${p.Mid || 'Exam'}</div>
+        <div class="card-title">${p.course}</div>
+        <div class="card-subtitle">${p.file_type?.toUpperCase() || 'FILE'}</div>
+        <div class="card-actions">
+          <a href="${p.file_url}" download class="card-download-btn" onclick="event.stopPropagation()">
+            📥 Download
+          </a>
+        </div>
+        <div class="card-stats">
+          <div class="stat-item">
+            <span class="stat-icon">👁️</span>
+            <span id="views-${p.id}">${views}</span>
+          </div>
+          <button class="like-button ${isLiked ? 'liked' : ''}" id="like-btn-${p.id}" onclick="event.stopPropagation(); toggleLike(${p.id}, this)">
+            <span class="stat-icon" id="like-icon-${p.id}">${isLiked ? '❤️' : '🤍'}</span>
+            <span id="likes-${p.id}">${likes}</span>
+          </button>
+          <div class="stat-item">
+            <span class="stat-icon">🕒</span>
+            <span>${uploadDate}</span>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    programContainer.appendChild(paperCard);
+  });
+
+  breadcrumb.classList.add('active');
+  breadcrumbText.textContent = `${program} > ${semester}`;
+}
+
+async function toggleLike(paperId, button) {
+  const isCurrentlyLiked = likedPapers[paperId] || false;
+  const newLikeState = !isCurrentlyLiked;
+  
+  // Optimistic UI update
+  const icon = document.getElementById(`like-icon-${paperId}`);
+  const countElement = document.getElementById(`likes-${paperId}`);
+  const btnElement = document.getElementById(`like-btn-${paperId}`);
+  
+  const currentCount = parseInt(countElement.textContent) || 0;
+  const newCount = newLikeState ? currentCount + 1 : Math.max(0, currentCount - 1);
+  
+  // Update UI immediately
+  btnElement.classList.toggle('liked', newLikeState);
+  icon.textContent = newLikeState ? '❤️' : '🤍';
+  countElement.textContent = newCount;
+  
+  // Update local storage
+  likedPapers[paperId] = newLikeState;
+  localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
+  
+  try {
+    // Update database
+    const { error: updateError } = await client
+      .from('past_papers')
+      .update({ likes: newCount })
+      .eq('id', paperId);
+    
+    if (updateError) throw updateError;
+    
+    // Update the paper in currentPapers array
+    const paperIndex = currentPapers.findIndex(p => p.id === paperId);
+    if (paperIndex !== -1) {
+      currentPapers[paperIndex].likes = newCount;
+    }
+    
+  } catch (error) {
+    console.error('Like error:', error);
+    // Revert on error
+    likedPapers[paperId] = isCurrentlyLiked;
+    localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
+    btnElement.classList.toggle('liked', isCurrentlyLiked);
+    icon.textContent = isCurrentlyLiked ? '❤️' : '🤍';
+    countElement.textContent = currentCount;
+    showToast('Failed to update like', true);
+  }
+}
+
+async function openLightbox(index) {
+  currentLightboxIndex = index;
+  const paper = currentPapers[index];
+  
+  // Optimistic UI update for views
+  const viewsElement = document.getElementById(`views-${paper.id}`);
+  const currentViews = parseInt(viewsElement.textContent) || 0;
+  const newViews = currentViews + 1;
+  viewsElement.textContent = newViews;
+  
+  // Update view count in database
+  try {
+    const { error } = await client
+      .from('past_papers')
+      .update({ views: newViews })
+      .eq('id', paper.id);
+    
+    if (!error) {
+      paper.views = newViews;
+      // Update the paper in currentPapers array
+      const paperIndex = currentPapers.findIndex(p => p.id === paper.id);
+      if (paperIndex !== -1) {
+        currentPapers[paperIndex].views = newViews;
+      }
+    } else {
+      // Revert on error
+      viewsElement.textContent = currentViews;
+    }
+  } catch (error) {
+    console.error('View count error:', error);
+    viewsElement.textContent = currentViews;
+  }
+  
+  updateLightboxContent();
+  lightbox.classList.add('active');
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+}
+
+function navigateLightbox(direction) {
+  currentLightboxIndex += direction;
+  if (currentLightboxIndex < 0) currentLightboxIndex = currentPapers.length - 1;
+  if (currentLightboxIndex >= currentPapers.length) currentLightboxIndex = 0;
+  updateLightboxContent();
+}
+
+function updateLightboxContent() {
+  const paper = currentPapers[currentLightboxIndex];
+  const isImage = isImageFile(paper.file_type);
+  const isPDF = paper.file_type?.toLowerCase() === 'pdf';
+  
+  if (isImage) {
+    lightboxContent.innerHTML = `<img src="${paper.file_url}" alt="${paper.course}" class="lightbox-image">`;
+  } else if (isPDF) {
+    lightboxContent.innerHTML = `<iframe src="${paper.file_url}" class="lightbox-pdf"></iframe>`;
+  } else {
+    lightboxContent.innerHTML = `
+      <div style="text-align: center; color: white; padding: 40px;">
+        <div style="font-size: 80px; margin-bottom: 20px;">${getFileIcon(paper.file_type)}</div>
+        <h2 style="margin-bottom: 10px;">${paper.course}</h2>
+        <p style="margin-bottom: 20px; opacity: 0.8;">This file type cannot be previewed</p>
+        <a href="${paper.file_url}" download class="card-download-btn" style="margin-top: 20px; display: inline-flex;">📥 Download File</a>
+      </div>
+    `;
+  }
+  
+  lightboxInfo.textContent = `${currentLightboxIndex + 1} / ${currentPapers.length} - ${paper.course}`;
+}
+
+function navigateBack() {
+  if (currentView === 'papers') {
+    showSemesters(currentProgram, currentData);
+  } else if (currentView === 'semesters') {
+    loadPrograms();
+  }
+}
+
+// Helper Functions
+function getProgramIcon(program) {
+  const icons = 
+  {
+  // 🎓 Bachelor’s Degrees
+  'Agriculture': '🌾',
+  'Agricultural Economics': '📊',
+  'Agribusiness Management': '💼',
+  'Agricultural Extension': '🌱',
+  'Agricultural Enterprise Development & Microfinance': '💰',
+  'Agricultural Innovations': '🔬',
+  'Agroforestry': '🌳',
+  'Agronomy': '🌾',
+  'Animal Science': '🐄',
+  'Aquaculture & Fisheries Science': '🐟',
+  'Biotechnology': '🧬',
+  'Environmental Sciences': '🌍',
+  'Food Science & Technology': '🍎',
+  'Forestry': '🌲',
+  'Horticulture': '🌺',
+  'Human Nutrition & Food Science': '🥗',
+  'Human Sciences & Community Services': '👥',
+  'Development Economics': '📈',
+  'Natural Resources Management (Land & Water)': '💧',
+  'Natural Resources Management (Wildlife & Ecotourism)': '🦌',
+  'Seed Systems': '🌱🌰',
+
+  // 🎓 Diploma Programs (City Campus & NRC)
+  'Diploma in Agriculture': '🌾',
+  'Diploma in Agriculture Education': '🏫',
+  'Diploma in Agro-Food Processing': '🍲',
+  'Diploma in Animal Health & Production': '🐖',
+  'Diploma in Environmental Management': '♻️',
+  'Diploma in Food, Nutrition & Livelihood Security': '🍽️',
+  'Diploma in Gender & Development': '⚖️',
+  'Diploma in Horticulture': '🌷',
+  'irrigation engineering': '💧⚙️',
+  'Diploma in Land Administration': '📐',
+  'Diploma in Seed Technology': '🌰',
+  'Diploma in Youth Development': '👩‍🎓',
+  'basics': '📐',
+
+  // 🎓 ODeL Diploma Programs (distance learning)
+  'Diploma in Agriculture (ODeL)': '🌾💻',
+  'Diploma in Agrofood Processing (ODeL)': '🍽️💻',
+  'Diploma in Food, Nutrition & Livelihood Security (ODeL)': '🥘💻',
+
+  // 📌 Certificate / Professional Diplomas (CCEPD)
+  'Certificate in Land Administration': '📜📐',
+  'University Certificate in Climate Smart Agriculture': '☀️🌱',
+  'Certificate in Dairy Entrepreneurship': '🥛🚜',
+  'Certificate in Agricultural Mechanization': '🔧🚜',
+  'Certificate in Landscape Design & Entrepreneurship': '🌿🎨',
+
+  // 🎓 Postgraduate Diplomas
+  'Postgraduate Diploma in Clinical Dietetics': '🩺🥗',
+  'Postgraduate Diploma in Horticulture': '🌻🎓',
+  'Postgraduate Diploma in Seed Technology': '🌱🎓',
+};
+
+  for (let key in icons) {
+    if (program.toLowerCase().includes(key.toLowerCase())) {
+      return icons[key];
+    }
+  }
+  return '📚';
+}
+
+function getFileIcon(fileType) {
+  const icons = {
+    'pdf': '📕',
+    'docx': '📘',
+    'doc': '📘',
+    'pptx': '📙',
+    'ppt': '📙',
+    'jpg': '🖼️',
+    'jpeg': '🖼️',
+    'png': '🖼️',
+    'gif': '🖼️'
+  };
+  return icons[fileType?.toLowerCase()] || '📄';
+}
+
+function isImageFile(fileType) {
+  const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+  return imageTypes.includes(fileType?.toLowerCase());
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Initialize
+window.onload = loadPrograms;
+</script>
+
+</body>
+</html>

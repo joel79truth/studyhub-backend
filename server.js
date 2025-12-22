@@ -1,29 +1,43 @@
-// server.js
 const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const { v4: uuidv4 } = require("uuid");
-const fs = require("fs");
-const webpush = require("web-push");
+const admin = require("firebase-admin");
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public")); // for sw.js, icons, etc.
+app.use(express.static("public"));
+
+// ------------------ FIREBASE ADMIN (FCM) ------------------
+
+admin.initializeApp({
+  credential: admin.credential.cert(
+    JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+  ),
+});
+
+// Store tokens in memory (OK for now)
+const fcmTokens = new Set();
+
+// ------------------ MULTER ------------------
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+// ------------------ STORAGE SETUP ------------------
+
 let db = null;
 let supabase = null;
-const storageProvider = process.env.STORAGE_PROVIDER || "local";
+let storageProvider = process.env.STORAGE_PROVIDER || "local";
 
-// ------------------ LOCAL MODE (SQLite) ------------------
+// ---------- LOCAL (SQLite) ----------
 if (storageProvider === "local") {
   const sqlite3 = require("sqlite3").verbose();
   db = new sqlite3.Database("./metadata.db");
+
   db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS files (
       id TEXT PRIMARY KEY,
@@ -36,10 +50,11 @@ if (storageProvider === "local") {
       uploaded_at TEXT
     )`);
   });
-  console.log("✅ Using LOCAL storage with SQLite");
+
+  console.log("✅ Using LOCAL storage (SQLite)");
 }
 
-// ------------------ SUPABASE MODE ------------------
+// ---------- SUPABASE ----------
 if (storageProvider === "supabase") {
   const { createClient } = require("@supabase/supabase-js");
   supabase = createClient(
@@ -49,48 +64,23 @@ if (storageProvider === "supabase") {
   console.log("✅ Using SUPABASE storage");
 }
 
-// ------------------ WEB PUSH SETUP ------------------
-const SUBSCRIPTIONS_FILE = "./subscriptions.json";
-if (!fs.existsSync(SUBSCRIPTIONS_FILE)) fs.writeFileSync(SUBSCRIPTIONS_FILE, "[]");
+// ------------------ SAVE FCM TOKEN ------------------
 
-webpush.setVapidDetails(
-  "mailto:your@email.com",
-  process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
-);
+app.post("/save-token", (req, res) => {
+  const { token } = req.body;
 
-function sendPushNotification(title, body, url = "/") {
-  const subscriptions = JSON.parse(fs.readFileSync(SUBSCRIPTIONS_FILE, "utf-8"));
-  const payload = JSON.stringify({ title, body, url, icon: "/icon.png" });
-
-  subscriptions.forEach((sub) => {
-    webpush.sendNotification(sub, payload).catch((err) => {
-      console.error("❌ Push error:", err.message);
-    });
-  });
-}
-
-// ------------------ SUBSCRIBE ENDPOINT ------------------
-app.post("/subscribe", (req, res) => {
-  try {
-    const subscription = req.body;
-    const existing = JSON.parse(fs.readFileSync(SUBSCRIPTIONS_FILE, "utf-8"));
-    const already = existing.find((sub) => sub.endpoint === subscription.endpoint);
-
-    if (!already) {
-      existing.push(subscription);
-      fs.writeFileSync(SUBSCRIPTIONS_FILE, JSON.stringify(existing, null, 2));
-      console.log("✅ New push subscription added");
-    }
-
-    res.status(201).json({ message: "Subscribed successfully" });
-  } catch (err) {
-    console.error("❌ Error saving subscription:", err);
-    res.status(500).json({ message: "Failed to save subscription" });
+  if (!token) {
+    return res.status(400).json({ message: "Missing FCM token" });
   }
+
+  fcmTokens.add(token);
+  console.log("📨 FCM token saved:", token);
+
+  res.status(200).json({ message: "Token saved" });
 });
 
 // ------------------ UPLOAD ENDPOINT ------------------
+
 app.post("/upload", upload.single("file"), async (req, res) => {
   const { program, semester, subject } = req.body;
   const file = req.file;
@@ -99,33 +89,35 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     return res.status(400).json({ message: "Missing required fields or file." });
   }
 
+  // Program validation
   if (!/^Diploma|^Bachelors/i.test(program) && program.toLowerCase() !== "basics") {
     return res.status(400).json({
-      message: "Program must start with 'Diploma' or 'Bachelors', or be 'Basics'.",
+      message: "Program must start with Diploma or Bachelors, or be Basics.",
     });
   }
 
   const id = uuidv4();
   const sanitizedName = file.originalname.replace(/\s+/g, "_");
-  const path = `${program}/${semester}/${subject}/${Date.now()}-${sanitizedName}`;
+  const filePath = `${program}/${semester}/${subject}/${Date.now()}-${sanitizedName}`;
   let publicUrl = "";
 
   try {
+    // ---------- SUPABASE ----------
     if (storageProvider === "supabase") {
-      // Upload to Supabase Storage
       const { error } = await supabase.storage
-        .from(process.env.SUPABASE_BUCKET) // 'files'
-        .upload(path, file.buffer, { contentType: file.mimetype });
+        .from(process.env.SUPABASE_BUCKET)
+        .upload(filePath, file.buffer, {
+          contentType: file.mimetype,
+        });
+
       if (error) throw error;
 
-      // Get public URL
       const { data } = supabase.storage
         .from(process.env.SUPABASE_BUCKET)
-        .getPublicUrl(path);
+        .getPublicUrl(filePath);
 
       publicUrl = data.publicUrl;
 
-      // Save metadata to Supabase
       const { error: dbError } = await supabase.from("files").insert([
         {
           id,
@@ -133,19 +125,25 @@ app.post("/upload", upload.single("file"), async (req, res) => {
           semester,
           subject,
           filename: file.originalname,
-          path,
+          path: filePath,
           url: publicUrl,
           uploaded_at: new Date().toISOString(),
         },
       ]);
+
       if (dbError) throw dbError;
-    } else {
-      // Local storage in 'files' folder
-      const pathModule = require("path");
-      const uploadPath = pathModule.join(__dirname, "files", path); // changed from 'uploads'
-      fs.mkdirSync(pathModule.dirname(uploadPath), { recursive: true });
+    }
+
+    // ---------- LOCAL ----------
+    else {
+      const fs = require("fs");
+      const path = require("path");
+
+      const uploadPath = path.join(__dirname, "uploads", filePath);
+      fs.mkdirSync(path.dirname(uploadPath), { recursive: true });
       fs.writeFileSync(uploadPath, file.buffer);
-      publicUrl = `/files/${path}`; // public URL for frontend
+
+      publicUrl = `/uploads/${filePath}`;
 
       db.run(
         `INSERT INTO files (id, program, semester, subject, filename, path, url, uploaded_at)
@@ -156,28 +154,40 @@ app.post("/upload", upload.single("file"), async (req, res) => {
           semester,
           subject,
           file.originalname,
-          path,
+          filePath,
           publicUrl,
           new Date().toISOString(),
         ]
       );
     }
 
-    // Send push notification
-    sendPushNotification(
-      "📘 New File Uploaded!",
-      `${program} – Semester ${semester} – ${file.originalname}`,
-      `/program-detail.html?program=${encodeURIComponent(program)}`
-    );
+    // ------------------ PUSH NOTIFICATION ------------------
 
-    res.status(200).json({ message: "✅ Upload successful!", id, url: publicUrl });
+    if (fcmTokens.size > 0) {
+      await admin.messaging().sendMulticast({
+        tokens: Array.from(fcmTokens),
+        notification: {
+          title: "📚 New Notes Uploaded",
+          body: `${subject} notes for Semester ${semester} are now available`,
+        },
+      });
+
+      console.log("🔔 Push notification sent");
+    }
+
+    res.status(200).json({
+      message: "✅ Upload successful!",
+      id,
+      url: publicUrl,
+    });
   } catch (err) {
     console.error("❌ Upload error:", err.message);
     res.status(500).json({ message: "Upload failed", error: err.message });
   }
 });
 
-// ------------------ FETCH METADATA ENDPOINT ------------------
+// ------------------ FETCH METADATA ------------------
+
 app.get("/api/metadata", async (req, res) => {
   try {
     if (storageProvider === "supabase") {
@@ -185,12 +195,12 @@ app.get("/api/metadata", async (req, res) => {
         .from("files")
         .select("*")
         .order("uploaded_at", { ascending: false });
+
       if (error) throw error;
       res.json(data);
     } else {
       db.all("SELECT * FROM files ORDER BY uploaded_at DESC", [], (err, rows) => {
         if (err) {
-          console.error(err);
           return res.status(500).json({ message: "Failed to fetch metadata" });
         }
         res.json(rows);
@@ -202,37 +212,8 @@ app.get("/api/metadata", async (req, res) => {
   }
 });
 
-
-console.log("🔍 ENV CHECK:", process.env.SUPABASE_BUCKET, process.env.SUPABASE_URL);
-
-// ------------------ TEST BUCKETS ENDPOINT ------------------
-if (storageProvider === "supabase") {
-  app.get("/api/buckets", async (req, res) => {
-    try {
-      const { data, error } = await supabase.storage.listBuckets();
-      if (error) throw error;
-      res.json({ buckets: data });
-    } catch (err) {
-      console.error("❌ List buckets error:", err.message);
-      res.status(500).json({ message: "Failed to list buckets", error: err.message });
-    }
-  });
-}
-
-
-app.get("/api/test-supabase", async (req, res) => {
-  try {
-    const { data, error } = await supabase.storage.listBuckets();
-    if (error) throw error;
-    res.json({ message: "✅ Supabase connection successful!", buckets: data });
-  } catch (err) {
-    console.error("❌ Supabase test failed:", err.message);
-    res.status(500).json({ message: "Supabase connection failed", error: err.message });
-  }
-});
-
-
 // ------------------ START SERVER ------------------
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT} (mode=${storageProvider})`);
