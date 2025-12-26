@@ -694,11 +694,7 @@
 }
 
 
-<<<<<<< HEAD
-    </style>
-=======
 </style>
->>>>>>> aff68f3 (google analytics)
 
  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
@@ -725,141 +721,54 @@
             </div>
         </div>
 
-        <!-- Lecturer Security Code Screen -->
-        <div id="lecturerSecurity" class="form-container hidden">
-            <h2>🔐 Lecturer Verification</h2>
-            <p class="subtitle">Please enter the security code to continue</p>
-            
-            <div class="form-group">
-                <label for="securityCode">Security Code</label>
-                <input type="password" id="securityCode" placeholder="Enter security code">
-                <div id="securityError" class="error hidden">Invalid security code!</div>
-            </div>
-            
-            <button onclick="verifySecurityCode()">Verify</button>
-            <button onclick="goBack()" class="btn-secondary">Back</button>
-        </div>
+<div class="login-container">
+  <h1>Welcome to Program Chat</h1>
+  <input type="text" id="username" placeholder="Enter your name" required>
+  <select id="program">
+   
+    <option value="" disabled selected>Select your program</option>
+     <option value="Basics">Basics</option>
+    <option value="Computer Science">Computer Science</option>
+    <option value="Agriculture">Bachalor of Science in Agriculture</option>
+    <option value="Aplied Science">Aplied Science</option>
+    <option value="Irrigation engineering">Irrigation Engineering</option>
+    <option value="Agriculture General">Agriculture General</option>
+    
+    <option value="Textile and Fashion Design">Textile and Fashion Design</option>
+    <option value="Animal Healthy">Animal Healthy</option>
+    <option value="Land Adiministration">Land Adiministration</option>
+    <option value="Enviromental Management">Enviromental Management</option>
+    <option value="Horticulture">Horticulture</option>
+    <option value="Agricultural Engineering">Agricultural Engineering</option>
+    <option value="Agricultural Economics">Agricultural Economics</option>
+    <option value="Agricultural Education">Agricultural Education</option>
+    <option value="Bachelor of Science in Agronomy">Bachelor of Science in Agronomy</option>
+    <option value="Bachelor of Science in Animal Science">Bachelor of Science in Animal Science</option>
+    <option value="Bachelor of Science in Aquaculture and Fisheries Management">Bachelor of Science in Aquaculture and Fisheries Management</option>
+    <option value="Bachelor of Science in Horticulture and Landscape Management">Bachelor of Science in Horticulture and Landscape Management</option>
+    <option value="Bachelor of Science in Plant Science and Crop Protection">Bachelor of Science in Plant Science and Crop Protection</option>
+    <option value="Bachelor of Science in Soil and Water Management">Bachelor of Science in Soil and Water Management</option>
+    <option value="Bachelor of Science in Agricultural Economics and Agribusiness">Bachelor of Science in Agricultural Economics and Agribusiness</option>
+    <option value="Bachelor of Science in Food Technology">Bachelor of Science in Food Technology</option>
+    
 
-        <!-- Lecturer Create Classroom Screen -->
-        <div id="createClassroom" class="form-container hidden">
-            <h2>🏫 Create Classroom</h2>
-            <p class="subtitle">Set up your virtual classroom</p>
-            
-            <div class="form-group">
-                <label for="programName">Program Name *</label>
-                <input type="text" id="programName" placeholder="e.g., Diploma in Computer Science">
-                <div id="programError" class="error hidden">Program must start with 'diploma', 'bachelor', or 'basics'</div>
-            </div>
-
-            <div class="form-group">
-                <label for="semester">Semester *</label>
-                <select id="semester">
-                    <option value="">Select semester</option>
-                    <option value="1">Semester 1</option>
-                    <option value="2">Semester 2</option>
-                    <option value="3">Semester 3</option>
-                    <option value="4">Semester 4</option>
-                    <option value="5">Semester 5</option>
-                    <option value="6">Semester 6</option>
-                    <option value="7">Semester 7</option>
-                    <option value="8">Semester 8</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="lecturerEmail">Your Email *</label>
-                <input type="email" id="lecturerEmail" placeholder="lecturer@university.edu">
-            </div>
-            
-            <button onclick="createClassroom()">Create Classroom</button>
-            <button onclick="goBack()" class="btn-secondary">Back</button>
-        </div>
-
-        <!-- Student Join Screen -->
-        <div id="studentJoin" class="form-container hidden">
-            <h2>👨‍🎓 Join Classroom</h2>
-            <p class="subtitle">Enter your details to join the class</p>
-            
-            <div class="form-group">
-                <label for="studentProgram">Program Name *</label>
-                <input type="text" id="studentProgram" placeholder="e.g., Diploma in Computer Science">
-                <div id="studentProgramError" class="error hidden">Program must start with 'diploma', 'bachelor', or 'basics'</div>
-            </div>
-
-            <div class="form-group">
-                <label for="studentSemester">Semester *</label>
-                <select id="studentSemester">
-                    <option value="">Select semester</option>
-                    <option value="1">Semester 1</option>
-                    <option value="2">Semester 2</option>
-                    <option value="3">Semester 3</option>
-                    <option value="4">Semester 4</option>
-                    <option value="5">Semester 5</option>
-                    <option value="6">Semester 6</option>
-                    <option value="7">Semester 7</option>
-                    <option value="8">Semester 8</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="studentName">Full Name *</label>
-                <input type="text" id="studentName" placeholder="Enter your full name">
-            </div>
-            
-            <button onclick="joinClassroom()">Join Classroom</button>
-            <button onclick="goBack()" class="btn-secondary">Back</button>
-        </div>
-
-        <!-- Lecturer Dashboard -->
-        <div id="lecturerDashboard" class="dashboard hidden">
-            <div class="sidebar" id="sidebar">
-                <h3>📋 Menu</h3>
-                <button class="sidebar-btn" onclick="showAddClassForm()">➕ Add Class</button>
-                <div id="classList" style="margin-bottom: 20px;"></div>
-                <button class="sidebar-btn" onclick="viewStudents()">👥 View Students</button>
-                <button class="sidebar-btn" onclick="viewAnalytics()">📊 Analytics</button>
-                <button class="sidebar-btn" onclick="settings()">⚙️ Settings</button>
-                <button class="sidebar-btn" onclick="logout()" style="background: #e74c3c; margin-top: 20px;">🚪 Logout</button>
-            <button onclick="
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('active');
-">
-  × Close
-</button>
-
-            
-            </div>
-
-            <div class="main-content">
-                <div class="header">
-                    <h2 id="dashboardTitle">Loading...</h2>
-                    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰ Menu</button>
-                </div>
-
-                <div class="content-area">
-                    <div class="lecturers-list">
-                        <h4>👨‍🏫 Lecturers in this Classroom</h4>
-                        <div id="lecturersList">
-                            <p style="color: #999; font-size: 13px;">Loading...</p>
-                        </div>
-                    </div>
-<div class="call-buttons">
-  <div class="call-btn-wrapper">
-    <button class="call-btn video-call-btn">📹</button>
-    <div class="call-label">Video</div>
-  </div>
-
-  <div class="call-btn-wrapper">
-    <button class="call-btn voice-call-btn">📞</button>
-    <div class="call-label">Voice</div>
-  </div>
-
-  <div class="call-btn-wrapper">
-    <button class="call-btn chat-btn">💬</button>
-    <div class="call-label">Chat</div>
-  </div>
+  </select>
+  <button onclick="login()">Enter Chat</button>
 </div>
 
+<script>
+  function login() {
+    const username = document.getElementById('username').value.trim();
+    const program = document.getElementById('program').value;
+    if(!username || !program){
+      alert("Please enter your name and select a program!");
+      return;
+    }
+    localStorage.setItem('userName', username);
+    localStorage.setItem('program', program); 
+    window.location.href = "chat.html";
+  }
+</script>
 
 
 
