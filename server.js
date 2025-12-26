@@ -42,15 +42,30 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-/* ===== GOOGLE DRIVE (OAuth 2.0) ===== */
-const oauthCreds = JSON.parse(fs.readFileSync("./oauth-client.json"));
-const tokens = JSON.parse(fs.readFileSync("./token.json"));
+/* ===== GOOGLE DRIVE (OAuth 2.0 via ENV) ===== */
+if (!process.env.OAUTH_CLIENT_JSON) {
+  throw new Error("❌ OAUTH_CLIENT_JSON missing");
+}
+if (!process.env.GOOGLE_OAUTH_TOKENS) {
+  throw new Error("❌ GOOGLE_OAUTH_TOKENS missing");
+}
 
-const { client_id, client_secret, redirect_uris } = oauthCreds.installed;
-const auth = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+const oauthCreds = JSON.parse(process.env.OAUTH_CLIENT_JSON);
+const tokens = JSON.parse(process.env.GOOGLE_OAUTH_TOKENS);
+
+const { client_id, client_secret, redirect_uris } =
+  oauthCreds.installed || oauthCreds.web;
+
+const auth = new google.auth.OAuth2(
+  client_id,
+  client_secret,
+  redirect_uris[0]
+);
+
 auth.setCredentials(tokens);
 
 const drive = google.drive({ version: "v3", auth });
+
 
 /* ===== SAVE FCM TOKEN ===== */
 app.post("/save-token", (req, res) => {
