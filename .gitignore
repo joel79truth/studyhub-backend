@@ -11,3 +11,16 @@ serviceAccountKey.json
 serviceAccountKey.json 
 serviceAccountKey.json
 uploads/
+# OAuth credentials
+oauth-client.json
+token.json
+
+# Firebase service account
+firebase-service-account.json
+.env
+
+# Node modules
+node_modules/
+
+# Logs
+*.log

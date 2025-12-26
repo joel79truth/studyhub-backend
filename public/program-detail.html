@@ -289,6 +289,77 @@ h1 { margin:0; font-size:2rem; }
   color: #333;
 }
 
+.filter-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.filter-btn {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.filter-btn:hover {
+    background: #2ecc71;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background: #0fac17; /* Matches your header color */
+    color: white;
+    box-shadow: 0 4px 12px rgba(15, 172, 23, 0.4);
+}
+
+/* Preview Area for Images/Thumbnails */
+.file-card-preview {
+    width: 100%;
+    height: 160px; /* Adjust height as needed */
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.file-card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This makes images fill the space perfectly */
+    transition: transform 0.5s ease;
+}
+
+.file-card:hover .file-card-preview img {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Placeholder for non-image files */
+.file-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #666;
+}
+
+.file-placeholder .file-icon {
+    font-size: 50px; /* Large icon for documents */
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     #fileList {
@@ -372,6 +443,18 @@ gtag('config', 'G-0LTZS1S9W6');
 </div>
 
 <div class="container">
+
+  <div class="filter-container">
+  <button class="filter-btn active" onclick="filterBySemester('all', this)">All</button>
+  <button class="filter-btn" onclick="filterBySemester('1', this)">Sem 1</button>
+  <button class="filter-btn" onclick="filterBySemester('2', this)">Sem 2</button>
+  <button class="filter-btn" onclick="filterBySemester('3', this)">Sem 3</button>
+  <button class="filter-btn" onclick="filterBySemester('4', this)">Sem 4</button>
+  <button class="filter-btn" onclick="filterBySemester('5', this)">Sem 5</button>
+  <button class="filter-btn" onclick="filterBySemester('6', this)">Sem 6</button>
+  <button class="filter-btn" onclick="filterBySemester('7', this)">Sem 7</button>
+</div>
+
   <div class="search-bar">
     <input type="text" id="fileSearch" placeholder="Search files by subject or name...">
   </div>
@@ -440,47 +523,105 @@ async function loadFiles() {
   }
 }
 
-// Display files
-function displayFiles(files) {
-  const container = document.getElementById("fileList");
-  if (!files.length) {
-    container.innerHTML = "<p>No files available for this program.</p>";
-    return;
-  }
+let currentSemester = 'all';
 
-  container.innerHTML = files.map(f => {
-    const filePath = f.url.startsWith("http") ? f.url : (f.url.startsWith("/") ? f.url.slice(1) : f.url);
-    const fileIcon = getFileIcon(f.filename);
-
-    return `
-      <div class="file-card">
-        <div class="file-card-header">
-          <div class="file-icon-wrapper">
-            <div class="file-icon">${fileIcon}</div>
-          </div>
-          <h3>${f.filename}</h3>
-        </div>
-        <div class="file-card-body">
-          <div class="file-info-grid">
-            <div class="file-info-item">
-              <div class="file-info-label">Semester</div>
-              <div class="file-info-value">${f.semester}</div>
-            </div>
-            <div class="file-info-item subject">
-              <div class="file-info-label">Subject</div>
-              <div class="file-info-value">${f.subject}</div>
-            </div>
-          </div>
-          <div class="button-group">
-            <button class="view-btn" onclick="viewFile('${filePath}')">👁️ View</button>
-            <button class="download-btn" onclick="downloadFile('${filePath}')">⬇️ Download</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
+function filterBySemester(semester, btn) {
+    // 1. Update UI: Change active button class
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // 2. Set the global current semester
+    currentSemester = semester;
+    
+    // 3. Trigger filtering
+    applyFilters();
 }
 
+function applyFilters() {
+    const searchQuery = document.getElementById("fileSearch").value.trim().toLowerCase();
+    
+    const filtered = allFiles.filter(f => {
+        // Check Semester Match
+        // This logic handles if f.semester is "Sem 1", "1", or "Semester 1"
+        const semMatch = currentSemester === 'all' || 
+                         f.semester.toString().toLowerCase().includes(currentSemester.toLowerCase());
+        
+        // Check Search Match
+        const searchMatch = f.filename.toLowerCase().includes(searchQuery) || 
+                            f.subject.toLowerCase().includes(searchQuery);
+        
+        return semMatch && searchMatch;
+    });
+    
+    displayFiles(filtered);
+}
+
+// Update your existing Search Event Listener to use the new applyFilters function
+document.getElementById("fileSearch").addEventListener("input", applyFilters);
+
+// Display files
+// Helper to decide what to show in the preview area
+function getFilePreview(filename, filePath) {
+    const ext = filename.split('.').pop().toLowerCase();
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+    
+    // If it's an image file, show the actual image
+    if (imageExtensions.includes(ext)) {
+        return `<img src="${filePath}" alt="${filename}" onerror="this.parentElement.innerHTML=renderPlaceholder('${filename}')">`;
+    } 
+    
+    // Otherwise, show a stylized placeholder with the icon
+    return renderPlaceholder(filename);
+}
+
+// Helper to render the placeholder when it's not an image
+function renderPlaceholder(filename) {
+    const icon = getFileIcon(filename);
+    return `
+        <div class="file-placeholder">
+            <div class="file-icon">${icon}</div>
+        </div>
+    `;
+}
+
+function displayFiles(files) {
+    const container = document.getElementById("fileList");
+    if (!files.length) {
+        container.innerHTML = "<p style='color:white; text-align:center;'>No files available for this selection.</p>";
+        return;
+    }
+
+    container.innerHTML = files.map(f => {
+        const filePath = f.url.startsWith("http") ? f.url : (f.url.startsWith("/") ? f.url.slice(1) : f.url);
+        
+        return `
+            <div class="file-card">
+                <div class="file-card-preview">
+                    ${getFilePreview(f.filename, filePath)}
+                </div>
+                <div class="file-card-header">
+                    <h3>${f.filename}</h3>
+                </div>
+                <div class="file-card-body">
+                    <div class="file-info-grid">
+                        <div class="file-info-item">
+                            <div class="file-info-label">Semester</div>
+                            <div class="file-info-value">${f.semester}</div>
+                        </div>
+                        <div class="file-info-item subject">
+                            <div class="file-info-label">course</div>
+                            <div class="file-info-value">${f.subject}</div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="view-btn" onclick="viewFile('${filePath}')">👁️ View</button>
+                        <button class="download-btn" onclick="downloadFile('${filePath}')">⬇️ Download</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 // Open file in new tab
 function viewFile(filePath) {
   window.open(filePath, "_blank");
@@ -529,48 +670,6 @@ function showToast(message) {
     toast.style.display = "block";
     setTimeout(() => toast.style.display = "none", 5000);
 }
-
-// Polling for new files
-let knownFiles = [...allFiles]; // copy of current files
-
-async function checkForNewFiles() {
-    try {
-        const res = await fetch("/api/metadata");
-        const metadata = await res.json();
-        const files = Array.isArray(metadata) ? metadata : metadata.files || [];
-
-        // Filter files for this program only
-        const programFiles = files.filter(f =>
-            f.program?.trim().toLowerCase() === programName.toLowerCase()
-        );
-
-        // Detect new files
-        const newFiles = programFiles.filter(f =>
-            !knownFiles.some(kf => kf.url === f.url)
-        );
-
-        // Show notifications and update list
-        newFiles.forEach(f => {
-            const message = `${f.program} – ${f.semester} – New file uploaded: ${f.filename}`;
-            showToast(message);
-            showBrowserNotification(f.program, f.semester, f.filename);
-
-            // Add to knownFiles so we don't notify again
-            knownFiles.push(f);
-            allFiles.push(f);
-        });
-
-        // Refresh UI if new files
-        if (newFiles.length > 0) {
-            displayFiles(allFiles);
-        }
-    } catch (err) {
-        console.error("Error checking new files:", err);
-    }
-}
-
-// Start polling every 10 seconds
-setInterval(checkForNewFiles, 10000);
 
 
     

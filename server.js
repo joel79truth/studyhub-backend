@@ -4,221 +4,174 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const { v4: uuidv4 } = require("uuid");
 const admin = require("firebase-admin");
+const { createClient } = require("@supabase/supabase-js");
+const { google } = require("googleapis");
+const { Readable } = require("stream");
+const fs = require("fs");
 
 dotenv.config();
 
+/* ===== LOG ENV VARS ===== */
+console.log("FIREBASE:", !!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64);
+console.log("SUPABASE:", !!process.env.SUPABASE_URL);
+console.log("DRIVE FOLDER:", process.env.GOOGLE_DRIVE_FOLDER_ID);
+
+/* ===== EXPRESS SETUP ===== */
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// ------------------ FIREBASE ADMIN (FCM) ------------------
-
-const serviceAccount = JSON.parse(
-  Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf-8')
+/* ===== FIREBASE ===== */
+const firebaseAccount = JSON.parse(
+  Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, "base64").toString("utf8")
 );
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(firebaseAccount),
 });
 
-
-
-// Store tokens in memory (OK for now)
 const fcmTokens = new Set();
 
-// ------------------ MULTER ------------------
-
+/* ===== MULTER ===== */
 const upload = multer({ storage: multer.memoryStorage() });
 
-// ------------------ STORAGE SETUP ------------------
+/* ===== SUPABASE ===== */
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
-let db = null;
-let supabase = null;
-let storageProvider = process.env.STORAGE_PROVIDER || "local";
+/* ===== GOOGLE DRIVE (OAuth 2.0) ===== */
+const oauthCreds = JSON.parse(fs.readFileSync("./oauth-client.json"));
+const tokens = JSON.parse(fs.readFileSync("./token.json"));
 
-// ---------- LOCAL (SQLite) ----------
-if (storageProvider === "local") {
-  const sqlite3 = require("sqlite3").verbose();
-  db = new sqlite3.Database("./metadata.db");
+const { client_id, client_secret, redirect_uris } = oauthCreds.installed;
+const auth = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+auth.setCredentials(tokens);
 
-  db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS files (
-      id TEXT PRIMARY KEY,
-      program TEXT,
-      semester INTEGER,
-      subject TEXT,
-      filename TEXT,
-      path TEXT,
-      url TEXT,
-      uploaded_at TEXT
-    )`);
-  });
+const drive = google.drive({ version: "v3", auth });
 
-  console.log("✅ Using LOCAL storage (SQLite)");
-}
-
-// ---------- SUPABASE ----------
-if (storageProvider === "supabase") {
-  const { createClient } = require("@supabase/supabase-js");
-  supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
-  console.log("✅ Using SUPABASE storage");
-}
-
-// ------------------ SAVE FCM TOKEN ------------------
-
+/* ===== SAVE FCM TOKEN ===== */
 app.post("/save-token", (req, res) => {
   const { token } = req.body;
-
-  if (!token) {
-    return res.status(400).json({ message: "Missing FCM token" });
-  }
+  if (!token) return res.status(400).json({ message: "Missing token" });
 
   fcmTokens.add(token);
-  console.log("📨 FCM token saved:", token);
-
-  res.status(200).json({ message: "Token saved" });
+  res.json({ message: "Token saved" });
 });
 
-// ------------------ UPLOAD ENDPOINT ------------------
-
+/* ===== UPLOAD ===== */
 app.post("/upload", upload.single("file"), async (req, res) => {
-  const { program, semester, subject } = req.body;
-  const file = req.file;
-
-  if (!program || !semester || !subject || !file) {
-    return res.status(400).json({ message: "Missing required fields or file." });
-  }
-
-  // Program validation
-  if (!/^Diploma|^Bachelors/i.test(program) && program.toLowerCase() !== "basics") {
-    return res.status(400).json({
-      message: "Program must start with Diploma or Bachelors, or be Basics.",
-    });
-  }
-
-  const id = uuidv4();
-  const sanitizedName = file.originalname.replace(/\s+/g, "_");
-  const filePath = `${program}/${semester}/${subject}/${Date.now()}-${sanitizedName}`;
-  let publicUrl = "";
-
   try {
-    // ---------- SUPABASE ----------
-    if (storageProvider === "supabase") {
-      const { error } = await supabase.storage
-        .from(process.env.SUPABASE_BUCKET)
-        .upload(filePath, file.buffer, {
-          contentType: file.mimetype,
-        });
+    const { program, semester, subject } = req.body;
+    const file = req.file;
 
-      if (error) throw error;
+    if (!program || !semester || !subject || !file)
+      return res.status(400).json({ message: "Missing fields or file" });
 
-      const { data } = supabase.storage
-        .from(process.env.SUPABASE_BUCKET)
-        .getPublicUrl(filePath);
+    const USE_GDRIVE = file.size > 50 * 1024; // 50KB threshold
+    console.log("FILE SIZE:", file.size, "USE_GDRIVE:", USE_GDRIVE);
 
-      publicUrl = data.publicUrl;
+    const id = uuidv4();
+    const safeName = file.originalname.replace(/\s+/g, "_");
+    const filePath = `${program}/${semester}/${subject}/${Date.now()}-${safeName}`;
 
-      const { error: dbError } = await supabase.from("files").insert([
-        {
-          id,
-          program,
-          semester,
-          subject,
-          filename: file.originalname,
-          path: filePath,
-          url: publicUrl,
-          uploaded_at: new Date().toISOString(),
+    let storage_type, storage_ref, publicUrl;
+
+    /* ===== GOOGLE DRIVE ===== */
+    if (USE_GDRIVE) {
+      const bufferStream = new Readable();
+      bufferStream.push(file.buffer);
+      bufferStream.push(null);
+
+      const driveRes = await drive.files.create({
+        requestBody: {
+          name: file.originalname,
+          parents: [process.env.GOOGLE_DRIVE_FOLDER_ID],
         },
-      ]);
-
-      if (dbError) throw dbError;
-    }
-
-    // ---------- LOCAL ----------
-    else {
-      const fs = require("fs");
-      const path = require("path");
-
-      const uploadPath = path.join(__dirname, "uploads", filePath);
-      fs.mkdirSync(path.dirname(uploadPath), { recursive: true });
-      fs.writeFileSync(uploadPath, file.buffer);
-
-      publicUrl = `/uploads/${filePath}`;
-
-      db.run(
-        `INSERT INTO files (id, program, semester, subject, filename, path, url, uploaded_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          id,
-          program,
-          semester,
-          subject,
-          file.originalname,
-          filePath,
-          publicUrl,
-          new Date().toISOString(),
-        ]
-      );
-    }
-
-    // ------------------ PUSH NOTIFICATION ------------------
-
-    if (fcmTokens.size > 0) {
-      await admin.messaging().sendMulticast({
-        tokens: Array.from(fcmTokens),
-        notification: {
-          title: "📚 New Notes Uploaded",
-          body: `${subject} notes for Semester ${semester} are now available`,
+        media: {
+          mimeType: file.mimetype,
+          body: bufferStream,
         },
       });
 
-      console.log("🔔 Push notification sent");
+      storage_type = "gdrive";
+      storage_ref = driveRes.data.id;
+      publicUrl = `/api/drive/${storage_ref}`;
+    } else {
+      /* ===== SUPABASE STORAGE ===== */
+      const { error } = await supabase.storage
+        .from(process.env.SUPABASE_BUCKET)
+        .upload(filePath, file.buffer, { contentType: file.mimetype });
+
+      if (error) throw error;
+
+      storage_type = "supabase";
+      storage_ref = filePath;
+      publicUrl = supabase.storage
+        .from(process.env.SUPABASE_BUCKET)
+        .getPublicUrl(filePath).data.publicUrl;
     }
 
-    res.status(200).json({
-      message: "✅ Upload successful!",
+    /* ===== SAVE METADATA ===== */
+    const pathValue = USE_GDRIVE ? storage_ref : filePath;
+
+    const { error: dbError } = await supabase.from("files").insert([{
       id,
+      program,
+      semester,
+      subject,
+      filename: file.originalname,
+      path: pathValue,
       url: publicUrl,
-    });
+      storage_type,
+      uploaded_at: new Date().toISOString(),
+    }]);
+    if (dbError) throw dbError;
+
+    /* ===== PUSH NOTIFICATIONS ===== */
+    if (fcmTokens.size > 0) {
+      await admin.messaging().sendMulticast({
+        tokens: [...fcmTokens],
+        notification: {
+          title: "📚 New Notes Uploaded",
+          body: `${subject} notes for Semester ${semester} available`,
+        },
+      });
+    }
+
+    res.json({ message: "Upload successful", url: publicUrl });
   } catch (err) {
-    console.error("❌ Upload error:", err.message);
+    console.error(err);
     res.status(500).json({ message: "Upload failed", error: err.message });
   }
 });
 
-// ------------------ FETCH METADATA ------------------
-
-app.get("/api/metadata", async (req, res) => {
+/* ===== GOOGLE DRIVE STREAM ===== */
+app.get("/api/drive/:fileId", async (req, res) => {
   try {
-    if (storageProvider === "supabase") {
-      const { data, error } = await supabase
-        .from("files")
-        .select("*")
-        .order("uploaded_at", { ascending: false });
-
-      if (error) throw error;
-      res.json(data);
-    } else {
-      db.all("SELECT * FROM files ORDER BY uploaded_at DESC", [], (err, rows) => {
-        if (err) {
-          return res.status(500).json({ message: "Failed to fetch metadata" });
-        }
-        res.json(rows);
-      });
-    }
-  } catch (err) {
-    console.error("❌ Metadata fetch error:", err.message);
-    res.status(500).json({ message: "Failed to fetch metadata" });
+    const driveRes = await drive.files.get(
+      { fileId: req.params.fileId, alt: "media" },
+      { responseType: "stream" }
+    );
+    driveRes.data.pipe(res);
+  } catch {
+    res.status(404).send("File not found");
   }
 });
 
-// ------------------ START SERVER ------------------
+/* ===== METADATA ===== */
+app.get("/api/metadata", async (req, res) => {
+  const { data, error } = await supabase
+    .from("files")
+    .select("*")
+    .order("uploaded_at", { ascending: false });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT} (mode=${storageProvider})`);
+  if (error) return res.status(500).json({ message: "Fetch failed" });
+  res.json(data);
 });
+
+/* ===== START SERVER ===== */
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
