@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Past Papers - StudyHub LUANAR</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 <style>
   * {
     margin: 0;
@@ -15,10 +14,9 @@
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+    background: linear-gradient(135deg, #000000 0%, #000000 50%, #1b1b1b 100%);
     min-height: 100vh;
-    padding-top: 140px;
-    color: #fff;
+    padding-top: 120px;
   }
 
   /* Header */
@@ -27,11 +25,13 @@
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     z-index: 100;
-    padding: 15px 20px;
     animation: slideDown 0.5s ease-out;
   }
 
@@ -45,71 +45,122 @@
   .header-title {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
   }
 
   .logo {
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #29304d, #764ba2);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 24px;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
   }
 
   .header-title h1 {
     color: white;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: 700;
   }
 
-  .upload-btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  }
-
-  .upload-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-  }
-
-  /* Search Bar */
   .search-container {
     width: 100%;
+    position: relative;
   }
 
-  .search-bar {
+  .search-input {
     width: 100%;
-    padding: 12px 20px 12px 45px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    color: white;
+    padding: 14px 50px 14px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
     font-size: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
     outline: none;
     transition: all 0.3s ease;
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>');
-    background-repeat: no-repeat;
-    background-position: 15px center;
   }
 
-  .search-bar:focus {
-    background-color: rgba(255, 255, 255, 0.15);
+  .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .search-input:focus {
     border-color: #667eea;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
   }
 
-  .search-bar::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+  .search-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    pointer-events: none;
+  }
+
+  /* Floating Action Button */
+  .fab-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: slideDown 0.5s ease-out 0.2s both;
+  }
+
+  .fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+    margin: 0;
+  }
+
+  .fab:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.7);
+  }
+
+  .fab:active {
+    transform: scale(0.95);
+  }
+
+  .fab-label {
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+  }
+
+  /* Buttons */
+  button {
+    padding: 12px 24px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Breadcrumb */
@@ -119,6 +170,7 @@
     display: none;
     align-items: center;
     gap: 10px;
+    animation: fadeIn 0.4s ease-out;
   }
 
   .breadcrumb.active {
@@ -126,127 +178,25 @@
   }
 
   .breadcrumb button {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     color: white;
     padding: 8px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
   }
 
   .breadcrumb button:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-3px);
   }
 
   .breadcrumb-text {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 14px;
-  }
-
-  /* Cards Grid */
-  .cards {
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-    border-color: rgba(102, 126, 234, 0.5);
-  }
-
-  .card-preview {
-    width: 100%;
-    height: 60%;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .card-preview-icon {
-    font-size: 48px;
-  }
-
-  .card-content {
-    padding: 15px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .card-title {
-    font-size: 1rem;
-    font-weight: 700;
     color: white;
-    margin-bottom: 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    font-size: 15px;
+    font-weight: 500;
   }
 
-  .card-meta {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 8px;
-  }
-
-  .card-stats {
-    display: flex;
-    gap: 15px;
-    margin-top: 8px;
-  }
-
-  .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .stat-item.clickable {
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .stat-item.clickable:hover {
-    color: #667eea;
-  }
-
-  .stat-item.liked {
-    color: #ff4757;
-  }
-
-  /* Upload Modal */
+  /* Modal */
   .modal {
     display: none;
     position: fixed;
@@ -254,54 +204,40 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
     overflow-y: auto;
-    padding: 20px;
   }
 
   .modal.active {
     display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .modal-content {
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 30px;
-    border-radius: 16px;
-    width: 100%;
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    width: 90%;
     max-width: 600px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    animation: scaleIn 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 20px;
   }
 
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .modal-content h3 {
+    font-size: 1.8rem;
     margin-bottom: 25px;
-  }
-
-  .modal-header h3 {
-    font-size: 1.5rem;
-    color: white;
-  }
-
-  .modal-close {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 28px;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
   }
 
   .form-group {
@@ -311,7 +247,7 @@
   .form-group label {
     display: block;
     margin-bottom: 8px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #333;
     font-weight: 600;
     font-size: 14px;
   }
@@ -319,187 +255,176 @@
   input, select {
     width: 100%;
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: white;
+    margin: 5px 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
     font-size: 15px;
-    outline: none;
     transition: all 0.3s ease;
+    outline: none;
+    background: white;
+    color: #333;
   }
 
   input:focus, select:focus {
-    background: rgba(255, 255, 255, 0.08);
     border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
   }
 
   input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: #999;
   }
 
-  select option {
-    background: #1a1a1a;
-    color: white;
+  select {
+    cursor: pointer;
   }
 
-  .file-drop-zone {
-    border: 2px dashed rgba(102, 126, 234, 0.5);
-    border-radius: 8px;
+  .file-upload-zone {
     padding: 40px 20px;
+    border: 3px dashed #667eea;
+    background: #f8f9ff;
+    border-radius: 12px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(102, 126, 234, 0.05);
+    position: relative;
   }
 
-  .file-drop-zone:hover {
-    border-color: #667eea;
-    background: rgba(102, 126, 234, 0.1);
-  }
-
-  .file-drop-zone.dragover {
+  .file-upload-zone:hover {
     border-color: #764ba2;
-    background: rgba(118, 75, 162, 0.1);
+    background: #f0f2ff;
+    transform: scale(1.02);
+  }
+
+  .file-upload-zone.dragover {
+    border-color: #764ba2;
+    background: #e8ebff;
+    transform: scale(1.05);
   }
 
   #fileInput {
     display: none;
   }
 
-  .drop-icon {
+  .upload-icon {
     font-size: 48px;
     margin-bottom: 10px;
   }
 
-  .drop-text {
-    color: rgba(255, 255, 255, 0.7);
+  .upload-text {
     font-size: 16px;
+    color: #667eea;
+    font-weight: 600;
     margin-bottom: 5px;
   }
 
-  .drop-subtext {
-    color: rgba(255, 255, 255, 0.5);
+  .upload-subtext {
     font-size: 13px;
+    color: #999;
   }
 
-  /* File Preview Grid */
-  .file-previews {
+  .file-preview-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-    margin-top: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
   }
 
-  .file-preview-item {
+  .file-preview {
     position: relative;
-    aspect-ratio: 1;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 10px;
+    background: #f9f9f9;
+    transition: all 0.3s ease;
   }
 
-  .file-preview-item img {
+  .file-preview:hover {
+    border-color: #667eea;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .file-preview-image {
     width: 100%;
-    height: 100%;
+    height: 120px;
     object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
   }
 
-  .file-preview-placeholder {
+  .file-preview-icon {
     width: 100%;
-    height: 100%;
+    height: 120px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(102, 126, 234, 0.1);
-    font-size: 32px;
+    font-size: 48px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 8px;
+    margin-bottom: 8px;
   }
 
   .file-preview-name {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 5px;
-    font-size: 10px;
-    color: white;
+    font-size: 12px;
+    color: #333;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    margin-bottom: 4px;
   }
 
-  .file-remove {
+  .file-preview-size {
+    font-size: 11px;
+    color: #999;
+  }
+
+  .file-preview-remove {
     position: absolute;
     top: 5px;
     right: 5px;
-    background: #ff4757;
+    background: #f5576c;
+    color: white;
     border: none;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    color: white;
-    cursor: pointer;
+    width: 28px;
+    height: 28px;
     font-size: 16px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    transition: all 0.2s ease;
+    padding: 0;
+    margin: 0;
   }
 
-  .file-status {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    color: white;
+  .file-preview-remove:hover {
+    transform: scale(1.1);
+    background: #e04055;
   }
 
-  .file-status.validating {
-    background: #f39c12;
-  }
-
-  .file-status.valid {
-    background: #2ecc71;
-  }
-
-  .file-status.invalid {
-    background: #e74c3c;
-  }
-
-  /* Progress Bar */
-  .upload-progress {
-    margin-top: 15px;
-    display: none;
-  }
-
-  .upload-progress.active {
-    display: block;
-  }
-
-  .progress-bar {
-    width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    width: 0%;
-    transition: width 0.3s ease;
-  }
-
-  .progress-text {
+  .file-preview-status {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-top: 5px;
     text-align: center;
-    margin-top: 8px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .status-verified {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-invalid {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .status-checking {
+    background: #fff3cd;
+    color: #856404;
   }
 
   .modal-actions {
@@ -508,14 +433,9 @@
     margin-top: 25px;
   }
 
-  .btn {
+  .modal-actions button {
     flex: 1;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    padding: 14px;
   }
 
   .btn-primary {
@@ -523,172 +443,365 @@
     color: white;
   }
 
-  .btn-primary:hover:not(:disabled) {
+  .btn-secondary {
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid #e0e0e0;
+  }
+
+  .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
   }
 
-  .btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
   .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: #ebebeb;
   }
 
-  /* Fullscreen Viewer */
-  .viewer {
+  .btn-primary:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Cards Container */
+  .cards {
+    padding: 10px 20px 40px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .card {
+    background: rgb(0, 0, 0);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.4s ease-out;
+    animation-fill-mode: both;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+  }
+
+  /* Card Preview Area */
+  .card-preview {
+    width: 100%;
+    flex: 1;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .card-preview img {
+    transform: scale(1.05);
+  }
+
+  .card-preview-icon {
+    font-size: 64px;
+    filter: brightness(1.5);
+  }
+
+  .card-preview-pdf {
+    width: 100%;
+    height: 100%;
+    border: none;
+    pointer-events: none;
+  }
+
+  /* Card Content */
+  .card-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-exam-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #2a2a2e, #1d1b1f);
+    color: white;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    align-self: flex-start;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .card-subtitle {
+    font-size: 0.75rem;
+    color: #929191;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .card-download-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #1d2342, #392849);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .card-download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(98, 123, 235, 0.4);
+    background: linear-gradient(135deg, #242b52, #4a3159);
+  }
+
+  .card-stats {
+    display: flex;
+    gap: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #999;
+  }
+
+  .stat-icon {
+    font-size: 0.9rem;
+  }
+
+  .like-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #999;
+    transition: all 0.2s ease;
+  }
+
+  .like-button:hover {
+    color: #f5576c;
+    transform: scale(1.1);
+  }
+
+  .like-button.liked {
+    color: #f5576c;
+  }
+
+  .like-button .stat-icon {
+    font-size: 0.9rem;
+  }
+
+  /* Lightbox Viewer */
+  .lightbox {
     display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.98);
+    background: rgba(0, 0, 0, 0.95);
     z-index: 2000;
+    animation: fadeIn 0.3s ease-out;
+    touch-action: pan-y;
   }
 
-  .viewer.active {
+  .lightbox.active {
     display: flex;
     flex-direction: column;
-  }
-
-  .viewer-header {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.9);
+    justify-content: center;
   }
 
-  .viewer-title {
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-
-  .viewer-close {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 24px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .viewer-close:hover {
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
     background: rgba(255, 255, 255, 0.2);
-    transform: rotate(90deg);
-  }
-
-  .viewer-content {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .viewer-slide {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.3s ease;
-  }
-
-  .viewer-slide.active {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .viewer-slide.prev {
-    transform: translateX(-100%);
-  }
-
-  .viewer-slide img {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-  }
-
-  .viewer-slide iframe {
-    width: 90%;
-    height: 90%;
-    border: none;
-  }
-
-  .viewer-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
     color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     width: 50px;
     height: 50px;
     border-radius: 50%;
     font-size: 24px;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
     z-index: 10;
   }
 
-  .viewer-nav:hover {
+  .lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+  }
+
+  .lightbox-content-wrapper {
+    position: relative;
+    max-width: 90%;
+    max-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+  }
+
+  .lightbox-content {
+    max-width: 100%;
+    max-height: 85vh;
+    position: relative;
+  }
+
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 8px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+  }
+
+  .lightbox-pdf {
+    width: 90vw;
+    height: 85vh;
+    border: none;
+    border-radius: 8px;
+    background: white;
+  }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 28px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    z-index: 10;
   }
 
-  .viewer-nav:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
+  .lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
   }
 
-  .viewer-nav.prev {
+  .lightbox-nav.prev {
     left: 20px;
   }
 
-  .viewer-nav.next {
+  .lightbox-nav.next {
     right: 20px;
   }
 
-  .viewer-counter {
+  .lightbox-info {
     position: absolute;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
     color: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    z-index: 10;
+    max-width: 90%;
+    text-align: center;
   }
 
-  /* Loading & Empty States */
-  .loading, .empty-state {
-    grid-column: 1 / -1;
+  /* Loading */
+  .loading {
+    grid-column: 1/-1;
     text-align: center;
     padding: 60px 20px;
     color: white;
   }
 
   .spinner {
-    border: 4px solid rgba(255, 255, 255, 0.1);
-    border-top: 4px solid #667eea;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -696,10 +809,33 @@
     margin: 0 auto 20px;
   }
 
+  .loading-text {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Empty State */
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    color: white;
+  }
+
   .empty-icon {
-    font-size: 64px;
-    margin-bottom: 15px;
-    opacity: 0.5;
+    font-size: 80px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+  }
+
+  .empty-text {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+
+  .empty-subtext {
+    font-size: 1rem;
+    opacity: 0.8;
   }
 
   /* Toast */
@@ -710,11 +846,12 @@
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     padding: 16px 24px;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    z-index: 3000;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+    z-index: 2000;
     display: none;
-    animation: slideInRight 0.3s ease;
+    font-weight: 600;
+    animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .toast.active {
@@ -722,46 +859,29 @@
   }
 
   .toast.error {
-    background: linear-gradient(135deg, #ff4757, #e84118);
+    background: linear-gradient(135deg, #f093fb, #f5576c);
   }
-
-  .toast.success {
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
-  }
-
-.card {
-  position: relative; /* makes absolute positioning inside work */
-}
-
-.download-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  border: none;
-  background-color: #007bff; /* blue */
-  color: white;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  transition: transform 0.2s, background-color 0.2s;
-}
-
-.download-btn:hover {
-  transform: scale(1.1);
-  background-color: #0048b3ff;
-}
-
 
   /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   @keyframes slideDown {
     from {
       transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(30px);
       opacity: 0;
     }
     to {
@@ -782,7 +902,8 @@
   }
 
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 
   @keyframes slideInRight {
@@ -799,11 +920,7 @@
   /* Responsive */
   @media (max-width: 768px) {
     body {
-      padding-top: 180px;
-    }
-
-    .cards {
-      grid-template-columns: 1fr;
+      padding-top: 140px;
     }
 
     .header-top {
@@ -811,14 +928,87 @@
       gap: 10px;
     }
 
-    .upload-btn {
-      width: 100%;
+    .header-title h1 {
+      font-size: 1.2rem;
     }
 
-    .viewer-nav {
-      width: 40px;
-      height: 40px;
+    .fab-container {
+      top: 15px;
+      right: 15px;
     }
+
+    .fab {
+      width: 55px;
+      height: 55px;
+      font-size: 24px;
+    }
+
+    .fab-label {
+      font-size: 11px;
+    }
+
+    .cards {
+      padding: 20px 15px;
+      gap: 15px;
+    }
+
+    .breadcrumb {
+      padding: 0 15px;
+      flex-wrap: wrap;
+    }
+
+    .modal-content {
+      padding: 25px;
+      margin: 10px;
+    }
+
+    .toast {
+      bottom: 20px;
+      right: 20px;
+      left: 20px;
+    }
+
+    .lightbox-nav {
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+    }
+
+    .lightbox-nav.prev {
+      left: 10px;
+    }
+
+    .lightbox-nav.next {
+      right: 10px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.7rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 5px;
   }
 </style>
 </head>
@@ -830,55 +1020,58 @@
       <div class="logo">📚</div>
       <h1>Past Papers Library</h1>
     </div>
-    <button class="upload-btn" onclick="openUploadModal()">➕ Upload Paper</button>
   </div>
   <div class="search-container">
-    <input type="text" class="search-bar" id="searchBar" placeholder="Search past papers by course, program, or semester..." oninput="handleSearch()">
+    <input type="text" class="search-input" id="searchInput" placeholder="Search past papers by program, course, semester...">
+    <span class="search-icon">🔍</span>
   </div>
 </header>
 
+<!-- Floating Action Button -->
+<div class="fab-container">
+  <button class="fab" id="addPaperBtn" title="Add Past Paper">+</button>
+  <span class="fab-label">Add Past Paper</span>
+</div>
+
 <div class="breadcrumb" id="breadcrumb">
-  <button onclick="navigateBack()">← Back</button>
+  <button id="backBtn">← Back</button>
   <span class="breadcrumb-text" id="breadcrumbText"></span>
 </div>
 
-<div class="cards" id="cardsContainer">
+<div class="cards" id="programContainer">
   <div class="loading">
     <div class="spinner"></div>
-    <div>Loading past papers...</div>
+    <div class="loading-text">Loading past papers...</div>
   </div>
 </div>
 
 <!-- Upload Modal -->
 <div class="modal" id="uploadModal">
   <div class="modal-content">
-    <div class="modal-header">
-      <h3>📤 Upload Past Papers</h3>
-      <button class="modal-close" onclick="closeUploadModal()">×</button>
+    <h3>📤 Upload Past Papers</h3>
+    
+    <div class="form-group">
+      <label>Program:</label>
+      <input type="text" id="programInput" placeholder="e.g., BSc Agriculture" required>
     </div>
 
     <div class="form-group">
-      <label>Program</label>
-      <input type="text" id="programInput" placeholder="e.g., BSc Agriculture">
+      <label>Course:</label>
+      <input type="text" id="courseInput" placeholder="e.g., Crop Production" required>
     </div>
 
     <div class="form-group">
-      <label>Course</label>
-      <input type="text" id="courseInput" placeholder="e.g., Crop Production">
+      <label>Exam Type:</label>
+      <input type="text" id="midInput" placeholder="e.g., Mid Sem, End Sem" required>
     </div>
 
     <div class="form-group">
-      <label>Exam Type</label>
-      <input type="text" id="examTypeInput" placeholder="e.g., Mid Sem, End Sem">
-    </div>
-
-    <div class="form-group">
-      <label>Semester</label>
-      <select id="semesterInput">
+      <label>Semester:</label>
+      <select id="semesterInput" required>
         <option value="">Select Semester</option>
         <option value="Semester 1">Semester 1</option>
         <option value="Semester 2">Semester 2</option>
-        <option value="Semester 3">Semester 3</option>
+        <option value="Semester 3">Semester 3</option>    
         <option value="Semester 4">Semester 4</option>
         <option value="Semester 5">Semester 5</option>
         <option value="Semester 6">Semester 6</option>
@@ -886,178 +1079,266 @@
     </div>
 
     <div class="form-group">
-      <label>Files (Max 7)</label>
-      <div class="file-drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-        <div class="drop-icon">📁</div>
-        <div class="drop-text">Click to select or drag files here</div>
-        <div class="drop-subtext">Maximum 7 files, images will be scanned for text</div>
+      <label>Files (Maximum 7 files, Images will be verified):</label>
+      <div class="file-upload-zone" id="fileUploadZone">
+        <div class="upload-icon">📁</div>
+        <div class="upload-text">Click to browse or drag & drop files</div>
+        <div class="upload-subtext">PDF, DOCX, PPTX, Images (Max 10MB each, up to 7 files)</div>
       </div>
       <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" multiple>
-      <div class="file-previews" id="filePreviews"></div>
     </div>
 
-    <div class="upload-progress" id="uploadProgress">
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-      <div class="progress-text" id="progressText"></div>
-    </div>
+    <div id="filePreviewContainer" class="file-preview-container"></div>
 
     <div class="modal-actions">
-      <button class="btn btn-primary" id="uploadButton" onclick="uploadFiles()">Upload Papers</button>
-      <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
+      <button class="btn-primary" id="uploadBtn" onclick="uploadPapers()">Upload</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- Fullscreen Viewer -->
-<div class="viewer" id="viewer">
-  <div class="viewer-header">
-    <div class="viewer-title" id="viewerTitle"></div>
-    <button class="viewer-close" onclick="closeViewer()">×</button>
+<!-- Lightbox Viewer -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <button class="lightbox-nav prev" onclick="navigateLightbox(-1)">‹</button>
+  <div class="lightbox-content-wrapper" id="lightboxContentWrapper">
+    <div class="lightbox-content" id="lightboxContent"></div>
   </div>
-  <div class="viewer-content" id="viewerContent">
-    <button class="viewer-nav prev" id="viewerPrev" onclick="navigateViewer(-1)">‹</button>
-    <button class="viewer-nav next" id="viewerNext" onclick="navigateViewer(1)">›</button>
-  </div>
-  <div class="viewer-counter" id="viewerCounter"></div>
+  <button class="lightbox-nav next" onclick="navigateLightbox(1)">›</button>
+  <div class="lightbox-info" id="lightboxInfo"></div>
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.33.1/dist/supabase.min.js"></script>
 
 <script>
-// Supabase Configuration
 const supabaseUrl = 'https://qosudbigoxwzbdqkdecz.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ';
+
 const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-let selectedFiles = [];
-let allPapers = [];
+const addPaperBtn = document.getElementById('addPaperBtn');
+const uploadModal = document.getElementById('uploadModal');
+const programContainer = document.getElementById('programContainer');
+const breadcrumb = document.getElementById('breadcrumb');
+const breadcrumbText = document.getElementById('breadcrumbText');
+const backBtn = document.getElementById('backBtn');
+const toast = document.getElementById('toast');
+const lightbox = document.getElementById('lightbox');
+const lightboxContent = document.getElementById('lightboxContent');
+const lightboxContentWrapper = document.getElementById('lightboxContentWrapper');
+const lightboxInfo = document.getElementById('lightboxInfo');
+const searchInput = document.getElementById('searchInput');
+const fileUploadZone = document.getElementById('fileUploadZone');
+const fileInput = document.getElementById('fileInput');
+const filePreviewContainer = document.getElementById('filePreviewContainer');
+
 let currentView = 'programs';
 let currentProgram = null;
 let currentSemester = null;
-let viewerPapers = [];
-let viewerIndex = 0;
-let userId = getUserId();
+let currentData = [];
+let currentPapers = [];
+let currentLightboxIndex = 0;
+let selectedFiles = [];
+let searchQuery = '';
+let likedPapers = JSON.parse(localStorage.getItem('likedPapers') || '{}');
 
-function getUserId() {
-  let id = localStorage.getItem('userId');
-  if (!id) {
-    id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('userId', id);
-  }
-  return id;
-}
+// Touch/Swipe variables
+let touchStartX = 0;
+let touchEndX = 0;
 
-// Fixed File Input Handler for Mobile
-document.getElementById('fileInput').addEventListener('change', (e) => {
-  const files = Array.from(e.target.files);
-  if (files.length > 0) addFiles(files);
-  // Clear input so same file can be re-selected if removed
-  e.target.value = ''; 
+// Event Listeners
+addPaperBtn.onclick = () => uploadModal.classList.add('active');
+backBtn.onclick = navigateBack;
+
+uploadModal.onclick = (e) => {
+  if (e.target === uploadModal) closeModal();
+};
+
+lightbox.onclick = (e) => {
+  if (e.target === lightbox) closeLightbox();
+};
+
+// File upload zone
+fileUploadZone.onclick = () => fileInput.click();
+
+fileUploadZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  fileUploadZone.classList.add('dragover');
 });
 
-async function addFiles(files) {
-  if (selectedFiles.length + files.length > 7) {
-    showToast('Maximum 7 files allowed', 'error');
-    return;
+fileUploadZone.addEventListener('dragleave', () => {
+  fileUploadZone.classList.remove('dragover');
+});
+
+fileUploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  fileUploadZone.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', (e) => {
+  handleFiles(e.target.files);
+});
+
+// Search functionality
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value.toLowerCase();
+  if (currentView === 'papers') {
+    showPapers(currentProgram, currentSemester, currentData, true);
+  } else {
+    loadPrograms();
   }
+});
 
-  for (const file of files) {
-    if (file.size > 80 * 1024 * 1024) {
-      showToast(`${file.name} is too large (max 80MB)`, 'error');
-      continue;
-    }
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (lightbox.classList.contains('active')) {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navigateLightbox(-1);
+    if (e.key === 'ArrowRight') navigateLightbox(1);
+  }
+});
 
-    const fileObj = {
-      file: file,
-      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
-      status: 'pending',
-      valid: false
-    };
+// Touch/Swipe navigation for lightbox
+lightboxContentWrapper.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+}, false);
 
-    selectedFiles.push(fileObj);
-    renderFilePreviews();
+lightboxContentWrapper.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+}, false);
 
-    if (file.type.startsWith('image/')) {
-      fileObj.status = 'validating';
-      renderFilePreviews();
-      
-      // Pass file object directly
-      const isValid = await validateImageHasText(file);
-      fileObj.status = isValid ? 'valid' : 'invalid';
-      fileObj.valid = isValid;
-      
-      if (!isValid) {
-        showToast(`${file.name} might not be a valid document`, 'error');
-      }
+function handleSwipe() {
+  const swipeThreshold = 50;
+  const diff = touchStartX - touchEndX;
+  
+  if (Math.abs(diff) > swipeThreshold) {
+    if (diff > 0) {
+      // Swipe left - next
+      navigateLightbox(1);
     } else {
-      fileObj.status = 'valid';
-      fileObj.valid = true;
+      // Swipe right - previous
+      navigateLightbox(-1);
     }
-    renderFilePreviews();
   }
 }
 
-// Improved OCR for Mobile (with Timeout)
-async function validateImageHasText(file) {
-  // Mobile devices struggle with OCR. If it takes > 10 seconds, we just allow it.
-  const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(true), 10000));
+function handleFiles(files) {
+  const maxFiles = 7;
+  const maxSize = 10 * 1024 * 1024; // 10MB
   
-  const ocrPromise = (async () => {
-    try {
-      // Use the global Tesseract object
-      const worker = await Tesseract.createWorker('eng');
-      const { data: { text } } = await worker.recognize(file);
-      await worker.terminate();
-      
-      const wordCount = text.trim().split(/\s+/).filter(w => w.length > 2).length;
-      return wordCount >= 10; // Lowered threshold for mobile camera quality
-    } catch (error) {
-      console.error('OCR error:', error);
-      return true; // Fail-safe: allow if OCR crashes
+  if (selectedFiles.length + files.length > maxFiles) {
+    showToast(`Maximum ${maxFiles} files allowed`, true);
+    return;
+  }
+  
+  Array.from(files).forEach(async (file) => {
+    if (file.size > maxSize) {
+      showToast(`${file.name} exceeds 10MB limit`, true);
+      return;
     }
-  })();
+    
+    if (selectedFiles.length >= maxFiles) return;
+    
+    const fileData = {
+      file: file,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      preview: null,
+      verified: 'checking',
+      id: Date.now() + Math.random()
+    };
+    
+    // Create preview for images
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        fileData.preview = e.target.result;
+        verifyImage(fileData);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      fileData.verified = 'verified';
+    }
+    
+    selectedFiles.push(fileData);
+    renderFilePreviews();
+  });
+}
 
-  return Promise.race([ocrPromise, timeoutPromise]);
+async function verifyImage(fileData) {
+  // Simulated image verification (checking if it contains text/documents)
+  // In a real app, this would use OCR or AI to detect text vs faces
+  const img = new Image();
+  img.onload = () => {
+    // Simple heuristic: check image aspect ratio and size
+    // Documents tend to have specific aspect ratios
+    const aspectRatio = img.width / img.height;
+    const isLikelyDocument = (aspectRatio > 0.6 && aspectRatio < 1.5) || img.width > 800;
+    
+    // Simulate processing time
+    setTimeout(() => {
+      fileData.verified = isLikelyDocument ? 'verified' : 'invalid';
+      renderFilePreviews();
+    }, 1000 + Math.random() * 1000);
+  };
+  img.src = fileData.preview;
 }
 
 function renderFilePreviews() {
-  const container = document.getElementById('filePreviewContainer');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  if (selectedFiles.length === 0) {
-    container.innerHTML = `<div class="empty-preview">No files selected</div>`;
-    return;
-  }
-
-  selectedFiles.forEach((fileObj, index) => {
-    const file = fileObj.file;
-    const isImage = file.type.startsWith('image/');
-
-    const div = document.createElement('div');
-    div.className = 'file-card';
-
-    let preview = '';
-    if (isImage && fileObj.preview) {
-      preview = `<img src="${fileObj.preview}" alt="${file.name}" />`;
+  filePreviewContainer.innerHTML = '';
+  
+  selectedFiles.forEach((fileData, index) => {
+    const preview = document.createElement('div');
+    preview.className = 'file-preview';
+    
+    let previewContent = '';
+    if (fileData.preview) {
+      previewContent = `<img src="${fileData.preview}" class="file-preview-image" alt="${fileData.name}">`;
     } else {
-      preview = `<div class="file-icon">${getFileIcon(file.name.split('.').pop())}</div>`;
+      const icon = getFileIcon(fileData.name.split('.').pop());
+      previewContent = `<div class="file-preview-icon">${icon}</div>`;
     }
-
-    div.innerHTML = `
-      <div class="file-preview">${preview}</div>
-      <div class="file-name">${file.name}</div>
-      <div class="file-status">${fileObj.status}</div>
-      <button onclick="removeFile(${index})" class="remove-file">✖️</button>
+    
+    let statusHTML = '';
+    if (fileData.type.startsWith('image/')) {
+      if (fileData.verified === 'checking') {
+        statusHTML = '<div class="file-preview-status status-checking">⏳ Verifying...</div>';
+      } else if (fileData.verified === 'verified') {
+        statusHTML = '<div class="file-preview-status status-verified">✓ Verified</div>';
+      } else {
+        statusHTML = '<div class="file-preview-status status-invalid">✗ Invalid</div>';
+      }
+    }
+    
+    preview.innerHTML = `
+      ${previewContent}
+      <div class="file-preview-name" title="${fileData.name}">${fileData.name}</div>
+      <div class="file-preview-size">${formatFileSize(fileData.size)}</div>
+      ${statusHTML}
+      <button class="file-preview-remove" onclick="removeFile(${index})">×</button>
     `;
-
-    container.appendChild(div);
+    
+    filePreviewContainer.appendChild(preview);
   });
+  
+  // Update upload button state
+  const uploadBtn = document.getElementById('uploadBtn');
+  const hasInvalidImages = selectedFiles.some(f => f.verified === 'invalid');
+  const isChecking = selectedFiles.some(f => f.verified === 'checking');
+  
+  if (hasInvalidImages) {
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = 'Remove Invalid Images';
+  } else if (isChecking) {
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = 'Verifying Images...';
+  } else {
+    uploadBtn.disabled = false;
+    uploadBtn.textContent = selectedFiles.length > 0 ? `Upload ${selectedFiles.length} File${selectedFiles.length > 1 ? 's' : ''}` : 'Upload';
+  }
 }
 
 function removeFile(index) {
@@ -1065,943 +1346,499 @@ function removeFile(index) {
   renderFilePreviews();
 }
 
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
 
-async function uploadFiles() {
+function closeModal() {
+  uploadModal.classList.remove('active');
+  document.getElementById('programInput').value = '';
+  document.getElementById('courseInput').value = '';
+  document.getElementById('midInput').value = '';
+  document.getElementById('semesterInput').value = '';
+  fileInput.value = '';
+  selectedFiles = [];
+  renderFilePreviews();
+}
+
+function showToast(message, isError = false) {
+  toast.textContent = message;
+  toast.className = 'toast active';
+  if (isError) toast.classList.add('error');
+  
+  setTimeout(() => {
+    toast.classList.remove('active');
+  }, 3500);
+}
+
+async function uploadPapers() {
   const program = document.getElementById('programInput').value.trim();
   const course = document.getElementById('courseInput').value.trim();
-  const examType = document.getElementById('examTypeInput').value.trim();
+  const mid = document.getElementById("midInput").value.trim();
   const semester = document.getElementById('semesterInput').value;
 
-  if (!program || !course || !examType || !semester) {
-    showToast('Please fill all fields', 'error');
+  if(!program || !course || !mid || !semester || selectedFiles.length === 0){
+    showToast("All fields are required", true);
     return;
   }
-
-  // Mobile fix: ensure files are still valid
-  const validFiles = selectedFiles.filter(f => f.valid);
-  if (validFiles.length === 0) {
-    showToast('Wait for validation to finish or add valid files', 'error');
-    return;
-  }
-
-  const uploadBtn = document.getElementById('uploadButton');
-  uploadBtn.disabled = true;
-  uploadBtn.textContent = 'Uploading...';
   
-  const progressContainer = document.getElementById('uploadProgress');
-  const progressFill = document.getElementById('progressFill');
-  const progressText = document.getElementById('progressText');
-  if(progressContainer) progressContainer.classList.add('active');
+  const hasInvalidImages = selectedFiles.some(f => f.verified === 'invalid');
+  if (hasInvalidImages) {
+    showToast("Please remove invalid images", true);
+    return;
+  }
+
+  const uploadBtn = document.getElementById('uploadBtn');
+  uploadBtn.textContent = `Uploading 0/${selectedFiles.length}...`;
+  uploadBtn.disabled = true;
 
   try {
-    for (let i = 0; i < validFiles.length; i++) {
-      const { file } = validFiles[i];
+    let successCount = 0;
+    
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const fileData = selectedFiles[i];
+      const file = fileData.file;
+      
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${i}.${fileExt}`;
-      const filePath = `${program}/${course}/${semester}/${fileName}`.replace(/\s+/g, '_');
+      const fileName = `${Date.now()}_${i}_${file.name}`;
+      const filePath = `${program}/${course}/${semester}/${fileName}`;
 
-      if(progressText) progressText.textContent = `Uploading ${i + 1}/${validFiles.length}...`;
-
-      // Upload to Storage
-      const { error: uploadError } = await client.storage
+      const { data, error } = await client
+        .storage
         .from('past-paper')
-        .upload(filePath, file, { cacheControl: '3600', upsert: false });
+        .upload(filePath, file);
+        
+      if(error) throw error;
 
-      if (uploadError) throw uploadError;
+      const file_url = client
+        .storage
+        .from('past-paper')
+        .getPublicUrl(filePath).data.publicUrl;
 
-      const { data: urlData } = client.storage.from('past-paper').getPublicUrl(filePath);
-
-      // Insert to DB
       const { error: insertError } = await client
         .from('past_papers')
-        .insert({
-          program,
-          course,
-          semester,
-          Mid: examType,
-          file_name: fileName,
-          file_url: urlData.publicUrl,
-          thumbnail_url: file.type.startsWith('image/') ? urlData.publicUrl : null,
-          file_type: fileExt,
-          views: 0,
-          likes: 0
-        });
-
-      if (insertError) throw insertError;
+        .insert([
+          { 
+            program, 
+            course, 
+            semester, 
+            Mid: mid, 
+            file_name: fileName, 
+            file_url, 
+            file_type: fileExt,
+            views: 0,
+            likes: 0
+          }
+        ]);
+        
+      if(insertError) throw insertError;
       
-      if(progressFill) progressFill.style.width = `${((i + 1) / validFiles.length) * 100}%`;
+      successCount++;
+      uploadBtn.textContent = `Uploading ${successCount}/${selectedFiles.length}...`;
     }
 
-    showToast(`✅ Uploaded successfully!`, 'success');
-    closeUploadModal();
-    loadPapers();
-  } catch (error) {
+    showToast(`✅ ${successCount} file${successCount > 1 ? 's' : ''} uploaded successfully!`);
+    closeModal();
+    loadPrograms();
+
+  } catch(error) {
     console.error('Upload error:', error);
-    showToast('Error: ' + (error.message || 'Check connection'), 'error');
+    showToast("❌ Upload failed: " + error.message, true);
   } finally {
+    uploadBtn.textContent = 'Upload';
     uploadBtn.disabled = false;
-    uploadBtn.textContent = 'Upload Papers';
-    if(progressContainer) progressContainer.classList.remove('active');
   }
 }
 
-// Helper functions (renderFilePreviews, showToast, etc. remain mostly the same)
-// ... (rest of your UI logic)
-async function loadPapers() {
-
-  const container = document.getElementById('cardsContainer');
-
-  container.innerHTML = '<div class="loading"><div class="spinner"></div><div>Loading...</div></div>';
-
-
+// Load programs dynamically
+async function loadPrograms() {
+  programContainer.innerHTML = '<div class="loading"><div class="spinner"></div><div class="loading-text">Loading past papers...</div></div>';
+  currentView = 'programs';
+  currentProgram = null;
+  currentSemester = null;
+  breadcrumb.classList.remove('active');
 
   try {
-
     const { data, error } = await client
-
       .from('past_papers')
-
       .select('*')
-
       .order('uploaded_at', { ascending: false });
 
-
-
-    if (error) throw error;
-
-
-
-    allPapers = data || [];
-
-    displayPrograms();
-
-  } catch (error) {
-
-    console.error('Load error:', error);
-
-    container.innerHTML = `
-
-      <div class="empty-state">
-
-        <div class="empty-icon">⚠️</div>
-
-        <div>Failed to load papers</div>
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-
-function displayPrograms() {
-
-  currentView = 'programs';
-
-  document.getElementById('breadcrumb').classList.remove('active');
-
-  const container = document.getElementById('cardsContainer');
-
-
-
-  if (allPapers.length === 0) {
-
-    container.innerHTML = `
-
-      <div class="empty-state">
-
-        <div class="empty-icon">📚</div>
-
-        <div>No past papers yet</div>
-
-        <div style="opacity: 0.7; font-size: 14px; margin-top: 10px;">Be the first to upload!</div>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-
-  const programs = [...new Set(allPapers.map(p => p.program))];
-
-  container.innerHTML = '';
-
-
-
-  programs.forEach(program => {
-
-    const count = allPapers.filter(p => p.program === program).length;
-
-    const card = createProgramCard(program, count);
-
-    container.appendChild(card);
-
-  });
-
-}
-
-
-
-function createProgramCard(program, count) {
-
-  const card = document.createElement('div');
-
-  card.className = 'card';
-
-  card.onclick = () => displaySemesters(program);
-
-
-
-  card.innerHTML = `
-
-    <div class="card-preview">
-
-      <div class="card-preview-icon">${getProgramIcon(program)}</div>
-
-    </div>
-
-    <div class="card-content">
-
-      <div class="card-title">${program}</div>
-
-      <div class="card-meta">${count} paper${count !== 1 ? 's' : ''}</div>
-
-    </div>
-
-  `;
-
-
-
-  return card;
-
-}
-
-
-
-function displaySemesters(program) {
-
-  currentView = 'semesters';
-
-  currentProgram = program;
-
-  document.getElementById('breadcrumb').classList.add('active');
-
-  document.getElementById('breadcrumbText').textContent = program;
-
-
-
-  const container = document.getElementById('cardsContainer');
-
-  const programPapers = allPapers.filter(p => p.program === program);
-
-  const semesters = [...new Set(programPapers.map(p => p.semester))];
-
-
-
-  container.innerHTML = '';
-
-
-
-  semesters.forEach(semester => {
-
-    const count = programPapers.filter(p => p.semester === semester).length;
-
-    const card = createSemesterCard(semester, count);
-
-    container.appendChild(card);
-
-  });
-
-}
-
-
-
-function createSemesterCard(semester, count) {
-
-  const card = document.createElement('div');
-
-  card.className = 'card';
-
-  card.onclick = () => displayPapers(currentProgram, semester);
-
-
-
-  card.innerHTML = `
-
-    <div class="card-preview">
-
-      <div class="card-preview-icon">📅</div>
-
-    </div>
-
-    <div class="card-content">
-
-      <div class="card-title">${semester}</div>
-
-      <div class="card-meta">${count} paper${count !== 1 ? 's' : ''}</div>
-
-    </div>
-
-  `;
-
-
-
-  return card;
-
-}
-
-
-
-function displayPapers(program, semester) {
-
-  currentView = 'papers';
-
-  currentSemester = semester;
-
-  document.getElementById('breadcrumbText').textContent = `${program} > ${semester}`;
-
-
-
-  const container = document.getElementById('cardsContainer');
-
-  const papers = allPapers.filter(p => p.program === program && p.semester === semester);
-
-
-
-  container.innerHTML = '';
-
-
-
-  papers.forEach((paper, index) => {
-
-    const card = createPaperCard(paper, index, papers);
-
-    container.appendChild(card);
-
-  });
-
-}
-
-
-
-function createPaperCard(paper, index, papers) {
-
-  const card = document.createElement('div');
-
-  card.className = 'card';
-
-
-
-  const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(paper.file_type?.toLowerCase());
-
-  const isPDF = paper.file_type?.toLowerCase() === 'pdf';
-
-  const isLiked = isUserLiked(paper.id);
-
-
-
-  let previewHTML = '';
-
-  if (isImage) {
-
-    previewHTML = `<img src="${paper.file_url}" alt="${paper.course}">`;
-
-  } else if (isPDF) {
-
-    previewHTML = `<div class="card-preview-icon">📕</div>`;
-
-  } else {
-
-    previewHTML = `<div class="card-preview-icon">${getFileIcon(paper.file_type)}</div>`;
-
-  }
-
-
-
- card.innerHTML = `
-
-  <div class="card-preview">
-
-    ${previewHTML}
-
-  </div>
-
-  <div class="card-content">
-
-    <div class="card-title">${paper.course}</div>
-
-    <div class="card-meta">${paper.Mid || 'Exam'} • ${paper.file_type?.toUpperCase()}</div>
-
-    <div class="card-stats">
-
-      <div class="stat-item">
-
-        <span>👁️</span>
-
-        <span>${paper.views || 0}</span>
-
-      </div>
-
-      <div class="stat-item clickable ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${paper.id})">
-
-        <span>${isLiked ? '❤️' : '🤍'}</span>
-
-        <span id="likes-${paper.id}">${paper.likes || 0}</span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <button class="download-btn" onclick="event.stopPropagation(); downloadPaper('${paper.file_url}', '${paper.file_name}')">⬇️</button>
-
-`;
-
-
-
-
-
-card.querySelector('.card-preview').addEventListener('click', () => {
-
-  viewerPapers = papers;
-
-  openViewer(index);
-
-});
-
-
-
-  return card;
-
-}
-
-
-
-async function openViewer(index) {
-
-  viewerIndex = index;
-
-  await trackView(viewerPapers[index].id);
-
-  renderViewer();
-
-  document.getElementById('viewer').classList.add('active');
-
-}
-
-
-
-
-
-function renderViewer() {
-
-  const paper = viewerPapers[viewerIndex];
-
-  const content = document.getElementById('viewerContent');
-
- 
-
-  // Clear existing slides
-
-  const slides = content.querySelectorAll('.viewer-slide');
-
-  slides.forEach(s => s.remove());
-
-
-
-  // Create new slide
-
-  const slide = document.createElement('div');
-
-  slide.className = 'viewer-slide active';
-
-
-
-  const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(paper.file_type?.toLowerCase());
-
-  const isPDF = paper.file_type?.toLowerCase() === 'pdf';
-
-
-
-  if (isImage) {
-
-    const img = document.createElement('img');
-
-    img.src = paper.file_url;
-
-    slide.appendChild(img);
-
-  } else if (isPDF) {
-
-    const iframe = document.createElement('iframe');
-
-    iframe.src = paper.file_url;
-
-    slide.appendChild(iframe);
-
-  } else {
-
-    slide.innerHTML = `
-
-      <div style="text-align: center; color: white;">
-
-        <div style="font-size: 64px; margin-bottom: 20px;">${getFileIcon(paper.file_type)}</div>
-
-        <h3>${paper.course}</h3>
-
-        <p style="opacity: 0.7; margin-top: 10px;">Preview not available</p>
-
-        <a href="${paper.file_url}" target="_blank" class="btn btn-primary" style="margin-top: 20px; display: inline-block;">Download File</a>
-
-      </div>
-
-    `;
-
-  }
-
-
-
-  content.appendChild(slide);
-
-
-
-  document.getElementById('viewerTitle').textContent = paper.course;
-
-  document.getElementById('viewerCounter').textContent = `${viewerIndex + 1} / ${viewerPapers.length}`;
-
-  document.getElementById('viewerPrev').disabled = viewerIndex === 0;
-
-  document.getElementById('viewerNext').disabled = viewerIndex === viewerPapers.length - 1;
-
-}
-
-
-
-function navigateViewer(direction) {
-
-  const newIndex = viewerIndex + direction;
-
-  if (newIndex < 0 || newIndex >= viewerPapers.length) return;
-
-
-
-  viewerIndex = newIndex;
-
-  trackView(viewerPapers[viewerIndex].id);
-
-  renderViewer();
-
-}
-
-
-
-function closeViewer() {
-
-  document.getElementById('viewer').classList.remove('active');
-
-}
-
-
-
-async function trackView(paperId) {
-
-  try {
-
-    const { data: paper, error } = await client
-
-      .from('past_papers')
-
-      .select('views, viewed_by')
-
-      .eq('id', paperId)
-
-      .single();
-
-
-
-    if (error || !paper) {
-
-      console.warn('Paper not found or error:', error);
-
+    if(error) throw error;
+
+    currentData = data || [];
+
+    // Apply search filter
+    let filteredData = currentData;
+    if (searchQuery) {
+      filteredData = currentData.filter(d => 
+        d.program?.toLowerCase().includes(searchQuery) ||
+        d.course?.toLowerCase().includes(searchQuery) ||
+        d.semester?.toLowerCase().includes(searchQuery) ||
+        d.Mid?.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    if (filteredData.length === 0) {
+      programContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📚</div>
+          <div class="empty-text">${searchQuery ? 'No matching papers found' : 'No past papers yet'}</div>
+          <div class="empty-subtext">${searchQuery ? 'Try a different search term' : 'Be the first to upload!'}</div>
+        </div>
+      `;
       return;
-
     }
 
-
-
-    // Ensure viewedBy is an array
-
-    let viewedBy = Array.isArray(paper.viewed_by) ? paper.viewed_by : [];
-
-    let views = paper.views || 0;
-
-
-
-    if (!viewedBy.includes(userId)) {
-
-      viewedBy.push(userId);
-
-      views++;
-
-
-
-      await client
-
-        .from('past_papers')
-
-        .update({ views, viewed_by: viewedBy })
-
-        .eq('id', paperId);
-
-
-
-      const localPaper = allPapers.find(p => p.id === paperId);
-
-      if (localPaper) {
-
-        localPaper.views = views;
-
-        localPaper.viewed_by = viewedBy;
-
-      }
-
-    }
-
-  } catch (error) {
-
-    console.error('View tracking error:', error);
-
-  }
-
-}
-
-
-
-
-
-function isUserLiked(paperId) {
-
-  const liked = JSON.parse(localStorage.getItem('likedPapers') || '[]');
-
-  return liked.includes(paperId);
-
-}
-
-
-
-function downloadPaper(url, fileName) {
-
-  const a = document.createElement('a');
-
-  a.href = url;
-
-  a.download = fileName || 'file';
-
-  document.body.appendChild(a);
-
-  a.click();
-
-  document.body.removeChild(a);
-
-}
-
-
-
-
-
-async function toggleLike(paperId) {
-
-  try {
-
-    const liked = JSON.parse(localStorage.getItem('likedPapers') || '[]');
-
-    const isLiked = liked.includes(paperId);
-
-
-
-    const { data: paper } = await client
-
-      .from('past_papers')
-
-      .select('likes')
-
-      .eq('id', paperId)
-
-      .single();
-
-
-
-    let likes = paper.likes || 0;
-
-
-
-    if (isLiked) {
-
-      likes = Math.max(0, likes - 1);
-
-      liked.splice(liked.indexOf(paperId), 1);
-
-    } else {
-
-      likes++;
-
-      liked.push(paperId);
-
-    }
-
-
-
-    await client
-
-      .from('past_papers')
-
-      .update({ likes })
-
-      .eq('id', paperId);
-
-
-
-    localStorage.setItem('likedPapers', JSON.stringify(liked));
-
-
-
-    // Update UI
-
-    const el = document.getElementById(`likes-${paperId}`);
-
-    if (el) {
-
-      el.textContent = likes;
-
-      const parent = el.parentElement;
-
-      parent.classList.toggle('liked');
-
-      parent.querySelector('span').textContent = isLiked ? '🤍' : '❤️';
-
-    }
-
-
-
-    // Update local data
-
-    const localPaper = allPapers.find(p => p.id === paperId);
-
-    if (localPaper) localPaper.likes = likes;
-
-  } catch (error) {
-
-    console.error('Like error:', error);
-
-  }
-
-}
-
-
-
-function handleSearch() {
-
-  const query = document.getElementById('searchBar').value.toLowerCase().trim();
-
- 
-
-  if (!query) {
-
-    if (currentView === 'programs') displayPrograms();
-
-    else if (currentView === 'semesters') displaySemesters(currentProgram);
-
-    else if (currentView === 'papers') displayPapers(currentProgram, currentSemester);
-
-    return;
-
-  }
-
-
-
-  const filtered = allPapers.filter(p =>
-
-    p.course?.toLowerCase().includes(query) ||
-
-    p.program?.toLowerCase().includes(query) ||
-
-    p.semester?.toLowerCase().includes(query) ||
-
-    p.Mid?.toLowerCase().includes(query)
-
-  );
-
-
-
-  const container = document.getElementById('cardsContainer');
-
-  container.innerHTML = '';
-
-
-
-  if (filtered.length === 0) {
-
-    container.innerHTML = `
-
+    const programs = [...new Set(filteredData.map(d => d.program))];
+    programContainer.innerHTML = '';
+
+    programs.forEach((prog, index) => {
+      const paperCount = filteredData.filter(d => d.program === prog).length;
+      const progCard = document.createElement('div');
+      progCard.className = 'card';
+      progCard.style.animationDelay = `${index * 0.05}s`;
+      
+      progCard.innerHTML = `
+        <div class="card-preview">
+          <div class="card-preview-icon">${getProgramIcon(prog)}</div>
+        </div>
+        <div class="card-content">
+          <div class="card-title">${prog}</div>
+          <div class="card-subtitle">📄 ${paperCount} past paper${paperCount !== 1 ? 's' : ''} available</div>
+        </div>
+      `;
+      
+      progCard.onclick = () => showSemesters(prog, data);
+      programContainer.appendChild(progCard);
+    });
+
+  } catch(error) {
+    console.error('Load error:', error);
+    programContainer.innerHTML = `
       <div class="empty-state">
-
-        <div class="empty-icon">🔍</div>
-
-        <div>No results found</div>
-
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-text">Failed to load past papers</div>
+        <div class="empty-subtext">${error.message}</div>
       </div>
-
     `;
-
-    return;
-
   }
+}
 
+function showSemesters(program, allData) {
+  currentView = 'semesters';
+  currentProgram = program;
+  currentSemester = null;
+  programContainer.innerHTML = '';
 
+  const semesters = [...new Set(
+    allData.filter(d => d.program === program).map(d => d.semester)
+  )];
 
-  filtered.forEach((paper, index) => {
-
-    const card = createPaperCard(paper, index, filtered);
-
-    container.appendChild(card);
-
+  semesters.forEach((sem, index) => {
+    const paperCount = allData.filter(d => d.program === program && d.semester === sem).length;
+    const semCard = document.createElement('div');
+    semCard.className = 'card';
+    semCard.style.animationDelay = `${index * 0.05}s`;
+    
+    semCard.innerHTML = `
+      <div class="card-preview">
+        <div class="card-preview-icon">📅</div>
+      </div>
+      <div class="card-content">
+        <div class="card-title">${sem}</div>
+        <div class="card-subtitle">📄 ${paperCount} past paper${paperCount !== 1 ? 's' : ''}</div>
+      </div>
+    `;
+    
+    semCard.onclick = () => showPapers(program, sem, allData);
+    programContainer.appendChild(semCard);
   });
 
+  breadcrumb.classList.add('active');
+  breadcrumbText.textContent = program;
 }
 
+function showPapers(program, semester, allData, isSearchUpdate = false) {
+  if (!isSearchUpdate) {
+    currentView = 'papers';
+    currentSemester = semester;
+  }
+  programContainer.innerHTML = '';
 
+  let papers = allData.filter(d =>
+    d.program === program && d.semester === semester
+  );
+  
+  // Apply search filter
+  if (searchQuery) {
+    papers = papers.filter(p =>
+      p.course?.toLowerCase().includes(searchQuery) ||
+      p.Mid?.toLowerCase().includes(searchQuery) ||
+      p.program?.toLowerCase().includes(searchQuery)
+    );
+  }
+
+  currentPapers = papers;
+
+  if (papers.length === 0) {
+    programContainer.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-text">No papers found</div>
+        <div class="empty-subtext">${searchQuery ? 'Try a different search term' : 'No papers available'}</div>
+      </div>
+    `;
+    return;
+  }
+
+  papers.forEach((p, index) => {
+    const paperCard = document.createElement('div');
+    paperCard.className = 'card';
+    paperCard.style.animationDelay = `${index * 0.05}s`;
+    
+    const fileIcon = getFileIcon(p.file_type);
+    const uploadDate = p.uploaded_at ? formatDate(p.uploaded_at) : 'Recently';
+    const isImage = isImageFile(p.file_type);
+    const isPDF = p.file_type?.toLowerCase() === 'pdf';
+    const views = p.views || 0;
+    const likes = p.likes || 0;
+    const isLiked = likedPapers[p.id] || false;
+    
+    // Create preview HTML
+    let previewHTML = '';
+    if (isImage) {
+      previewHTML = `<img src="${p.file_url}" alt="${p.course}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'card-preview-icon\\'>${fileIcon}</div>';">`;
+    } else if (isPDF) {
+      previewHTML = `<iframe src="${p.file_url}#toolbar=0&navpanes=0&scrollbar=0" class="card-preview-pdf"></iframe>`;
+    } else {
+      previewHTML = `<div class="card-preview-icon">${fileIcon}</div>`;
+    }
+    
+    paperCard.innerHTML = `
+      <div class="card-preview" onclick="openLightbox(${index})">
+        ${previewHTML}
+      </div>
+      <div class="card-content">
+        <div class="card-exam-badge">${p.Mid || 'Exam'}</div>
+        <div class="card-title">${p.course}</div>
+        <div class="card-subtitle">${p.file_type?.toUpperCase() || 'FILE'}</div>
+        <div class="card-actions">
+          <a href="${p.file_url}" download class="card-download-btn" onclick="event.stopPropagation()">
+            📥 Download
+          </a>
+        </div>
+        <div class="card-stats">
+          <div class="stat-item">
+            <span class="stat-icon">👁️</span>
+            <span id="views-${p.id}">${views}</span>
+          </div>
+          <button class="like-button ${isLiked ? 'liked' : ''}" id="like-btn-${p.id}" onclick="event.stopPropagation(); toggleLike(${p.id}, this)">
+            <span class="stat-icon" id="like-icon-${p.id}">${isLiked ? '❤️' : '🤍'}</span>
+            <span id="likes-${p.id}">${likes}</span>
+          </button>
+          <div class="stat-item">
+            <span class="stat-icon">🕒</span>
+            <span>${uploadDate}</span>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    programContainer.appendChild(paperCard);
+  });
+
+  breadcrumb.classList.add('active');
+  breadcrumbText.textContent = `${program} > ${semester}`;
+}
+
+async function toggleLike(paperId, button) {
+  const isCurrentlyLiked = likedPapers[paperId] || false;
+  const newLikeState = !isCurrentlyLiked;
+  
+  // Optimistic UI update
+  const icon = document.getElementById(`like-icon-${paperId}`);
+  const countElement = document.getElementById(`likes-${paperId}`);
+  const btnElement = document.getElementById(`like-btn-${paperId}`);
+  
+  const currentCount = parseInt(countElement.textContent) || 0;
+  const newCount = newLikeState ? currentCount + 1 : Math.max(0, currentCount - 1);
+  
+  // Update UI immediately
+  btnElement.classList.toggle('liked', newLikeState);
+  icon.textContent = newLikeState ? '❤️' : '🤍';
+  countElement.textContent = newCount;
+  
+  // Update local storage
+  likedPapers[paperId] = newLikeState;
+  localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
+  
+  try {
+    // Update database
+    const { error: updateError } = await client
+      .from('past_papers')
+      .update({ likes: newCount })
+      .eq('id', paperId);
+    
+    if (updateError) throw updateError;
+    
+    // Update the paper in currentPapers array
+    const paperIndex = currentPapers.findIndex(p => p.id === paperId);
+    if (paperIndex !== -1) {
+      currentPapers[paperIndex].likes = newCount;
+    }
+    
+  } catch (error) {
+    console.error('Like error:', error);
+    // Revert on error
+    likedPapers[paperId] = isCurrentlyLiked;
+    localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
+    btnElement.classList.toggle('liked', isCurrentlyLiked);
+    icon.textContent = isCurrentlyLiked ? '❤️' : '🤍';
+    countElement.textContent = currentCount;
+    showToast('Failed to update like', true);
+  }
+}
+
+async function openLightbox(index) {
+  currentLightboxIndex = index;
+  const paper = currentPapers[index];
+  
+  // Optimistic UI update for views
+  const viewsElement = document.getElementById(`views-${paper.id}`);
+  const currentViews = parseInt(viewsElement.textContent) || 0;
+  const newViews = currentViews + 1;
+  viewsElement.textContent = newViews;
+  
+  // Update view count in database
+  try {
+    const { error } = await client
+      .from('past_papers')
+      .update({ views: newViews })
+      .eq('id', paper.id);
+    
+    if (!error) {
+      paper.views = newViews;
+      // Update the paper in currentPapers array
+      const paperIndex = currentPapers.findIndex(p => p.id === paper.id);
+      if (paperIndex !== -1) {
+        currentPapers[paperIndex].views = newViews;
+      }
+    } else {
+      // Revert on error
+      viewsElement.textContent = currentViews;
+    }
+  } catch (error) {
+    console.error('View count error:', error);
+    viewsElement.textContent = currentViews;
+  }
+  
+  updateLightboxContent();
+  lightbox.classList.add('active');
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+}
+
+function navigateLightbox(direction) {
+  currentLightboxIndex += direction;
+  if (currentLightboxIndex < 0) currentLightboxIndex = currentPapers.length - 1;
+  if (currentLightboxIndex >= currentPapers.length) currentLightboxIndex = 0;
+  updateLightboxContent();
+}
+
+function updateLightboxContent() {
+  const paper = currentPapers[currentLightboxIndex];
+  const isImage = isImageFile(paper.file_type);
+  const isPDF = paper.file_type?.toLowerCase() === 'pdf';
+  
+  if (isImage) {
+    lightboxContent.innerHTML = `<img src="${paper.file_url}" alt="${paper.course}" class="lightbox-image">`;
+  } else if (isPDF) {
+    lightboxContent.innerHTML = `<iframe src="${paper.file_url}" class="lightbox-pdf"></iframe>`;
+  } else {
+    lightboxContent.innerHTML = `
+      <div style="text-align: center; color: white; padding: 40px;">
+        <div style="font-size: 80px; margin-bottom: 20px;">${getFileIcon(paper.file_type)}</div>
+        <h2 style="margin-bottom: 10px;">${paper.course}</h2>
+        <p style="margin-bottom: 20px; opacity: 0.8;">This file type cannot be previewed</p>
+        <a href="${paper.file_url}" download class="card-download-btn" style="margin-top: 20px; display: inline-flex;">📥 Download File</a>
+      </div>
+    `;
+  }
+  
+  lightboxInfo.textContent = `${currentLightboxIndex + 1} / ${currentPapers.length} - ${paper.course}`;
+}
 
 function navigateBack() {
-
-  if (currentView === 'semesters') {
-
-    displayPrograms();
-
-  } else if (currentView === 'papers') {
-
-    displaySemesters(currentProgram);
-
+  if (currentView === 'papers') {
+    showSemesters(currentProgram, currentData);
+  } else if (currentView === 'semesters') {
+    loadPrograms();
   }
-
 }
 
-
-
-function openUploadModal() {
-
-  document.getElementById('uploadModal').classList.add('active');
-
-}
-
-
-
-function closeUploadModal() {
-
-  document.getElementById('uploadModal').classList.remove('active');
-
-  document.getElementById('programInput').value = '';
-
-  document.getElementById('courseInput').value = '';
-
-  document.getElementById('examTypeInput').value = '';
-
-  document.getElementById('semesterInput').value = '';
-
-  document.getElementById('fileInput').value = '';
-
-  selectedFiles = [];
-
-  renderFilePreviews();
-
-}
-
-
-
-function showToast(message, type = 'success') {
-
-  const toast = document.getElementById('toast');
-
-  toast.textContent = message;
-
-  toast.className = `toast active ${type}`;
-
-  setTimeout(() => toast.classList.remove('active'), 3500);
-
-}
-
-
-
+// Helper Functions
 function getProgramIcon(program) {
-
   const icons = {
-
     'Agriculture': '🌾',
-
     'Agribusiness': '💼',
-
-    'Animal': '🐄',
-
+    'Animal Science': '🐄',
     'Environmental': '🌍',
-
-    'Food': '🍎',
-
+    'Food Science': '🍎',
     'Aquaculture': '🐟',
-
     'Nutrition': '🥗'
-
   };
-
+  
   for (let key in icons) {
-
-    if (program.toLowerCase().includes(key.toLowerCase())) return icons[key];
-
+    if (program.toLowerCase().includes(key.toLowerCase())) {
+      return icons[key];
+    }
   }
-
   return '📚';
-
 }
 
-
-
-function getFileIcon(type) {
-
+function getFileIcon(fileType) {
   const icons = {
-
     'pdf': '📕',
-
     'docx': '📘',
-
     'doc': '📘',
-
     'pptx': '📙',
-
-    'ppt': '📙'
-
+    'ppt': '📙',
+    'jpg': '🖼️',
+    'jpeg': '🖼️',
+    'png': '🖼️',
+    'gif': '🖼️'
   };
-
-  return icons[type?.toLowerCase()] || '📄';
-
+  return icons[fileType?.toLowerCase()] || '📄';
 }
 
+function isImageFile(fileType) {
+  const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+  return imageTypes.includes(fileType?.toLowerCase());
+}
 
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 
 // Initialize
-
-window.onload = loadPapers;
-
+window.onload = loadPrograms;
 </script>
 
-
-
 </body>
-
 </html>
-
