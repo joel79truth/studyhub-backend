@@ -203,10 +203,13 @@
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-    authDomain: "studyhub-backend.firebaseapp.com",
-    projectId: "studyhub-backend",
-  };
+  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
+  projectId: "studyhub-backend",
+  storageBucket: "studyhub-backend.firebasestorage.app",
+  messagingSenderId: "985257842533",
+  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
+};
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
@@ -224,7 +227,7 @@ const registration = await navigator.serviceWorker.register(
 Notification.requestPermission().then(async (permission) => {
   if (permission === "granted") {
     const fcmToken = await getToken(messaging, {
-      vapidKey: "YOUR_PUBLIC_VAPID_KEY",
+      vapidKey: "BGrGNgr-o1fgQqLaDwdFugHhqUIwjwqB6Fr-Bk79C1OpAQt2l1mAzTs746LNfQvHe-ncR7gypDI0eyxk_FQHYiQ",
       serviceWorkerRegistration: registration,
     });
 

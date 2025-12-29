@@ -2,10 +2,12 @@ importScripts("https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"
 importScripts("https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
   projectId: "studyhub-backend",
+  storageBucket: "studyhub-backend.firebasestorage.app",
   messagingSenderId: "985257842533",
-  appId: "1:985257842533:web:cdba8c4138b3f7a3ad338c",
+  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
 });
 
 const messaging = firebase.messaging();
