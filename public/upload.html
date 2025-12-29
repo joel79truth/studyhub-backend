@@ -210,6 +210,35 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+import { getMessaging, getToken } from
+  "https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js";
+
+const messaging = getMessaging(app);
+
+// Register service worker
+const registration = await navigator.serviceWorker.register(
+  "/firebase-messaging-sw.js"
+);
+
+// Request permission + get token
+Notification.requestPermission().then(async (permission) => {
+  if (permission === "granted") {
+    const fcmToken = await getToken(messaging, {
+      vapidKey: "YOUR_PUBLIC_VAPID_KEY",
+      serviceWorkerRegistration: registration,
+    });
+
+    if (fcmToken) {
+      await fetch("/save-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: fcmToken }),
+      });
+    }
+  }
+});
+
+
   // Check login
   onAuthStateChanged(auth, (user) => {
     if (!user) {

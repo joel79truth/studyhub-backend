@@ -150,9 +150,11 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       await admin.messaging().sendMulticast({
         tokens: [...fcmTokens],
         notification: {
-          title: "📚 New Notes Uploaded",
-          body: `${subject} notes for Semester ${semester} available`,
-        },
+  title: "📚 New Notes Uploaded",
+  body: `${subject} notes for Semester ${semester} available`,
+  click_action: `/program.html?id=${id}`,
+},
+
       });
     }
 
