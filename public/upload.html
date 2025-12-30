@@ -199,138 +199,160 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js";
 
-  const firebaseConfig = {
+// Firebase config
+const firebaseConfig = {
   apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
   authDomain: "studyhub-backend.firebaseapp.com",
+  databaseURL: "https://studyhub-backend-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "studyhub-backend",
   storageBucket: "studyhub-backend.firebasestorage.app",
   messagingSenderId: "985257842533",
   appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
+  measurementId: "G-2FHPEF5XBQ"
 };
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
 
-import { getMessaging, getToken } from
-  "https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js";
-
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const messaging = getMessaging(app);
 
-// Register service worker
-const registration = await navigator.serviceWorker.register(
-  "/firebase-messaging-sw.js"
-);
+// Handle user login and FCM token registration
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert("Please log in first before uploading files.");
+    window.location.href = "login.html";
+    return;
+  }
 
-// Request permission + get token
-Notification.requestPermission().then(async (permission) => {
-  if (permission === "granted") {
+  try {
+    // Register service worker
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+    // Request notification permission
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      console.warn("Notifications not allowed");
+      return;
+    }
+
+    // Get FCM token
     const fcmToken = await getToken(messaging, {
-      vapidKey: "BGrGNgr-o1fgQqLaDwdFugHhqUIwjwqB6Fr-Bk79C1OpAQt2l1mAzTs746LNfQvHe-ncR7gypDI0eyxk_FQHYiQ",
+      vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
       serviceWorkerRegistration: registration,
     });
 
     if (fcmToken) {
+      const idToken = await user.getIdToken();
       await fetch("/save-token", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + idToken,
+        },
         body: JSON.stringify({ token: fcmToken }),
       });
     }
+
+    // Handle foreground notifications
+    onMessage(messaging, (payload) => {
+      if (Notification.permission === "granted") {
+        new Notification(payload.notification.title, {
+          body: payload.notification.body,
+        });
+      }
+    });
+
+  } catch (err) {
+    console.error("FCM registration failed:", err);
   }
 });
 
+// Upload form handling
+const form = document.getElementById("uploadForm");
+const progressContainer = document.getElementById("progressContainer");
+const progressBar = document.getElementById("progressBar");
+const messageBox = document.getElementById("uploadMessage");
 
-  // Check login
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      alert("Please log in first before uploading files.");
-      window.location.href = "login.html";
-    }
-  });
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-  const form = document.getElementById("uploadForm");
-  const progressContainer = document.getElementById("progressContainer");
-  const progressBar = document.getElementById("progressBar");
-  const messageBox = document.getElementById("uploadMessage");
+  // Program validation
+  const programInput = document.getElementById("program").value.trim();
+  const validPrograms = ["Diploma", "Bachelors", "Masters", "Basics"];
+  if (!validPrograms.some(p => programInput.startsWith(p))) {
+    alert("Program name must start with Diploma, Bachelors, Masters, or Basics.");
+    return;
+  }
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // Semester validation
+  const semesterInput = document.getElementById("semester").value;
+  if (!semesterInput || semesterInput < 1 || semesterInput > 12) {
+    alert("Semester must be between 1 and 12.");
+    return;
+  }
 
-    // Program validation
-    const programInput = document.getElementById("program").value.trim();
-    const validPrograms = ["Diploma", "Bachelors", "Masters", "Basics"];
-    if (!validPrograms.some(p => programInput.startsWith(p))) {
-      alert("Program name must start with Diploma, Bachelors, Masters, or Basics.");
+  // File validation
+  const file = document.getElementById("file").files[0];
+  if (!file) return alert("Please choose a file first.");
+  const allowedTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+  ];
+  if (!allowedTypes.includes(file.type)) {
+    alert("Only PDF or PPTX files are allowed!");
+    return;
+  }
+
+  try {
+    if (!auth.currentUser) {
+      alert("User not logged in");
       return;
     }
 
-    // Semester validation
-    const semesterInput = document.getElementById("semester").value;
-    if (!semesterInput || semesterInput < 1 || semesterInput > 12) {
-      alert("Semester must be between 1 and 12.");
-      return;
-    }
+    const token = await auth.currentUser.getIdToken();
+    const formData = new FormData(form);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/upload");
+    xhr.setRequestHeader("Authorization", "Bearer " + token);
 
-    // File validation
-    const file = document.getElementById("file").files[0];
-    if (!file) return alert("Please choose a file first.");
-    const allowedTypes = [
-      "application/pdf",
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-    ];
-    if (!allowedTypes.includes(file.type)) {
-      alert("Only PDF or PPTX files are allowed!");
-      return;
-    }
-
-    try {
-      if (!auth.currentUser) {
-        alert("User not logged in");
-        return;
+    progressContainer.style.display = "block";
+    xhr.upload.addEventListener("progress", (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        progressBar.style.width = percent + "%";
       }
+    });
 
-      const token = await auth.currentUser.getIdToken();
-      const formData = new FormData(form);
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", "/upload");
-      xhr.setRequestHeader("Authorization", "Bearer " + token);
-
-      progressContainer.style.display = "block";
-      xhr.upload.addEventListener("progress", (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          progressBar.style.width = percent + "%";
-        }
-      });
-
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          messageBox.textContent = "✅ Upload successful!";
-          messageBox.className = "message success show";
-          form.reset();
-          setTimeout(() => progressContainer.style.display = "none", 1500);
-          progressBar.style.width = "0%";
-        } else {
-          messageBox.textContent = "❌ Upload failed: " + xhr.responseText;
-          messageBox.className = "message error show";
-        }
-      };
-
-      xhr.onerror = () => {
-        messageBox.textContent = "❌ Upload error. Please try again.";
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        messageBox.textContent = "✅ Upload successful!";
+        messageBox.className = "message success show";
+        form.reset();
+        setTimeout(() => progressContainer.style.display = "none", 1500);
+        progressBar.style.width = "0%";
+      } else {
+        messageBox.textContent = "❌ Upload failed: " + xhr.responseText;
         messageBox.className = "message error show";
-      };
+      }
+    };
 
-      xhr.send(formData);
-
-    } catch (error) {
-      console.error(error);
-      messageBox.textContent = "❌ Upload error. Try again.";
+    xhr.onerror = () => {
+      messageBox.textContent = "❌ Upload error. Please try again.";
       messageBox.className = "message error show";
-    }
-  });
+    };
+
+    xhr.send(formData);
+
+  } catch (error) {
+    console.error(error);
+    messageBox.textContent = "❌ Upload error. Try again.";
+    messageBox.className = "message error show";
+  }
+});
 </script>
+
 </body>
 </html>

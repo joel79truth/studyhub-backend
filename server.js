@@ -31,7 +31,7 @@ admin.initializeApp({
   credential: admin.credential.cert(firebaseAccount),
 });
 
-const fcmTokens = new Set();
+
 
 /* ===== MULTER ===== */
 const upload = multer({ storage: multer.memoryStorage() });
@@ -68,13 +68,42 @@ const drive = google.drive({ version: "v3", auth });
 
 
 /* ===== SAVE FCM TOKEN ===== */
-app.post("/save-token", (req, res) => {
-  const { token } = req.body;
-  if (!token) return res.status(400).json({ message: "Missing token" });
+const { getAuth } = require("firebase-admin/auth");
+app.post("/save-token", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-  fcmTokens.add(token);
-  res.json({ message: "Token saved" });
+  try {
+    const idToken = authHeader.split(" ")[1];
+    const decoded = await getAuth().verifyIdToken(idToken);
+
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ message: "Missing token" });
+    }
+
+    const { error } = await supabase
+      .from("fcm_tokens")
+      .upsert(
+        {
+          uid: decoded.uid,
+          token,
+        },
+        { onConflict: "token" }
+      );
+
+    if (error) throw error;
+
+    res.json({ message: "Token stored", uid: decoded.uid });
+  } catch (err) {
+    console.error("Save token error:", err);
+    res.status(401).json({ message: "Invalid token" });
+  }
 });
+
+
 
 /* ===== UPLOAD ===== */
 app.post("/upload", upload.single("file"), async (req, res) => {
@@ -145,18 +174,52 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     }]);
     if (dbError) throw dbError;
 
-    /* ===== PUSH NOTIFICATIONS ===== */
-    if (fcmTokens.size > 0) {
-      await admin.messaging().sendMulticast({
-        tokens: [...fcmTokens],
-        notification: {
-  title: "📚 New Notes Uploaded",
-  body: `${subject} notes for Semester ${semester} available`,
-  click_action: `/program.html?id=${id}`,
-},
+   /* ===== PUSH NOTIFICATIONS ===== */
+const { data: rows, error: tokenError } = await supabase
+  .from("fcm_tokens")
+  .select("token");
 
-      });
+if (tokenError) {
+  console.error("Token fetch error:", tokenError);
+} else if (rows.length > 0) {
+  const tokens = rows.map(r => r.token);
+
+  const response = await admin.messaging().sendEachForMulticast({
+    tokens,
+    notification: {
+      title: "📚 New Notes Uploaded",
+      body: `${subject} notes for Semester ${semester} available`,
+    },
+    data: {
+      program,
+      semester: String(semester),
+      subject,
+      fileId: id,
+    },
+  });
+
+  /* 🔥 CLEAN UP DEAD TOKENS */
+  const invalidTokens = [];
+  response.responses.forEach((r, i) => {
+    if (!r.success) {
+      const code = r.error?.code || "";
+      if (
+        code.includes("registration-token-not-registered") ||
+        code.includes("invalid-registration-token")
+      ) {
+        invalidTokens.push(tokens[i]);
+      }
     }
+  });
+
+  if (invalidTokens.length) {
+    await supabase
+      .from("fcm_tokens")
+      .delete()
+      .in("token", invalidTokens);
+  }
+}
+
 
     res.json({ message: "Upload successful", url: publicUrl });
   } catch (err) {
