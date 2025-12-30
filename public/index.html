@@ -345,42 +345,6 @@ h3::after {
 
 </style>
 
-<button id="notifyBell">🔔</button>
-
-<!-- OneSignal SDK -->
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-<script>
-window.onload = () => {
-  const notifyBell = document.getElementById('notifyBell');
-
-  // Initialize OneSignal
-  OneSignal.push(function() {
-    OneSignal.init({
-      appId: "dc041d91-35cf-4daf-9955-a390afb8c506",
-      notifyButton: { enable: false } // disable default OneSignal bell
-    });
-  });
-
-  // Handle bell click
-  notifyBell.addEventListener('click', async () => {
-    const permission = await Notification.requestPermission();
-
-    if (permission === "granted") {
-      OneSignal.push(() => {
-        OneSignal.registerForPushNotifications()
-          .then(() => console.log("✅ Notifications enabled!"))
-          .catch(err => console.error("❌ OneSignal subscription failed:", err));
-      });
-
-      // Hide the bell after subscribing
-      notifyBell.style.display = 'none';
-      new Notification("Notifications enabled!");
-    } else {
-      alert("Permission denied. You can enable notifications later in your browser settings.");
-    }
-  });
-};
-</script>
 
 
 </head>
@@ -534,48 +498,52 @@ HOME FOR NOTES. 3.7 GPA target</h3>
 
 
   <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js"></script>
 
-<script>
-  // Your web app's Firebase configuration
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
+
   const firebaseConfig = {
-  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-  authDomain: "studyhub-backend.firebaseapp.com",
-  projectId: "studyhub-backend",
-  storageBucket: "studyhub-backend.firebasestorage.app",
-  messagingSenderId: "985257842533",
-  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
+    apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+    authDomain: "studyhub-backend.firebaseapp.com",
+    projectId: "studyhub-backend",
+    storageBucket: "studyhub-backend.firebasestorage.app",
+    messagingSenderId: "985257842533",
+    appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
   };
 
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const messaging = firebase.messaging();
-</script>
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
 
-  <script>
-async function enableNotifications() {
-  const permission = await Notification.requestPermission();
+  async function registerForNotifications() {
+    if (!("serviceWorker" in navigator)) return;
 
-  if (permission !== "granted") {
-    console.log("❌ Notifications denied");
-    return;
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") return;
+
+    const registration = await navigator.serviceWorker.ready;
+
+    const token = await getToken(messaging, {
+      vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
+      serviceWorkerRegistration: registration
+    });
+
+    if (!token) return;
+
+    console.log("📨 FCM TOKEN:", token);
+
+    await fetch("/save-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token })
+    });
   }
 
-  const token = await messaging.getToken({
-    vapidKey: "PASTE_YOUR_VAPID_KEY_HERE"
-  });
-
-  console.log("📨 FCM TOKEN:", token);
-
-  // Send token to backend
-  await fetch("/save-token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token })
-  });
-}
+  window.addEventListener("load", registerForNotifications);
 </script>
+
 
 
   <script>
@@ -603,83 +571,9 @@ async function enableNotifications() {
     });
   });
 
-  // Load service worker
   
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/firebase-messaging-sw.js")
-      .then(reg => console.log("✅ Firebase SW registered"))
-      .catch(err => console.error("❌ Firebase SW failed", err));
-  });
-}
 
 
-
-  // Create HTML for each file
-  function createFileCard(file) {
-    return `<div style="margin:5px; padding:10px; border:1px solid #ccc; border-radius:8px;">
-      <a href="${file.url}" target="_blank">${file.name}</a> - <b>${file.subject}</b>
-    </div>`;
-  }
-
-  // Load metadata.json
- 
-
-  // Search notes
-  async function handleSearch() {
-    const query = document.getElementById('searchInput').value.toLowerCase().trim();
-    const fileList = document.getElementById('fileList');
-    if (!query) { fileList.innerHTML = '<p>Please enter a search keyword.</p>'; return; }
-
-    const filtered = metadata.filter(file =>
-      (file.name || '').toLowerCase().includes(query) ||
-      (file.subject || '').toLowerCase().includes(query) ||
-      (file.program || '').toLowerCase().includes(query)
-    );
-    fileList.innerHTML = filtered.length === 0 ? '<p>No matching notes found.</p>' : filtered.map(createFileCard).join('');
-  }
-
-  // Show files by subject
-  async function handleSubjectClick(subject) {
-    const fileList = document.getElementById('fileList');
-    const filtered = metadata.filter(file => (file.subject || '').toLowerCase() === subject.toLowerCase());
-    fileList.innerHTML = filtered.length === 0 ? '<p>No files found for this subject.</p>' : filtered.map(createFileCard).join('');
-  }
-
-  // Filter subjects by semester
-  async function filterSemester(semesterNumber) {
-    const subjectsContainer = document.getElementById('subjectsContainer');
-    const closeSubjectBtn = document.getElementById('closeSubjectBtn');
-    subjectsContainer.innerHTML = '';
-    closeSubjectBtn.style.display = 'inline-block';
-
-    const semesterFiles = metadata.filter(f => f.semester == semesterNumber);
-    const subjects = [...new Set(semesterFiles.map(f => f.subject))];
-
-    if (subjects.length === 0) {
-      subjectsContainer.innerHTML = '<p>No subjects found for this semester.</p>';
-      return;
-    }
-
-    subjects.forEach(subject => {
-      const btn = document.createElement('button');
-      btn.textContent = subject;
-      btn.className = 'subject-btn';
-      btn.onclick = () => handleSubjectClick(subject);
-      subjectsContainer.appendChild(btn);
-    });
-  }
-
-  // Close subjects
-  document.getElementById('closeSubjectBtn').addEventListener('click', () => {
-    document.getElementById('subjectsContainer').innerHTML = '';
-    document.getElementById('closeSubjectBtn').style.display = 'none';
-    document.getElementById('fileList').innerHTML = '';
-  });
-</script>
-
-<script>
   // LUANAR Image Carousel
 const slides = document.querySelectorAll('.carousel-slide');
 let currentSlide = 0;
@@ -705,11 +599,6 @@ setInterval(nextSlide, 4000);
 
 </script>
 
-<script>
-window.addEventListener("load", () => {
-  enableNotifications();
-});
-</script>
 
 
 </body>
