@@ -322,6 +322,8 @@ function mergeSimilarPrograms(files) {
   return mergedCounts;
 }
 
+const program = new URLSearchParams(window.location.search).get("program");
+
 
 // Load programs from backend
 async function loadPrograms() {

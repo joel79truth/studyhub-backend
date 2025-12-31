@@ -15,25 +15,43 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// Handle background messages
+/* ===== BACKGROUND NOTIFICATIONS ===== */
 messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  console.log("[firebase-messaging-sw.js] BG message:", payload);
 
-  const notificationTitle = payload.notification?.title || "New Notification";
-  const notificationBody = payload.notification?.body || "";
-  const clickUrl = payload.notification?.click_action || payload.data?.url || "/";
+  const title = payload.notification?.title || "StudyHub Update";
+  const body = payload.notification?.body || "New content available";
+  const url = payload.data?.url || "/program.html";
 
-  self.registration.showNotification(notificationTitle, {
-    body: notificationBody,
-    data: { url: clickUrl },
-    icon: "/icon.png" // optional, add your icon path
+  self.registration.showNotification(title, {
+    body,
+    icon: "/icon.png",
+    data: {
+      url,          // 👈 used on click
+      program: payload.data?.program,
+      semester: payload.data?.semester,
+      subject: payload.data?.subject
+    }
   });
 });
 
-// Handle notification clicks
+/* ===== CLICK HANDLER ===== */
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+
+  const url = event.notification.data?.url || "/program.html";
+
   event.waitUntil(
-    clients.openWindow(event.notification.data.url)
+    clients.matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if (client.url.includes(url) && "focus" in client) {
+            return client.focus();
+          }
+        }
+        if (clients.openWindow) {
+          return clients.openWindow(url);
+        }
+      })
   );
 });

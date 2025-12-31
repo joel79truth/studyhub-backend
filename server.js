@@ -195,6 +195,8 @@ if (tokenError) {
       semester: String(semester),
       subject,
       fileId: id,
+      url: `/program.html?program=${encodeURIComponent(program)}`
+
     },
   });
 
