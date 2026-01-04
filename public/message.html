@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,47 +10,193 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px;
+      overflow: hidden;
     }
 
-    .chat-container {
-      width: 100%;
-      max-width: 900px;
-      height: 95vh;
-      max-height: 800px;
-      background: rgba(255, 255, 255, 0.98);
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.98);
+      border-right: 1px solid rgba(59, 130, 246, 0.2);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-subtitle {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .sidebar-section {
+      margin-bottom: 24px;
+    }
+
+    .sidebar-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-option {
+      padding: 12px 16px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-option:hover {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .sidebar-option-icon {
+      font-size: 20px;
+    }
+
+    .sidebar-option-text {
+      flex: 1;
+    }
+
+    .sidebar-option-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #e2e8f0;
+      margin-bottom: 2px;
+    }
+
+    .sidebar-option-desc {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .sidebar-back-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sidebar-back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Overlay */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 999;
+    }
+
+    .sidebar-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Main Container */
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: #f8fafc;
+      max-width: 100%;
+      margin: 0 auto;
     }
 
     /* Header */
     .chat-header {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: rgba(15, 23, 42, 0.98);
       color: white;
-      padding: 20px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .header-top {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.2);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      gap: 16px;
+      flex-shrink: 0;
     }
 
-    .header-title {
+    .menu-toggle {
+      width: 40px;
+      height: 40px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .menu-toggle:hover {
+      background: rgba(59, 130, 246, 0.2);
+    }
+
+    .header-content {
+      flex: 1;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -68,7 +214,7 @@
     }
 
     .header-info h1 {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
       margin-bottom: 2px;
     }
@@ -82,8 +228,8 @@
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       background: #10b981;
       border-radius: 50%;
       animation: pulse 2s infinite;
@@ -94,61 +240,23 @@
       50% { opacity: 0.5; }
     }
 
-    .header-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .action-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: white;
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+    .clear-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      color: #ef4444;
+      font-size: 18px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
     }
 
-    .action-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Quick Actions */
-    .quick-actions {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 5px;
-    }
-
-    .quick-actions::-webkit-scrollbar {
-      height: 4px;
-    }
-
-    .quick-actions::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-    }
-
-    .quick-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .quick-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
+    .clear-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
     }
 
     /* Messages Area */
@@ -211,7 +319,7 @@
     }
 
     .user-msg-avatar {
-      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      background: linear-gradient(135deg, #64748b, #475569);
       color: white;
     }
 
@@ -223,9 +331,9 @@
     }
 
     .message-bubble {
-      padding: 12px 16px;
+      padding: 14px 16px;
       border-radius: 12px;
-      line-height: 1.5;
+      line-height: 1.6;
       font-size: 14px;
     }
 
@@ -233,13 +341,12 @@
       background: white;
       color: #1e293b;
       border: 1px solid #e2e8f0;
-      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .message.user .message-bubble {
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
-      border-bottom-right-radius: 4px;
     }
 
     .message-time {
@@ -252,26 +359,33 @@
       text-align: right;
     }
 
-    /* Typing Indicator */
+    /* Typing Animation */
     .typing-indicator {
       display: none;
-      padding: 12px 16px;
+      padding: 14px 16px;
       background: white;
       border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       border-radius: 12px;
-      border-bottom-left-radius: 4px;
       width: fit-content;
     }
 
     .typing-indicator.show {
       display: flex;
-      gap: 4px;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .typing-text {
+      font-size: 13px;
+      color: #64748b;
+      margin-right: 6px;
     }
 
     .typing-dot {
-      width: 8px;
-      height: 8px;
-      background: #64748b;
+      width: 6px;
+      height: 6px;
+      background: #94a3b8;
       border-radius: 50%;
       animation: typing 1.4s infinite;
     }
@@ -287,67 +401,107 @@
     @keyframes typing {
       0%, 60%, 100% {
         transform: translateY(0);
-        opacity: 0.7;
+        opacity: 0.5;
       }
       30% {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
         opacity: 1;
       }
     }
 
-    /* Suggestions */
-    .suggestions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
+    /* Welcome Screen */
+    .welcome-screen {
+      text-align: center;
+      padding: 40px 20px;
     }
 
-    .suggestion-chip {
-      background: #eff6ff;
-      border: 1px solid #dbeafe;
-      color: #1e40af;
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-size: 13px;
+    .welcome-icon {
+      font-size: 56px;
+      margin-bottom: 20px;
+    }
+
+    .welcome-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .welcome-subtitle {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .quick-prompts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .prompt-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: left;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
     }
 
-    .suggestion-chip:hover {
-      background: #dbeafe;
-      border-color: #93c5fd;
+    .prompt-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .prompt-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .prompt-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .prompt-desc {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.4;
     }
 
     /* Input Area */
     .input-container {
-      padding: 20px 24px;
+      padding: 20px;
       background: white;
       border-top: 1px solid #e2e8f0;
+      flex-shrink: 0;
     }
 
     .input-wrapper {
       display: flex;
       gap: 12px;
       align-items: flex-end;
-    }
-
-    .input-box {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      max-width: 900px;
+      margin: 0 auto;
     }
 
     #messageInput {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #e2e8f0;
+      flex: 1;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
       border-radius: 12px;
       font-size: 14px;
       resize: none;
       max-height: 120px;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
+      font-family: inherit;
     }
 
     #messageInput:focus {
@@ -356,28 +510,8 @@
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
-    .input-tools {
-      display: flex;
-      gap: 8px;
-    }
-
-    .tool-btn {
-      background: none;
-      border: none;
-      color: #64748b;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.3s ease;
-    }
-
-    .tool-btn:hover {
-      background: #f1f5f9;
-      color: #1e293b;
+    #messageInput::placeholder {
+      color: #94a3b8;
     }
 
     #sendBtn {
@@ -391,12 +525,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
       flex-shrink: 0;
     }
 
     #sendBtn:hover {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
@@ -411,71 +544,7 @@
       transform: none;
     }
 
-    /* Welcome Screen */
-    .welcome-screen {
-      text-align: center;
-      padding: 40px 20px;
-    }
-
-    .welcome-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-    }
-
-    .welcome-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 8px;
-    }
-
-    .welcome-subtitle {
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 32px;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    .feature-card {
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .feature-card:hover {
-      border-color: #3b82f6;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .feature-icon {
-      font-size: 32px;
-      margin-bottom: 12px;
-    }
-
-    .feature-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }
-
-    .feature-desc {
-      font-size: 12px;
-      color: #64748b;
-    }
-
-    /* Code Block */
+    /* Code & Formula Blocks */
     .code-block {
       background: #1e293b;
       color: #e2e8f0;
@@ -487,7 +556,6 @@
       overflow-x: auto;
     }
 
-    /* Formula Block */
     .formula-block {
       background: #eff6ff;
       border-left: 4px solid #3b82f6;
@@ -498,7 +566,6 @@
       font-size: 14px;
     }
 
-    /* List Styling */
     .message-bubble ul, .message-bubble ol {
       margin-left: 20px;
       margin-top: 8px;
@@ -510,18 +577,22 @@
 
     /* Mobile Responsiveness */
     @media (max-width: 768px) {
-      .chat-container {
-        height: 100vh;
-        max-height: none;
-        border-radius: 0;
+      .sidebar {
+        width: 260px;
       }
 
       .chat-header {
-        padding: 16px 20px;
+        padding: 12px 16px;
       }
 
       .header-info h1 {
-        font-size: 16px;
+        font-size: 15px;
+      }
+
+      .bot-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
       }
 
       .messages-container {
@@ -532,22 +603,6 @@
         max-width: 85%;
       }
 
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .input-container {
-        padding: 16px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .bot-avatar {
-        width: 36px;
-        height: 36px;
-        font-size: 18px;
-      }
-
       .message-avatar {
         width: 32px;
         height: 32px;
@@ -556,7 +611,7 @@
 
       .message-bubble {
         font-size: 13px;
-        padding: 10px 14px;
+        padding: 12px 14px;
       }
 
       .welcome-title {
@@ -566,66 +621,186 @@
       .welcome-icon {
         font-size: 48px;
       }
+
+      .quick-prompts {
+        grid-template-columns: 1fr;
+      }
+
+      .input-container {
+        padding: 16px;
+      }
+
+      #messageInput {
+        font-size: 14px;
+        padding: 12px 14px;
+      }
+
+      #sendBtn {
+        width: 44px;
+        height: 44px;
+      }
+    }
+
+    /* Disable heavy effects on mobile for performance */
+    @media (max-width: 768px) {
+      * {
+        animation: none !important;
+      }
+
+      .message {
+        animation: none !important;
+      }
+
+      .sidebar,
+      .sidebar-overlay {
+        transition: none !important;
+      }
+
+      .message,
+      .prompt-card,
+      .sidebar-option,
+      .menu-toggle,
+      .clear-btn,
+      #sendBtn {
+        transition: transform 0.1s ease !important;
+      }
+
+      .typing-dot {
+        animation: typing 1.4s infinite !important;
+      }
+
+      .status-dot {
+        animation: pulse 2s infinite !important;
+      }
     }
   </style>
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RP8NY538W2');
+</script>
 </head>
 <body>
 
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">StudyHub AI</div>
+    <div class="sidebar-subtitle">Your Academic Assistant</div>
+  </div>
+
+  <div class="sidebar-content">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Quick Actions</div>
+      <div class="sidebar-option" onclick="sendQuickMessage('Help me solve a math problem'); closeSidebar();">
+        <div class="sidebar-option-icon">📐</div>
+        <div class="sidebar-option-text">
+          <div class="sidebar-option-label">Math Solver</div>
+          <div class="sidebar-option-desc">Equations & calculations</div>
+        </div>
+      </div>
+      <div class="sidebar-option" onclick="sendQuickMessage('Explain a scientific concept'); closeSidebar();">
+        <div class="sidebar-option-icon">🔬</div>
+        <div class="sidebar-option-text">
+          <div class="sidebar-option-label">Science Help</div>
+          <div class="sidebar-option-desc">Concepts & theories</div>
+        </div>
+      </div>
+      <div class="sidebar-option" onclick="sendQuickMessage('Give me study tips'); closeSidebar();">
+        <div class="sidebar-option-icon">📚</div>
+        <div class="sidebar-option-text">
+          <div class="sidebar-option-label">Study Tips</div>
+          <div class="sidebar-option-desc">Effective learning methods</div>
+        </div>
+      </div>
+      <div class="sidebar-option" onclick="sendQuickMessage('Help me write an essay'); closeSidebar();">
+        <div class="sidebar-option-icon">✍️</div>
+        <div class="sidebar-option-text">
+          <div class="sidebar-option-label">Writing Help</div>
+          <div class="sidebar-option-desc">Essays & reports</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Resources</div>
+      <div class="sidebar-option" onclick="sendQuickMessage('Generate a citation'); closeSidebar();">
+        <div class="sidebar-option-icon">📝</div>
+        <div class="sidebar-option-text">
+          <div class="sidebar-option-label">Citations</div>
+          <div class="sidebar-option-desc">APA, MLA, Chicago formats</div>
+        </div>
+      </div>
+      <div class="sidebar-option" onclick="sendQuickMessage('Research methodology help'); closeSidebar();">
+        <div class="sidebar-option-icon">🔍</div>
+        <div class="sidebar-option-text">
+          <div class="sidebar-option-label">Research Help</div>
+          <div class="sidebar-option-desc">Methodology & analysis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <button class="sidebar-back-btn" onclick="window.history.back()">
+      ← Back to Home
+    </button>
+  </div>
+</div>
+
+<!-- Main Chat Container -->
 <div class="chat-container">
   <!-- Header -->
   <div class="chat-header">
-    <div class="header-top">
-      <div class="header-title">
-        <div class="bot-avatar">🤖</div>
-        <div class="header-info">
-          <h1>StudyHub AI Assistant</h1>
-          <div class="status">
-            <span class="status-dot"></span>
-            <span>Always ready to help</span>
-          </div>
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+    <div class="header-content">
+      <div class="bot-avatar">🤖</div>
+      <div class="header-info">
+        <h1>StudyHub AI Assistant</h1>
+        <div class="status">
+          <span class="status-dot"></span>
+          <span>Online</span>
         </div>
       </div>
-      <div class="header-actions">
-        <button class="action-btn" onclick="clearChat()" title="Clear Chat">🗑️</button>
-        <button class="action-btn" onclick="window.history.back()" title="Back">✖️</button>
-      </div>
     </div>
-    <div class="quick-actions">
-      <button class="quick-btn" onclick="sendQuickMessage('Help me solve a math problem')">📐 Math Help</button>
-      <button class="quick-btn" onclick="sendQuickMessage('Explain a concept')">💡 Explain</button>
-      <button class="quick-btn" onclick="sendQuickMessage('Study tips')">📚 Study Tips</button>
-      <button class="quick-btn" onclick="sendQuickMessage('Generate citation')">📝 Citation</button>
-      <button class="quick-btn" onclick="sendQuickMessage('Research help')">🔬 Research</button>
-    </div>
+    <button class="clear-btn" onclick="clearChat()" title="Clear Chat">🗑️</button>
   </div>
 
   <!-- Messages -->
   <div class="messages-container" id="messagesContainer">
     <div class="welcome-screen" id="welcomeScreen">
       <div class="welcome-icon">🎓</div>
-      <h2 class="welcome-title">Welcome to StudyHub AI Assistant</h2>
-      <p class="welcome-subtitle">Your 24/7 academic companion for learning, problem-solving, and research</p>
+      <h2 class="welcome-title">Welcome to StudyHub AI</h2>
+      <p class="welcome-subtitle">Your intelligent academic companion for learning, problem-solving, and research support</p>
       
-      <div class="features-grid">
-        <div class="feature-card" onclick="sendQuickMessage('Help me with math')">
-          <div class="feature-icon">🧮</div>
-          <div class="feature-title">Math & Science</div>
-          <div class="feature-desc">Solve equations, explain formulas</div>
+      <div class="quick-prompts">
+        <div class="prompt-card" onclick="sendQuickMessage('Help me solve a quadratic equation')">
+          <div class="prompt-icon">🧮</div>
+          <div class="prompt-title">Math & Science</div>
+          <div class="prompt-desc">Solve equations and explain formulas</div>
         </div>
-        <div class="feature-card" onclick="sendQuickMessage('Help me write an essay')">
-          <div class="feature-icon">✍️</div>
-          <div class="feature-title">Writing Help</div>
-          <div class="feature-desc">Essays, reports, citations</div>
+        <div class="prompt-card" onclick="sendQuickMessage('Help me write an essay about climate change')">
+          <div class="prompt-icon">✍️</div>
+          <div class="prompt-title">Writing Support</div>
+          <div class="prompt-desc">Essays, reports, and citations</div>
         </div>
-        <div class="feature-card" onclick="sendQuickMessage('Study techniques')">
-          <div class="feature-icon">📖</div>
-          <div class="feature-title">Study Strategies</div>
-          <div class="feature-desc">Effective learning methods</div>
+        <div class="prompt-card" onclick="sendQuickMessage('What are effective study techniques?')">
+          <div class="prompt-icon">📖</div>
+          <div class="prompt-title">Study Strategies</div>
+          <div class="prompt-desc">Learn effective study methods</div>
         </div>
-        <div class="feature-card" onclick="sendQuickMessage('Explain photosynthesis')">
-          <div class="feature-icon">🔬</div>
-          <div class="feature-title">Concept Explanations</div>
-          <div class="feature-desc">Deep understanding of topics</div>
+        <div class="prompt-card" onclick="sendQuickMessage('Explain photosynthesis')">
+          <div class="prompt-icon">🔬</div>
+          <div class="prompt-title">Concept Explanations</div>
+          <div class="prompt-desc">Understand complex topics</div>
         </div>
       </div>
     </div>
@@ -634,6 +809,7 @@
       <div class="message-avatar bot-msg-avatar">🤖</div>
       <div class="message-content">
         <div class="typing-indicator" id="typingIndicator">
+          <span class="typing-text">AI is typing</span>
           <div class="typing-dot"></div>
           <div class="typing-dot"></div>
           <div class="typing-dot"></div>
@@ -645,19 +821,11 @@
   <!-- Input Area -->
   <div class="input-container">
     <div class="input-wrapper">
-      <div class="input-box">
-        <textarea 
-          id="messageInput" 
-          placeholder="Ask me anything... (e.g., 'Solve x² + 5x + 6 = 0')"
-          rows="1"
-        ></textarea>
-        <div class="input-tools">
-          <button class="tool-btn" onclick="insertSymbol('√')">√</button>
-          <button class="tool-btn" onclick="insertSymbol('²')">x²</button>
-          <button class="tool-btn" onclick="insertSymbol('π')">π</button>
-          <button class="tool-btn" onclick="insertSymbol('∫')">∫</button>
-        </div>
-      </div>
+      <textarea 
+        id="messageInput" 
+        placeholder="Ask me anything... (e.g., 'Solve x² + 5x + 6 = 0')"
+        rows="1"
+      ></textarea>
       <button id="sendBtn" onclick="sendMessage()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
@@ -668,6 +836,23 @@
 </div>
 
 <script>
+// ========================
+// Sidebar Functions
+// ========================
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+}
+
+function closeSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+}
+
 // ========================
 // GPT API Call
 // ========================
@@ -682,12 +867,12 @@ async function fetchGPTResponse(message) {
     return data.reply;
   } catch (err) {
     console.error("GPT fetch error:", err);
-    return "Sorry, I can't connect to the AI right now.";
+    return "I apologize, but I'm unable to connect to the AI service right now. Please try again in a moment.";
   }
 }
 
 // ========================
-// Knowledge Base & Handlers
+// Knowledge Base
 // ========================
 const knowledgeBase = {
   greetings: {
@@ -705,57 +890,73 @@ const knowledgeBase = {
   study: {
     patterns: ['study', 'learn', 'memorize', 'remember', 'focus', 'exam', 'test', 'preparation'],
     responses: [
-      `Here are proven study techniques:
+      `**Effective Study Techniques:**
 
 📚 **Study Methods:**
-- Pomodoro Technique
-- Active Recall
-- Spaced Repetition
-- Feynman Technique
+• Pomodoro Technique (25-min focus sessions)
+• Active Recall (test yourself)
+• Spaced Repetition (review over time)
+• Feynman Technique (teach to learn)
 
 💡 **Focus Tips:**
-- Dedicated study space
-- Minimize distractions
-- Take breaks
-- Start with 2-min rule
+• Create a dedicated study space
+• Minimize distractions
+• Take regular breaks
+• Use the 2-minute rule to start
 
-Want tips for a specific subject or exam?`
+Would you like specific tips for a subject or exam?`
     ]
   },
   agriculture: {
     patterns: ['agriculture', 'farming', 'crop', 'soil', 'plant', 'livestock', 'harvest'],
     responses: [
-      `I can help with Agricultural Sciences:
+      `**Agricultural Sciences Help:**
 
-🌱 Crop Science: Plant biology, crop production, pest management
-🐄 Animal Science: Nutrition, breeding, health
-🌾 Agribusiness: Management, economics, marketing
+🌱 **Crop Science:** Plant biology, production, pest management
+🐄 **Animal Science:** Nutrition, breeding, health
+🌾 **Agribusiness:** Management, economics, marketing
+🌍 **Soil Science:** Fertility, conservation, analysis
 
-What topic do you want to explore?`
+What specific topic would you like to explore?`
     ]
   },
   science: {
     patterns: ['biology', 'chemistry', 'physics', 'photosynthesis', 'cell', 'atom', 'molecule', 'reaction'],
     handler: (msg) => {
       if (msg.toLowerCase().includes('photosynthesis')) return explainPhotosynthesis();
-      return `I can explain various scientific concepts: Biology, Chemistry, Physics. Ask me anything!`;
+      return `I can explain various scientific concepts in Biology, Chemistry, and Physics. What would you like to learn about?`;
     }
   },
   writing: {
     patterns: ['write', 'essay', 'paper', 'report', 'citation', 'grammar', 'reference'],
     responses: [
-      `I can assist with academic writing: Essays, Reports, Citations, APA/MLA formatting.`
+      `**Academic Writing Assistance:**
+
+✍️ I can help with:
+• Essay structure and outlines
+• Research papers
+• Citations (APA, MLA, Chicago)
+• Grammar and clarity
+• References and bibliographies
+
+What writing task can I help with?`
     ]
   },
   research: {
     patterns: ['research', 'thesis', 'dissertation', 'methodology', 'literature review', 'data analysis'],
     responses: [
-      `Research guidance: Define question, review literature, methodology, collect data, analyze results, conclusions.`
+      `**Research Guidance:**
+
+📊 Research Process:
+1. Define research question
+2. Literature review
+3. Choose methodology
+4. Collect data
+5. Analyze results
+6. Draw conclusions
+
+What aspect of research do you need help with?`
     ]
-  },
-  citation: {
-    patterns: ['cite', 'citation', 'reference', 'bibliography'],
-    handler: () => `I can generate citations. Provide author, title, year, source type.`
   }
 };
 
@@ -765,7 +966,7 @@ What topic do you want to explore?`
 let messageHistory = [];
 
 // ========================
-// DOM Ready Initialization
+// DOM Ready
 // ========================
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('messageInput');
@@ -776,7 +977,7 @@ document.addEventListener('DOMContentLoaded', () => {
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
   });
 
-  // Send on Enter (Shift+Enter for new line)
+  // Send on Enter
   input.addEventListener('keypress', function (e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -807,10 +1008,13 @@ async function sendMessage() {
   // Show typing
   showTyping();
 
+  // Simulate delay for typing animation
+  await new Promise(resolve => setTimeout(resolve, 800));
+
   try {
     const lowerMessage = message.toLowerCase();
 
-    // Check Knowledge Base first
+    // Check Knowledge Base
     let response;
     for (const [category, data] of Object.entries(knowledgeBase)) {
       if (data.patterns.some(p => lowerMessage.includes(p))) {
@@ -820,7 +1024,7 @@ async function sendMessage() {
       }
     }
 
-    // Fallback to GPT if no KB match
+    // Fallback to GPT
     if (!response) {
       response = await fetchGPTResponse(message);
     }
@@ -829,13 +1033,13 @@ async function sendMessage() {
     addMessage(response, 'bot');
   } catch (err) {
     hideTyping();
-    addMessage("Oops! Something went wrong. Try again.", 'bot');
+    addMessage("I encountered an error. Please try again.", 'bot');
     console.error(err);
   }
 }
 
 // ========================
-// Add Message to Chat
+// Add Message
 // ========================
 function addMessage(text, sender) {
   const container = document.getElementById('messagesContainer');
@@ -898,61 +1102,94 @@ function solveMathProblem(message) {
     if (discriminant > 0) {
       const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
       const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-      return `**Solution for ${a}x² ${b >= 0 ? '+' : ''}${b}x ${c >= 0 ? '+' : ''}${c} = 0:**\n
-[formula]x = (-b ± √(b²-4ac))/2a[/formula]\n
-x₁ = ${x1.toFixed(2)}, x₂ = ${x2.toFixed(2)}`;
+      return `**Solution for ${a}x² ${b >= 0 ? '+' : ''}${b}x ${c >= 0 ? '+' : ''}${c} = 0:**
+
+[formula]x = (-b ± √(b²-4ac)) / 2a[/formula]
+
+**Results:**
+• x₁ = ${x1.toFixed(2)}
+• x₂ = ${x2.toFixed(2)}`;
     } else if (discriminant === 0) {
       const x = -b / (2 * a);
-      return `**Solution:** Repeated root: x = ${x.toFixed(2)}`;
+      return `**Solution:** One repeated root: x = ${x.toFixed(2)}`;
     } else {
-      return `**Solution:** Two complex roots (Δ = ${discriminant})`;
+      return `**Solution:** Two complex roots (discriminant = ${discriminant})`;
     }
   }
-  return "I can solve quadratic equations! Format like: x² + 5x + 6 = 0";
+  return "I can solve quadratic equations! Please format like: x² + 5x + 6 = 0";
 }
 
 // ========================
-// Photosynthesis Explanation
+// Photosynthesis
 // ========================
 function explainPhotosynthesis() {
-  return `**Photosynthesis:** Plants convert light into chemical energy.
+  return `**Photosynthesis Explained:**
 
-[formula]6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂[/formula]
+Plants convert light energy into chemical energy.
 
-1️⃣ Light-dependent reactions produce ATP & NADPH  
-2️⃣ Calvin Cycle fixes CO₂ into glucose  
+[formula]6CO₂ + 6H₂O + Light Energy → C₆H₁₂O₆ + 6O₂[/formula]
 
-Factors: Light, CO₂, Temperature, Water  
-Importance: Oxygen & Food production`;
+**Process:**
+1️⃣ **Light-dependent reactions** - Produce ATP & NADPH
+2️⃣ **Calvin Cycle** - Fixes CO₂ into glucose
+
+**Key Factors:**
+• Light intensity
+• CO₂ concentration
+• Temperature
+• Water availability
+
+**Importance:** Produces oxygen and food for most life on Earth.`;
 }
 
 // ========================
-// Quick Messages / Symbols / Clear Chat
+// Quick Message
 // ========================
-function sendQuickMessage(msg) { document.getElementById('messageInput').value = msg; sendMessage(); }
-
-function insertSymbol(symbol) {
-  const input = document.getElementById('messageInput');
-  const start = input.selectionStart;
-  const end = input.selectionEnd;
-  input.value = input.value.substring(0, start) + symbol + input.value.substring(end);
-  input.focus();
-  input.selectionStart = input.selectionEnd = start + symbol.length;
+function sendQuickMessage(msg) {
+  document.getElementById('messageInput').value = msg;
+  sendMessage();
 }
 
+// ========================
+// Clear Chat
+// ========================
 function clearChat() {
-  if (!confirm('Clear chat history?')) return;
+  if (!confirm('Clear all chat history?')) return;
   const container = document.getElementById('messagesContainer');
   container.innerHTML = `
     <div class="welcome-screen" id="welcomeScreen">
       <div class="welcome-icon">🎓</div>
-      <h2 class="welcome-title">Welcome to StudyHub AI Assistant</h2>
-      <p class="welcome-subtitle">Your 24/7 academic companion</p>
+      <h2 class="welcome-title">Welcome to StudyHub AI</h2>
+      <p class="welcome-subtitle">Your intelligent academic companion for learning, problem-solving, and research support</p>
+      
+      <div class="quick-prompts">
+        <div class="prompt-card" onclick="sendQuickMessage('Help me solve a quadratic equation')">
+          <div class="prompt-icon">🧮</div>
+          <div class="prompt-title">Math & Science</div>
+          <div class="prompt-desc">Solve equations and explain formulas</div>
+        </div>
+        <div class="prompt-card" onclick="sendQuickMessage('Help me write an essay about climate change')">
+          <div class="prompt-icon">✍️</div>
+          <div class="prompt-title">Writing Support</div>
+          <div class="prompt-desc">Essays, reports, and citations</div>
+        </div>
+        <div class="prompt-card" onclick="sendQuickMessage('What are effective study techniques?')">
+          <div class="prompt-icon">📖</div>
+          <div class="prompt-title">Study Strategies</div>
+          <div class="prompt-desc">Learn effective study methods</div>
+        </div>
+        <div class="prompt-card" onclick="sendQuickMessage('Explain photosynthesis')">
+          <div class="prompt-icon">🔬</div>
+          <div class="prompt-title">Concept Explanations</div>
+          <div class="prompt-desc">Understand complex topics</div>
+        </div>
+      </div>
     </div>
     <div class="message bot" style="display:none;">
       <div class="message-avatar bot-msg-avatar">🤖</div>
       <div class="message-content">
         <div class="typing-indicator" id="typingIndicator">
+          <span class="typing-text">AI is typing</span>
           <div class="typing-dot"></div>
           <div class="typing-dot"></div>
           <div class="typing-dot"></div>

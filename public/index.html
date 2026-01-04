@@ -15,14 +15,15 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-0LTZS1S9W6');
-  </script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RP8NY538W2');
+</script>
 
   <style>
     * {
@@ -391,7 +392,7 @@
     }
 
     .section-title::before {
-      content: '⭐';
+      content: '🗳️';
       font-size: 24px;
       animation: twinkle 2s ease-in-out infinite;
     }
@@ -404,7 +405,7 @@
     /* Campus Star Card */
     .campus-stars-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 20px;
       padding: 0 15px;
       margin-bottom: 30px;
@@ -413,19 +414,16 @@
     .star-card {
       background: rgba(30, 41, 59, 0.8);
       backdrop-filter: blur(6px);
-
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-
       border: 1px solid rgba(59, 130, 246, 0.2);
       transition: all 0.3s ease;
     }
 
     .star-card:hover {
       transform: translateY(-5px);
-     box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
       border-color: rgba(59, 130, 246, 0.5);
     }
 
@@ -447,6 +445,18 @@
       margin-bottom: 5px;
     }
 
+    .star-position {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fbbf24;
+      margin-bottom: 8px;
+      display: inline-block;
+      background: rgba(251, 191, 36, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
     .star-program {
       font-size: 13px;
       color: #94a3b8;
@@ -459,10 +469,25 @@
       margin-bottom: 12px;
     }
 
+    .star-description {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+      margin-bottom: 15px;
+      font-style: italic;
+      border-left: 3px solid rgba(59, 130, 246, 0.5);
+      padding-left: 10px;
+    }
+
     .star-actions {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-top: 12px;
+    }
+
+    .vote-btn-container {
+      grid-column: 1 / -1;
     }
 
     .action-btn {
@@ -483,8 +508,7 @@
     .like-btn {
       background: linear-gradient(135deg, #ef4444, #dc2626);
       color: white;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
     }
 
     .like-btn:hover {
@@ -507,10 +531,119 @@
       transform: scale(1.05);
     }
 
+    .vote-btn {
+      background: linear-gradient(135deg, #64748b, #475569);
+      color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+      cursor: not-allowed;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vote-btn::after {
+      content: '🔒';
+      position: absolute;
+      right: 10px;
+      font-size: 16px;
+    }
+
+    .vote-btn:hover {
+      background: linear-gradient(135deg, #475569, #334155);
+    }
+
+    .vote-btn.active {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .vote-btn.active::after {
+      content: '✓';
+    }
+
+    .vote-btn.active:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: scale(1.02);
+    }
+
     .like-count {
       font-size: 12px;
       color: #94a3b8;
       margin-top: 8px;
+    }
+
+    /* Modal for voting message */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 20000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(180deg, #1e293b, #0f172a);
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+      margin: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-content h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #fbbf24;
+    }
+
+    .modal-content p {
+      font-size: 16px;
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .modal-close-btn {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .modal-close-btn:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      transform: scale(1.05);
     }
 
     /* Christmas decoration - subtle */
@@ -614,7 +747,6 @@
     background: rgba(15,23,42,0.95);
   }
 
-
       .glass-button .icon-btn {
         width: 45px;
         height: 45px;
@@ -646,7 +778,6 @@
         height: 320px;
       }
 
-
       .button-with-label .icon-btn {
         width: 40px;
         height: 40px;
@@ -666,6 +797,11 @@
         width: 40px;
         height: 40px;
       }
+
+      .modal-content {
+        max-width: 90%;
+        padding: 25px;
+      }
     }
 
     @media (max-width: 400px) {
@@ -680,6 +816,10 @@
       .action-btn {
         font-size: 13px;
         padding: 8px;
+      }
+
+      .star-description {
+        font-size: 12px;
       }
     }
 
@@ -807,18 +947,28 @@
 
     <!-- Welcome Section -->
     <div class="welcome-section">
-      <h3>Welcome to StudyHub LUANAR<br>HOME FOR NOTES. 3.7 GPA target</h3>
-      <p>Discover and connect with campus stars ⭐</p>
+      <h3>Welcome to StudyHub LUANAR<br>Student Elections 2026</h3>
+      <p>Meet your candidates and vote for change! 🗳️</p>
     </div>
 
     <!-- Campus Stars Section -->
-    <h2 class="section-title">Campus Stars</h2>
+    <h2 class="section-title">Election Candidates</h2>
 
     <div class="campus-stars-grid" id="campusStarsGrid">
       <!-- Star cards will be dynamically added here -->
     </div>
 
   </main>
+
+  <!-- Voting Modal -->
+  <div class="modal" id="votingModal">
+    <div class="modal-content">
+      <h3>🔒 Voting Not Open Yet</h3>
+      <p>The voting period has not started. Please check back later when elections officially begin!</p>
+      <p style="font-size: 14px; color: #94a3b8; margin-top: 10px;">Stay tuned for announcements.</p>
+      <button class="modal-close-btn" onclick="closeModal()">Got it!</button>
+    </div>
+  </div>
 
   <!-- Bottom Navigation -->
   <div class="bottom-buttons">
@@ -887,15 +1037,14 @@
   localStorage.setItem("splashShown", "true");
 
   setTimeout(() => {
-    splash.style.transition = "opacity 3s ease"; // ⬅ slow cinematic fade
+    splash.style.transition = "opacity 3s ease";
     splash.style.opacity = "0";
 
     setTimeout(() => {
       splash.remove();
-    }, 3000); // ⬅ EXACT match
-  }, 6000); // ⬅ stays visible long
+    }, 3000);
+  }, 6000);
 });
-
 
 </script>
  <!-- Firebase SDK -->
@@ -943,102 +1092,147 @@
   </script>
 
 <script>
-    // Campus Stars Data (Sample - replace with your actual student images)
+    // Election Candidates Data
     const campusStars = [
       {
         name: "Sarah Banda",
+        position: "Student Union President",
         program: "BSc Agriculture",
         year: "Year 3",
+        description: "Committed to improving student welfare and creating more opportunities for academic excellence. Together we can build a better LUANAR!",
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
         likes: 245
       },
       {
         name: "James Phiri",
+        position: "Vice President",
         program: "BSc Environmental Science",
         year: "Year 2",
+        description: "Fighting for transparent leadership and better campus facilities. Your voice matters, and I'm here to amplify it!",
         image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
         likes: 189
       },
       {
         name: "Grace Mwale",
+        position: "Social Welfare Director",
         program: "BSc Food Science",
         year: "Year 4",
+        description: "Dedicated to enhancing student life through social events, mental health support, and community building programs.",
         image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
         likes: 312
       },
       {
         name: "Patrick Mbewe",
+        position: "Religious Director",
         program: "BSc Agribusiness",
         year: "Year 1",
+        description: "Promoting spiritual growth and interfaith harmony on campus. Let's strengthen our faith community together!",
         image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
         likes: 156
       },
       {
         name: "Mercy Chirwa",
+        position: "Sports Director",
         program: "BSc Animal Science",
         year: "Year 3",
+        description: "Passionate about sports development and student fitness. Let's make LUANAR a sporting powerhouse!",
         image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop",
         likes: 278
       },
       {
         name: "Daniel Tembo",
+        position: "Academic Affairs Director",
         program: "BSc Forestry",
         year: "Year 2",
+        description: "Working to improve learning resources, library services, and student-lecturer relationships for academic success.",
         image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop",
         likes: 201
       },
       {
         name: "Chisomo Banda",
+        position: "Entertainment Director",
         program: "BSc Horticulture",
         year: "Year 4",
+        description: "Bringing joy and excitement to campus through quality entertainment and cultural events. Vote for more fun!",
         image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop",
         likes: 334
       },
       {
         name: "Michael Kadzamira",
+        position: "Secretary General",
         program: "BSc Aquaculture",
         year: "Year 1",
+        description: "Ensuring efficient communication and record keeping. Transparency and accountability are my priorities!",
         image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=400&fit=crop",
         likes: 167
       }
     ];
 
-    // Render Campus Stars//
+    // Voting is currently closed - change this to true when voting opens
+    const votingOpen = false;
+    const votingPageUrl = "voting.html"; // URL where voting actually happens
+
+    // Render Campus Stars
     const grid = document.getElementById('campusStarsGrid');
     
     campusStars.forEach((star, index) => {
       const card = document.createElement('div');
       card.className = 'star-card';
       card.innerHTML = `
-        <img loading="lazy" src="${star.image}" class="star-image">
+        <img loading="lazy" src="${star.image}" alt="${star.name}" class="star-image">
 
         <div class="star-info">
           <div class="star-name">${star.name}</div>
+          <div class="star-position">📌 ${star.position}</div>
           <div class="star-program">${star.program}</div>
           <div class="star-year">${star.year}</div>
+          <div class="star-description">"${star.description}"</div>
+          
           <div class="star-actions">
             <button class="action-btn like-btn" data-index="${index}">
               <span class="heart">❤️</span>
               <span class="like-text">Like</span>
             </button>
-            <button class="action-btn share-btn" onclick="shareProfile('${star.name}')">
+            <button class="action-btn share-btn" onclick="shareProfile('${star.name}', '${star.position}')">
               <span>📤</span>
               <span>Share</span>
             </button>
+            <div class="vote-btn-container">
+              <button class="action-btn vote-btn ${votingOpen ? 'active' : ''}" data-index="${index}" data-name="${star.name}">
+                <span>🗳️</span>
+                <span>Vote</span>
+              </button>
+            </div>
           </div>
+          
           <div class="like-count" id="likeCount${index}">${star.likes} likes</div>
         </div>
       `;
       grid.appendChild(card);
     });
 
-grid.addEventListener("click", e => {
-  const btn = e.target.closest(".like-btn");
-  if (!btn) return;
-  const index = btn.dataset.index;
-  toggleLike(btn, index);
-});
+    // Event delegation for like buttons
+    grid.addEventListener("click", e => {
+      const btn = e.target.closest(".like-btn");
+      if (!btn) return;
+      const index = btn.dataset.index;
+      toggleLike(btn, index);
+    });
 
+    // Event delegation for vote buttons
+    grid.addEventListener("click", e => {
+      const btn = e.target.closest(".vote-btn");
+      if (!btn) return;
+      
+      if (votingOpen) {
+        // Redirect to voting page with candidate info
+        const candidateName = btn.dataset.name;
+        window.location.href = `${votingPageUrl}?candidate=${encodeURIComponent(candidateName)}`;
+      } else {
+        // Show modal that voting is not open
+        openModal();
+      }
+    });
 
     // Like functionality
     function toggleLike(btn, index) {
@@ -1069,21 +1263,40 @@ grid.addEventListener("click", e => {
     }
 
     // Share functionality
-    function shareProfile(name) {
+    function shareProfile(name, position) {
+      const shareText = `Vote for ${name} for ${position} at LUANAR Student Elections 2026! 🗳️`;
+      
       if (navigator.share) {
         navigator.share({
-          title: `${name} - Campus Star`,
-          text: `Check out ${name} on StudyHub LUANAR!`,
+          title: `${name} - ${position}`,
+          text: shareText,
           url: window.location.href
         }).catch(() => {});
       } else {
         // Fallback - copy to clipboard
         const url = window.location.href;
-        navigator.clipboard.writeText(url).then(() => {
-          alert('Link copied to clipboard!');
+        const fullText = `${shareText}\n${url}`;
+        navigator.clipboard.writeText(fullText).then(() => {
+          alert('Link copied to clipboard! Share it with your friends!');
         });
       }
     }
+
+    // Modal functions
+    function openModal() {
+      document.getElementById('votingModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('votingModal').classList.remove('active');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('votingModal').addEventListener('click', (e) => {
+      if (e.target.id === 'votingModal') {
+        closeModal();
+      }
+    });
 
     // Load saved likes on page load
     window.addEventListener('load', () => {

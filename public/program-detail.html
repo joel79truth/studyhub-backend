@@ -5,431 +5,679 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Program Details – StudyHub LUANAR</title>
 <style>
-body {
-    font-family:'Segoe UI',sans-serif;
-    margin:0;
-    padding:0;
-    background:url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
-    background-size:cover;
-}
-header {
-    text-align:center;
-    padding:20px;
-    background: rgba(15,172,23,0.8);
-    color:white;
-    box-shadow:0 4px 8px rgba(0,0,0,0.2);
-}
-h1 { margin:0; font-size:2rem; }
-.container { max-width:900px; margin:20px auto; padding:0 20px; }
-.search-bar { width:300px; margin:20px auto; }
-.search-bar input {
-    width:100%;
-    padding:10px 15px;
-    border-radius:50px;
-    border:none;
-    outline:none;
-    font-size:14px;
-    background: rgba(255,255,255,0.9);
-    color:#1e1e1e;
-    box-shadow:0 6px 15px rgba(0,0,0,0.2);
-}
-#fileList { 
-    margin-top:20px; 
-    display:grid; 
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); 
-    gap:24px; 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Enhanced File Card */
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background:  
+              url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding: 30px 20px;
+  background: rgba(49, 230, 4, 0.479);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+h1 { 
+  margin: 0; 
+  font-size: 1.8rem;
+  background: linear-gradient(90deg, #f1f3f5, #f6f8fc, #f0f0f1);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Container */
+.container { 
+  max-width: 1200px; 
+  margin: 30px auto; 
+  padding: 0 20px; 
+}
+
+/* Search Bar */
+.search-bar { 
+  max-width: 500px; 
+  margin: 0 auto 25px; 
+  position: relative; 
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 15px 20px 15px 50px;
+  border-radius: 50px;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  outline: none;
+  font-size: 15px;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-bar input:focus {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+}
+
+.search-bar input::placeholder {
+  color: #94a3b8;
+}
+
+.search-bar::before {
+  content: '🔍';
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  pointer-events: none;
+}
+
+/* Filter Buttons */
+.filter-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 25px;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  color: #94a3b8;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #fff;
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-color: #3b82f6;
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* File Cards Grid */
+#fileList { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+  gap: 20px; 
+}
+
+/* File Card */
 .file-card { 
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border-radius:20px; 
-    padding:0;
-    box-shadow:0 10px 30px rgba(0,0,0,0.15), 0 3px 8px rgba(0,0,0,0.1); 
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(255,255,255,0.8);
+  background: rgba(30, 41, 59, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px; 
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
 .file-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #3498db, #2ecc71, #3498db);
-    background-size: 200% 100%;
-    animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 
 .file-card:hover { 
-    transform: translateY(-8px);
-    box-shadow:0 20px 40px rgba(0,0,0,0.2), 0 8px 16px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
 }
 
+.file-card:hover::before {
+  opacity: 1;
+}
+
+/* Preview Area */
+.file-card-preview {
+  width: 100%;
+  height: 180px;
+  background: rgba(15, 23, 42, 0.705);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.file-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.file-card:hover .file-card-preview img {
+  transform: scale(1.05);
+}
+
+.file-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #94a3b8;
+}
+
+.file-placeholder .file-icon {
+  font-size: 50px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+
+/* Card Header */
 .file-card-header {
-    padding: 24px 24px 16px 24px;
-    position: relative;
-}
-
-.file-icon-wrapper {
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.file-icon {
-    font-size: 28px;
+  padding: 20px 20px 12px 20px;
 }
 
 .file-card h3 { 
-    margin:0 0 12px 0; 
-    font-size:1.15rem; 
-    color:#1e1e1e;
-    font-weight: 600;
-    line-height: 1.4;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  margin: 0; 
+  font-size: 1.05rem; 
+  color: #fff;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
+/* Card Body */
 .file-card-body {
-    padding: 0 24px 20px 24px;
+  padding: 0 20px 20px 20px;
 }
 
 .file-info-grid {
-    display: grid;
-    gap: 10px;
-    margin-bottom: 20px;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .file-info-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: rgba(52, 152, 219, 0.08);
-    border-radius: 10px;
-    border-left: 3px solid #3498db;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 12px;
+  border-left: 3px solid #3b82f6;
 }
 
 .file-info-item.subject {
-    background: rgba(46, 204, 113, 0.08);
-    border-left-color: #2ecc71;
+  background: rgba(16, 185, 129, 0.1);
+  border-left-color: #10b981;
 }
 
 .file-info-label {
-    font-size: 0.75rem;
-    color: #666;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    min-width: 70px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 70px;
 }
 
 .file-info-value {
-    font-size: 0.9rem;
-    color: #333;
-    font-weight: 500;
-    flex: 1;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  font-weight: 500;
+  flex: 1;
 }
 
+/* Button Group */
 .button-group {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .file-card button { 
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    position: relative;
-    overflow: hidden;
-}
-
-.file-card button::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.file-card button:hover::before {
-    width: 300px;
-    height: 300px;
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .view-btn { 
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .view-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
-}
-
-.view-btn:active {
-    transform: translateY(0);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
 }
 
 .download-btn { 
-    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .download-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(46, 204, 113, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
 }
 
-.download-btn:active {
-    transform: translateY(0);
-}
-
+/* Back Button */
 .back-home-btn { 
-    position:fixed; 
-    top:20px; 
-    left:20px; 
-    display:flex; 
-    flex-direction:column; 
-    align-items:center; 
-    justify-content:center; 
-    width:55px; 
-    height:55px; 
-    background:#000; 
-    color:white; 
-    text-decoration:none; 
-    border-radius:50%; 
-    font-size:24px; 
-    box-shadow:0 6px 15px rgba(0,0,0,0.3); 
+  position: fixed; 
+  top: 20px; 
+  left: 20px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 50px; 
+  height: 50px; 
+  background: linear-gradient(135deg, #000000, #151618);
+  color: white; 
+  text-decoration: none; 
+  border-radius: 50%; 
+  font-size: 22px; 
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  z-index: 1000;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* Modal styles */
-#viewerModal {
-    position:fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.8);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-}
-#viewerModal iframe {
-    width:90%;
-    max-width:800px;
-    height:80%;
-    border:none;
-    border-radius:12px;
-    background:white;
-}
-#viewerModal .close-btn {
-    position:absolute;
-    top:20px;
-    right:20px;
-    font-size:30px;
-    color:white;
-    cursor:pointer;
+.back-home-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
 }
 
+/* Profile Button */
 #youButton {
   position: fixed;
-  top: 10px;
-  right: 10px;
+  top: 20px;
+  right: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 1000;
 }
 
-.profile-picture {
+#youButton .profile-picture {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid #161616;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+#youButton .profile-picture:hover {
+  transform: scale(1.1);
 }
 
 #youButton .btn-label {
   margin-top: 5px;
-  font-size: 14px;
-  font-weight: bold;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f3f6f8;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Toast Notification */
+#toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: none;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-weight: 600;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Modal */
+#viewerModal {
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+#viewerModal iframe {
+  width: 90%;
+  max-width: 900px;
+  height: 85%;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+#viewerModal .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239, 68, 68, 0.2);
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+#viewerModal .close-btn:hover {
+  background: rgba(239, 68, 68, 0.4);
+  transform: scale(1.1);
+}
+
+/* Empty State */
+.empty-state {
   text-align: center;
-  color: #333;
+  padding: 60px 20px;
+  color: #94a3b8;
+  font-size: 1.1rem;
+  grid-column: 1 / -1;
 }
 
-.filter-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 15px;
-}
-
-.filter-btn {
-    padding: 6px 14px;
-    font-size: 0.85rem;
-    border: none;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-    font-weight: 600;
-}
-
-.filter-btn:hover {
-    background: #2ecc71;
-    color: white;
-    transform: translateY(-2px);
-}
-
-.filter-btn.active {
-    background: #0fac17; /* Matches your header color */
-    color: white;
-    box-shadow: 0 4px 12px rgba(15, 172, 23, 0.4);
-}
-
-/* Preview Area for Images/Thumbnails */
-.file-card-preview {
-    width: 100%;
-    height: 160px; /* Adjust height as needed */
-    background: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.file-card-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* This makes images fill the space perfectly */
-    transition: transform 0.5s ease;
-}
-
-.file-card:hover .file-card-preview img {
-    transform: scale(1.1); /* Slight zoom on hover */
-}
-
-/* Placeholder for non-image files */
-.file-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    color: #666;
-}
-
-.file-placeholder .file-icon {
-    font-size: 50px; /* Large icon for documents */
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-}
-
-/* Responsive adjustments */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
-    #fileList {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 16px;
-    }
-    
-    .file-card {
-        border-radius: 16px;
-    }
-    
-    .file-card-header {
-        padding: 20px 20px 12px 20px;
-    }
-    
-    .file-card-body {
-        padding: 0 20px 16px 20px;
-    }
-    
-    .file-icon-wrapper {
-        width: 48px;
-        height: 48px;
-    }
-    
-    .file-icon {
-        font-size: 24px;
-    }
-}
+  header {
+    padding: 20px 15px;
+  }
 
-@media (max-width: 600px) {
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .container {
+    padding: 0 15px;
+    margin: 20px auto;
+  }
+
+  .search-bar {
+    margin-bottom: 20px;
+  }
+
+  .search-bar input {
+    padding: 13px 15px 13px 45px;
+    font-size: 14px;
+  }
+
+  .search-bar::before {
+    left: 15px;
+    font-size: 16px;
+  }
+
+  .filter-container {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  #fileList {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 15px;
+  }
+
+  .file-card-preview {
+    height: 160px;
+  }
+
+  .file-card-header {
+    padding: 16px 16px 10px 16px;
+  }
+
+  .file-card h3 {
+    font-size: 1rem;
+  }
+
+  .file-card-body {
+    padding: 0 16px 16px 16px;
+  }
+
+  .file-info-item {
+    padding: 8px 12px;
+  }
+
+  .file-card button {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  .back-home-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    top: 15px;
+    left: 15px;
+  }
+
+  #youButton {
+    top: 15px;
+    right: 15px;
+  }
+
   #youButton .profile-picture {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
   }
 
   #youButton .btn-label {
-    font-size: 12px;
+    font-size: 11px;
+  }
+
+  #viewerModal iframe {
+    width: 95%;
+    height: 80%;
+  }
+
+  #viewerModal .close-btn {
+    top: 10px;
+    right: 15px;
+    font-size: 35px;
+    width: 45px;
+    height: 45px;
   }
 }
 
-@media (max-width: 400px) {
-  #youButton {
-    top: 5px;
-    right: 5px;
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2rem;
   }
-  
+
+  #fileList {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .file-card-preview {
+    height: 140px;
+  }
+
+  .file-card-header {
+    padding: 14px 14px 8px 14px;
+  }
+
+  .file-card h3 {
+    font-size: 0.95rem;
+  }
+
+  .file-card-body {
+    padding: 0 14px 14px 14px;
+  }
+
+  .file-info-label {
+    font-size: 0.7rem;
+    min-width: 60px;
+  }
+
+  .file-info-value {
+    font-size: 0.85rem;
+  }
+
+  .file-card button {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    gap: 4px;
+  }
+
+  .filter-btn {
+    padding: 7px 14px;
+    font-size: 0.8rem;
+  }
+
+  .back-home-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    top: 12px;
+    left: 12px;
+  }
+
+  #youButton {
+    top: 12px;
+    right: 12px;
+  }
+
   #youButton .profile-picture {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
+    border-width: 2px;
   }
 
   #youButton .btn-label {
     font-size: 10px;
   }
 }
+
+/* Disable heavy effects on mobile for performance */
+@media (max-width: 768px) {
+  * {
+    animation: none !important;
+  }
+
+  body {
+    backdrop-filter: none !important;
+  }
+
+  header,
+  .search-bar input,
+  .filter-btn,
+  .file-card {
+    backdrop-filter: none !important;
+  }
+
+  /* Keep only essential transitions */
+  .file-card,
+  .filter-btn,
+  .back-home-btn,
+  #youButton .profile-picture,
+  .file-card button {
+    transition: transform 0.15s ease !important;
+  }
+
+  .file-card-preview img {
+    transition: none !important;
+  }
+
+  .file-card::before {
+    display: none;
+  }
+}
 </style>
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
 <script>
-window.dataLayer = window.dataLayer || [];
-function gtag() { dataLayer.push(arguments); }
-gtag('js', new Date());
-gtag('config', 'G-0LTZS1S9W6');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RP8NY538W2');
 </script>
 
 </head>
 <body>
 
-<header><h1 id="programTitle">Program Details</h1></header>
+<header>
+  <h1 id="programTitle">Program Details</h1>
+</header>
+
 <a href="program.html" class="back-home-btn" aria-label="Back to Programs">🏠</a>
 
 <div class="profile-container" id="youButton">
@@ -445,40 +693,31 @@ gtag('config', 'G-0LTZS1S9W6');
 <div class="container">
 
   <div class="filter-container">
-  <button class="filter-btn active" onclick="filterBySemester('all', this)">All</button>
-  <button class="filter-btn" onclick="filterBySemester('1', this)">Sem 1</button>
-  <button class="filter-btn" onclick="filterBySemester('2', this)">Sem 2</button>
-  <button class="filter-btn" onclick="filterBySemester('3', this)">Sem 3</button>
-  <button class="filter-btn" onclick="filterBySemester('4', this)">Sem 4</button>
-  <button class="filter-btn" onclick="filterBySemester('5', this)">Sem 5</button>
-  <button class="filter-btn" onclick="filterBySemester('6', this)">Sem 6</button>
-  <button class="filter-btn" onclick="filterBySemester('7', this)">Sem 7</button>
-</div>
+    <button class="filter-btn active" onclick="filterBySemester('all', this)">All</button>
+    <button class="filter-btn" onclick="filterBySemester('1', this)">Sem 1</button>
+    <button class="filter-btn" onclick="filterBySemester('2', this)">Sem 2</button>
+    <button class="filter-btn" onclick="filterBySemester('3', this)">Sem 3</button>
+    <button class="filter-btn" onclick="filterBySemester('4', this)">Sem 4</button>
+    <button class="filter-btn" onclick="filterBySemester('5', this)">Sem 5</button>
+    <button class="filter-btn" onclick="filterBySemester('6', this)">Sem 6</button>
+    <button class="filter-btn" onclick="filterBySemester('7', this)">Sem 7</button>
+  </div>
 
   <div class="search-bar">
-    <input type="text" id="fileSearch" placeholder="Search files by subject or name...">
+    <input type="text" id="fileSearch" placeholder="Search files by subject or name..." autocomplete="off">
   </div>
+
   <div id="fileList"></div>
 </div>
 
 <!-- Modal for viewing -->
 <div id="viewerModal">
-    <span class="close-btn" onclick="closeViewer()">×</span>
-    <iframe id="viewerFrame"></iframe>
+  <span class="close-btn" onclick="closeViewer()">×</span>
+  <iframe id="viewerFrame"></iframe>
 </div>
-<div id="toast" style="
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    display: none;
-    padding: 12px 20px;
-    background: #2ecc71;
-    color: white;
-    font-weight: bold;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    z-index: 9999;
-"></div>
+
+<!-- Toast Notification -->
+<div id="toast"></div>
 
 <script>
 // Get program name from URL
@@ -487,6 +726,13 @@ const programName = (params.get("program") || "").trim();
 document.getElementById("programTitle").textContent = programName || "Program Details";
 
 let allFiles = [];
+let currentSemester = 'all';
+
+// Load saved profile picture
+window.addEventListener("load", () => {
+  const savedPic = localStorage.getItem("userProfilePic");
+  if (savedPic) document.getElementById("youProfilePic").src = savedPic;
+});
 
 // Get file icon based on extension
 function getFileIcon(filename) {
@@ -519,109 +765,107 @@ async function loadFiles() {
     displayFiles(allFiles);
   } catch (err) {
     console.error(err);
-    document.getElementById("fileList").innerHTML = "<p>Error loading files.</p>";
+    document.getElementById("fileList").innerHTML = '<div class="empty-state">❌ Error loading files.</div>';
   }
 }
 
-let currentSemester = 'all';
-
+// Filter by semester
 function filterBySemester(semester, btn) {
-    // 1. Update UI: Change active button class
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    // 2. Set the global current semester
-    currentSemester = semester;
-    
-    // 3. Trigger filtering
-    applyFilters();
+  // Update UI: Change active button class
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  // Set the global current semester
+  currentSemester = semester;
+  
+  // Trigger filtering
+  applyFilters();
 }
 
+// Apply all filters (semester + search)
 function applyFilters() {
-    const searchQuery = document.getElementById("fileSearch").value.trim().toLowerCase();
+  const searchQuery = document.getElementById("fileSearch").value.trim().toLowerCase();
+  
+  const filtered = allFiles.filter(f => {
+    // Check Semester Match
+    const semMatch = currentSemester === 'all' || 
+                     f.semester.toString().toLowerCase().includes(currentSemester.toLowerCase());
     
-    const filtered = allFiles.filter(f => {
-        // Check Semester Match
-        // This logic handles if f.semester is "Sem 1", "1", or "Semester 1"
-        const semMatch = currentSemester === 'all' || 
-                         f.semester.toString().toLowerCase().includes(currentSemester.toLowerCase());
-        
-        // Check Search Match
-        const searchMatch = f.filename.toLowerCase().includes(searchQuery) || 
-                            f.subject.toLowerCase().includes(searchQuery);
-        
-        return semMatch && searchMatch;
-    });
+    // Check Search Match
+    const searchMatch = f.filename.toLowerCase().includes(searchQuery) || 
+                        f.subject.toLowerCase().includes(searchQuery);
     
-    displayFiles(filtered);
+    return semMatch && searchMatch;
+  });
+  
+  displayFiles(filtered);
 }
 
-// Update your existing Search Event Listener to use the new applyFilters function
-document.getElementById("fileSearch").addEventListener("input", applyFilters);
+// Get file preview HTML
+function getFilePreview(filename, filePath) {
+  const ext = filename.split('.').pop().toLowerCase();
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+  
+  // If it's an image file, show the actual image
+  if (imageExtensions.includes(ext)) {
+    return `<img src="${filePath}" alt="${filename}" onerror="this.parentElement.innerHTML=renderPlaceholder('${filename}')">`;
+  } 
+  
+  // Otherwise, show a stylized placeholder with the icon
+  return renderPlaceholder(filename);
+}
+
+// Render placeholder for non-image files
+function renderPlaceholder(filename) {
+  const icon = getFileIcon(filename);
+  return `
+    <div class="file-placeholder">
+      <div class="file-icon">${icon}</div>
+    </div>
+  `;
+}
 
 // Display files
-// Helper to decide what to show in the preview area
-function getFilePreview(filename, filePath) {
-    const ext = filename.split('.').pop().toLowerCase();
-    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-    
-    // If it's an image file, show the actual image
-    if (imageExtensions.includes(ext)) {
-        return `<img src="${filePath}" alt="${filename}" onerror="this.parentElement.innerHTML=renderPlaceholder('${filename}')">`;
-    } 
-    
-    // Otherwise, show a stylized placeholder with the icon
-    return renderPlaceholder(filename);
-}
-
-// Helper to render the placeholder when it's not an image
-function renderPlaceholder(filename) {
-    const icon = getFileIcon(filename);
-    return `
-        <div class="file-placeholder">
-            <div class="file-icon">${icon}</div>
-        </div>
-    `;
-}
-
 function displayFiles(files) {
-    const container = document.getElementById("fileList");
-    if (!files.length) {
-        container.innerHTML = "<p style='color:white; text-align:center;'>No files available for this selection.</p>";
-        return;
-    }
+  const container = document.getElementById("fileList");
+  
+  if (!files.length) {
+    container.innerHTML = '<div class="empty-state">📚 No files available for this selection.</div>';
+    return;
+  }
 
-    container.innerHTML = files.map(f => {
-        const filePath = f.url.startsWith("http") ? f.url : (f.url.startsWith("/") ? f.url.slice(1) : f.url);
-        
-        return `
-            <div class="file-card">
-                <div class="file-card-preview">
-                    ${getFilePreview(f.filename, filePath)}
-                </div>
-                <div class="file-card-header">
-                    <h3>${f.filename}</h3>
-                </div>
-                <div class="file-card-body">
-                    <div class="file-info-grid">
-                        <div class="file-info-item">
-                            <div class="file-info-label">Semester</div>
-                            <div class="file-info-value">${f.semester}</div>
-                        </div>
-                        <div class="file-info-item subject">
-                            <div class="file-info-label">course</div>
-                            <div class="file-info-value">${f.subject}</div>
-                        </div>
-                    </div>
-                    <div class="button-group">
-                        <button class="view-btn" onclick="viewFile('${filePath}')">👁️ View</button>
-                        <button class="download-btn" onclick="downloadFile('${filePath}')">⬇️ Download</button>
-                    </div>
-                </div>
+  container.innerHTML = files.map(f => {
+    const filePath = f.url.startsWith("http") ? f.url : (f.url.startsWith("/") ? f.url.slice(1) : f.url);
+    
+    return `
+      <div class="file-card">
+        <div class="file-card-preview">
+          ${getFilePreview(f.filename, filePath)}
+        </div>
+        <div class="file-card-header">
+          <h3>${f.filename}</h3>
+        </div>
+        <div class="file-card-body">
+          <div class="file-info-grid">
+            <div class="file-info-item">
+              <div class="file-info-label">Semester</div>
+              <div class="file-info-value">${f.semester}</div>
             </div>
-        `;
-    }).join('');
+            <div class="file-info-item subject">
+              <div class="file-info-label">Course</div>
+              <div class="file-info-value">${f.subject}</div>
+            </div>
+          </div>
+          <div class="button-group">
+            <button class="view-btn" onclick="viewFile('${filePath}')">👁️ View</button>
+            <button class="download-btn" onclick="downloadFile('${filePath}')">⬇️ Download</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
+
 // Open file in new tab
 function viewFile(filePath) {
   window.open(filePath, "_blank");
@@ -635,47 +879,43 @@ function downloadFile(url) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  
+  showToast("Download started!");
+}
+
+// Close viewer modal
+function closeViewer() {
+  document.getElementById("viewerModal").style.display = "none";
+}
+
+// Show toast notification
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+  setTimeout(() => toast.style.display = "none", 3000);
 }
 
 // Search files
-document.getElementById("fileSearch").addEventListener("input", function() {
-  const query = this.value.trim().toLowerCase();
-  const filtered = allFiles.filter(f =>
-    f.filename.toLowerCase().includes(query) ||
-    f.subject.toLowerCase().includes(query) ||
-    f.program?.toLowerCase().includes(query)
-  );
-  displayFiles(filtered);
-});
+document.getElementById("fileSearch").addEventListener("input", applyFilters);
 
-// Initialize
-loadFiles();
 // Request browser notification permission
 if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission();
+  Notification.requestPermission();
 }
 
 function showBrowserNotification(program, semester, filename) {
-    if (Notification.permission === "granted") {
-        new Notification("New file uploaded!", {
-            body: `${program} – ${semester} – ${filename}`,
-            icon: "/icon.png" // optional, you can add your logo path
-        });
-    }
+  if (Notification.permission === "granted") {
+    new Notification("New file uploaded!", {
+      body: `${program} – ${semester} – ${filename}`,
+      icon: "/icon.png"
+    });
+  }
 }
 
-function showToast(message) {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.style.display = "block";
-    setTimeout(() => toast.style.display = "none", 5000);
-}
-
-
-    
+// Initialize
+loadFiles();
 </script>
-
-
 
 </body>
 </html>
