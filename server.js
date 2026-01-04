@@ -8,8 +8,19 @@ const { createClient } = require("@supabase/supabase-js");
 const { google } = require("googleapis");
 const { Readable } = require("stream");
 const fs = require("fs");
+const fetch = require("node-fetch"); // Add this if not already
 
 dotenv.config();
+
+async function requireAuth(req, res) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new Error("Unauthorized");
+  }
+  const token = authHeader.split(" ")[1];
+  return await admin.auth().verifyIdToken(token);
+}
+
 
 /* ===== LOG ENV VARS ===== */
 console.log("FIREBASE:", !!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64);
@@ -43,26 +54,38 @@ const supabase = createClient(
 );
 
 /* ===== GOOGLE DRIVE (OAuth 2.0 via ENV) ===== */
+
+if (!process.env.GOOGLE_REFRESH_TOKEN) {
+  throw new Error("❌ GOOGLE_REFRESH_TOKEN missing");
+}
+
 if (!process.env.OAUTH_CLIENT_JSON) {
   throw new Error("❌ OAUTH_CLIENT_JSON missing");
 }
-if (!process.env.GOOGLE_OAUTH_TOKENS) {
-  throw new Error("❌ GOOGLE_OAUTH_TOKENS missing");
-}
 
 const oauthCreds = JSON.parse(process.env.OAUTH_CLIENT_JSON);
-const tokens = JSON.parse(process.env.GOOGLE_OAUTH_TOKENS);
 
 const { client_id, client_secret, redirect_uris } =
   oauthCreds.installed || oauthCreds.web;
 
+// ✅ CREATE auth FIRST
 const auth = new google.auth.OAuth2(
   client_id,
   client_secret,
   redirect_uris[0]
 );
 
-auth.setCredentials(tokens);
+// ✅ SET credentials ONCE
+auth.setCredentials({
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+});
+
+// optional debug
+auth.on("tokens", (tokens) => {
+  if (tokens.access_token) {
+    console.log("✅ Google Drive access token refreshed");
+  }
+});
 
 const drive = google.drive({ version: "v3", auth });
 
@@ -107,6 +130,19 @@ app.post("/save-token", async (req, res) => {
 
 /* ===== UPLOAD ===== */
 app.post("/upload", upload.single("file"), async (req, res) => {
+
+  
+/* ===== AUTH MIDDLEWARE ===== */
+const authHeader = req.headers.authorization;
+if (!authHeader?.startsWith("Bearer ")) {
+  return res.status(401).json({ message: "Unauthorized" });
+}
+
+const idToken = authHeader.split(" ")[1];
+const decoded = await admin.auth().verifyIdToken(idToken);
+
+console.log("DECODED TOKEN:", decoded);
+
   try {
     const { program, semester, subject } = req.body;
     const file = req.file;
@@ -162,16 +198,18 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     const pathValue = USE_GDRIVE ? storage_ref : filePath;
 
     const { error: dbError } = await supabase.from("files").insert([{
-      id,
-      program,
-      semester,
-      subject,
-      filename: file.originalname,
-      path: pathValue,
-      url: publicUrl,
-      storage_type,
-      uploaded_at: new Date().toISOString(),
-    }]);
+  id,
+  program,
+  semester,
+  subject,
+  email: decoded.email || "anonymous",
+  filename: file.originalname,
+  path: pathValue,
+  url: publicUrl,
+  storage_type,
+  uploaded_at: new Date().toISOString(),
+}]);
+
     if (dbError) throw dbError;
 
    /* ===== PUSH NOTIFICATIONS ===== */
@@ -253,6 +291,39 @@ app.get("/api/metadata", async (req, res) => {
   if (error) return res.status(500).json({ message: "Fetch failed" });
   res.json(data);
 });
+
+
+/* ===== GPT CHAT ENDPOINT ===== */
+app.post("/api/chat", async (req, res) => {
+  const { message } = req.body;
+  if (!message) return res.status(400).json({ reply: "No message provided." });
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are a helpful AI tutor specialized in academic subjects: math, science, writing, agriculture, research." },
+          { role: "user", content: message }
+        ],
+        temperature: 0.7
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.choices[0].message.content;
+    res.json({ reply });
+  } catch (err) {
+    console.error("GPT API error:", err);
+    res.status(500).json({ reply: "Error connecting to GPT API" });
+  }
+});
+
 
 /* ===== START SERVER ===== */
 const PORT = process.env.PORT || 3000;

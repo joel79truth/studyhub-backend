@@ -177,8 +177,8 @@
     <label for="subject">Subject:</label>
     <input type="text" id="subject" name="subject" required placeholder="e.g., Biology, Physics" />
 
-    <label for="email">Email (optional):</label>
-    <input type="email" id="email" name="email" placeholder="Enter your email (optional)" />
+    <label>Email (logged in as):</label>
+<input type="email" id="email" disabled />
 
     <label for="file">Choose File (.pdf or .pptx):</label>
     <input type="file" id="file" name="file" accept=".pdf,.pptx" required />
@@ -226,6 +226,13 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = "login.html";
     return;
   }
+console.log("USER PROVIDER:", auth.currentUser.providerData);
+
+
+  if (user?.email) {
+  document.getElementById("email").value = user.email;
+}
+
 
   try {
     // Register service worker
@@ -264,6 +271,7 @@ onAuthStateChanged(auth, async (user) => {
         });
       }
     });
+    
 
   } catch (err) {
     console.error("FCM registration failed:", err);

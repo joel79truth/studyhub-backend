@@ -7,79 +7,402 @@
   <title>StudyHub LUANAR – Login</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     * {
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
     }
+
     body {
-      background: linear-gradient(135deg, #0077ff, #00c6ff);
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      color: #333;
+      min-height: 100vh;
+      color: #1e293b;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
     }
+
+    /* Subtle background pattern */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+    }
+
     .card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 30px 25px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      width: 92%;
-      max-width: 420px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 16px;
+      padding: 48px 40px;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
       text-align: center;
-      animation: fadeIn 0.5s ease;
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(10px);
     }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
+    .logo-container {
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+    }
+
     h2 {
-      margin-bottom: 12px;
-      font-weight: 600;
-      color: #003366;
+      font-size: 28px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
     }
-    p {
-      margin-bottom: 20px;
-      color: #666;
+
+    .subtitle {
+      font-size: 15px;
+      color: #64748b;
+      margin-bottom: 32px;
+      line-height: 1.6;
     }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 24px 0;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .divider span {
+      padding: 0 16px;
+    }
+
+    /* Buttons */
     button {
-      background: #0077ff;
+      background: #0f172a;
       color: #fff;
       border: none;
       border-radius: 10px;
-      padding: 12px 18px;
+      padding: 14px 24px;
       width: 100%;
-      font-size: 16px;
+      font-size: 15px;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.3s;
-      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
+
     button:hover {
-      background: #005fd4;
+      background: #1e293b;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
     }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .google-btn {
+      background: #fff;
+      color: #1e293b;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-weight: 600;
+    }
+
+    .google-btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .google-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .form-label .required {
+      color: #ef4444;
+    }
+
     select, input {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 12px 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
       font-size: 15px;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      background: #fff;
     }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    input::placeholder {
+      color: #94a3b8;
+    }
+
+    .error-message {
+      color: #ef4444;
+      font-size: 13px;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    input.error, select.error {
+      border-color: #ef4444;
+    }
+
+    /* Hidden class */
     .hidden {
       display: none;
     }
+
+    /* Footer */
     .footer {
-      margin-top: 15px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e2e8f0;
       font-size: 13px;
-      color: #888;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-links a {
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #3b82f6;
+    }
+
+    /* Loading State */
+    .loading {
+      pointer-events: none;
+      position: relative;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Info Badge */
+    .info-badge {
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: start;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .info-badge-icon {
+      color: #3b82f6;
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .info-badge-text {
+      font-size: 13px;
+      color: #1e40af;
+      line-height: 1.5;
+    }
+
+    /* Progress Steps */
+    .steps {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .step {
+      width: 40px;
+      height: 4px;
+      background: #e2e8f0;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .step.active {
+      background: #3b82f6;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 600px) {
+      .card {
+        padding: 36px 24px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .logo {
+        width: 56px;
+        height: 56px;
+        font-size: 28px;
+      }
+
+      .footer {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      body {
+        padding: 15px;
+      }
+
+      .card {
+        padding: 28px 20px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      button {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+
+      select, input {
+        padding: 11px 14px;
+        font-size: 14px;
+      }
     }
   </style>
-
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
@@ -93,45 +416,129 @@
 </head>
 <body>
 
-  <!-- Step 1: Google Sign-In -->
-  <div class="card" id="loginCard">
-    <h2>Welcome to StudyHub LUANAR</h2>
-    <p>Sign in with your Google account to continue</p>
-    <button id="googleSignInBtn">Continue with Google</button>
-    <div class="footer">© 2025 StudyHub LUANAR</div>
-  </div>
+  <div class="container">
+    <!-- Step 1: Google Sign-In -->
+    <div class="card" id="loginCard">
+      <div class="steps">
+        <div class="step active"></div>
+        <div class="step"></div>
+      </div>
 
-  <!-- Step 2: User Details -->
-  <div class="card hidden" id="detailsCard">
-    <h2>Enter Your Details</h2>
+      <div class="logo-container">
+        <div class="logo">📚</div>
+        <h2>StudyHub LUANAR</h2>
+        <p class="subtitle">Your academic resource center for excellence</p>
+      </div>
 
-    <input type="text" id="program" placeholder="Enter Program (e.g., Bachelor of Science)" />
-    <input type="text" id="semester" placeholder="Enter Semester (e.g., Semester 1)" />
+      <button class="google-btn" id="googleSignInBtn">
+        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
 
-    <select id="year">
-      <option value="">Select Year of Study</option>
-      <option value="Year 1">Year 1</option>
-      <option value="Year 2">Year 2</option>
-      <option value="Year 3">Year 3</option>
-      <option value="Year 4">Year 4</option>
-    </select>
+      <div class="footer">
+        <span>© 2026 StudyHub LUANAR</span>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
 
-    <select id="role">
-      <option value="">Select Role</option>
-      <option value="Student">Student</option>
-      <option value="Lecturer">Lecturer</option>
-    </select>
+    <!-- Step 2: User Details -->
+    <div class="card hidden" id="detailsCard">
+      <div class="steps">
+        <div class="step active"></div>
+        <div class="step active"></div>
+      </div>
 
-    <input type="password" id="lectureCode" class="hidden" placeholder="Enter Lecturer Code" />
+      <div class="logo-container">
+        <h2>Complete Your Profile</h2>
+        <p class="subtitle">Help us personalize your experience</p>
+      </div>
 
-    <button id="continueBtn">Continue</button>
+      <div class="info-badge">
+        <div class="info-badge-icon">ℹ️</div>
+        <div class="info-badge-text">
+          This information will help us provide you with relevant academic resources and connect you with your peers.
+        </div>
+      </div>
+
+      <form id="detailsForm">
+        <div class="form-group">
+          <label class="form-label">Program <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="program" 
+            placeholder="e.g., Bachelor of Science in Agriculture"
+            required
+          />
+          <div class="error-message" id="programError">Program must start with Bachelor, Diploma, Masters, or Basics</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Semester <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="semester" 
+            placeholder="e.g., Semester 1"
+            required
+          />
+          <div class="error-message" id="semesterError">Please enter your current semester</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Year of Study <span class="required">*</span></label>
+          <select id="year" required>
+            <option value="">Select your year</option>
+            <option value="Year 1">Year 1</option>
+            <option value="Year 2">Year 2</option>
+            <option value="Year 3">Year 3</option>
+            <option value="Year 4">Year 4</option>
+          </select>
+          <div class="error-message" id="yearError">Please select your year of study</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Role <span class="required">*</span></label>
+          <select id="role" required>
+            <option value="">Select your role</option>
+            <option value="Student">Student</option>
+            <option value="Lecturer">Lecturer</option>
+          </select>
+          <div class="error-message" id="roleError">Please select your role</div>
+        </div>
+
+        <div class="form-group hidden" id="lecturerCodeGroup">
+          <label class="form-label">Lecturer Authorization Code <span class="required">*</span></label>
+          <input 
+            type="password" 
+            id="lectureCode" 
+            placeholder="Enter authorization code"
+          />
+          <div class="error-message" id="codeError">Invalid authorization code</div>
+        </div>
+
+        <button type="submit" id="continueBtn">Complete Setup</button>
+      </form>
+
+      <div class="footer">
+        <span>Step 2 of 2</span>
+      </div>
+    </div>
   </div>
 
   <script type="module">
     // Import Firebase SDKs
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-
+    import { getFirestore, doc, setDoc, serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+ 
     // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
@@ -148,13 +555,29 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
 
+    // Elements
     const loginCard = document.getElementById("loginCard");
     const detailsCard = document.getElementById("detailsCard");
     const googleSignInBtn = document.getElementById("googleSignInBtn");
+    const detailsForm = document.getElementById("detailsForm");
     const continueBtn = document.getElementById("continueBtn");
-    const lectureCodeInput = document.getElementById("lectureCode");
     const roleSelect = document.getElementById("role");
+    const lecturerCodeGroup = document.getElementById("lecturerCodeGroup");
+    const lectureCodeInput = document.getElementById("lectureCode");
+
+    // Form inputs
+    const programInput = document.getElementById("program");
+    const semesterInput = document.getElementById("semester");
+    const yearSelect = document.getElementById("year");
+
+    // Error messages
+    const programError = document.getElementById("programError");
+    const semesterError = document.getElementById("semesterError");
+    const yearError = document.getElementById("yearError");
+    const roleError = document.getElementById("roleError");
+    const codeError = document.getElementById("codeError");
 
     // Auto redirect if already logged in
     onAuthStateChanged(auth, (user) => {
@@ -165,61 +588,205 @@
 
     // Google Sign-In
     googleSignInBtn.addEventListener("click", async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
+      googleSignInBtn.disabled = true;
+      googleSignInBtn.classList.add('loading');
+      googleSignInBtn.textContent = '';
 
-        const storedDetails = localStorage.getItem("userDetails");
-        if (storedDetails) {
-          window.location.href = "index.html";
-        } else {
-          loginCard.classList.add("hidden");
-          detailsCard.classList.remove("hidden");
-        }
+      try {
+        
+
+       const result = await signInWithPopup(auth, provider);
+const user = result.user;
+
+// Save basic auth data in Firestore
+await setDoc(
+  doc(db, "users", user.uid),
+  {
+    uid: user.uid,
+    email: user.email,
+    name: user.displayName,
+    photoURL: user.photoURL,
+    provider: "google",
+    createdAt: serverTimestamp()
+  },
+  { merge: true }
+);
+
+const storedDetails = localStorage.getItem("userDetails");
+if (storedDetails) {
+  window.location.href = "index.html";
+} else {
+  loginCard.classList.add("hidden");
+  detailsCard.classList.remove("hidden");
+}
+
       } catch (error) {
-        alert("Login failed: " + error.message);
+        console.error("Login error:", error);
+        alert("Login failed. Please try again.");
+        googleSignInBtn.disabled = false;
+        googleSignInBtn.classList.remove('loading');
+        googleSignInBtn.innerHTML = `
+          <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        `;
       }
     });
 
     // Show lecturer code input if lecturer selected
     roleSelect.addEventListener("change", () => {
       if (roleSelect.value === "Lecturer") {
-        lectureCodeInput.classList.remove("hidden");
+        lecturerCodeGroup.classList.remove("hidden");
+        lectureCodeInput.required = true;
       } else {
-        lectureCodeInput.classList.add("hidden");
+        lecturerCodeGroup.classList.add("hidden");
+        lectureCodeInput.required = false;
+        lectureCodeInput.value = "";
       }
     });
 
-    // Continue Button
-    continueBtn.addEventListener("click", () => {
-      const program = document.getElementById("program").value.trim();
-      const semester = document.getElementById("semester").value.trim();
-      const year = document.getElementById("year").value;
-      const role = document.getElementById("role").value;
-      const lectureCode = document.getElementById("lectureCode").value.trim();
+    // Clear errors on input
+    [programInput, semesterInput, yearSelect, roleSelect, lectureCodeInput].forEach(input => {
+      input.addEventListener('input', () => {
+        input.classList.remove('error');
+        const errorId = input.id + 'Error';
+        const errorElement = document.getElementById(errorId);
+        if (errorElement) {
+          errorElement.classList.remove('show');
+        }
+      });
+    });
 
+    // Form validation
+    function validateForm() {
+      let isValid = true;
+
+      // Reset errors
+      [programError, semesterError, yearError, roleError, codeError].forEach(el => {
+        el.classList.remove('show');
+      });
+      [programInput, semesterInput, yearSelect, roleSelect, lectureCodeInput].forEach(el => {
+        el.classList.remove('error');
+      });
+
+      const program = programInput.value.trim();
+      const semester = semesterInput.value.trim();
+      const year = yearSelect.value;
+      const role = roleSelect.value;
+      const lectureCode = lectureCodeInput.value.trim();
+
+      // Validate program
       const validStartWords = ["bachelor", "diploma", "masters", "basics"];
       const programStart = program.toLowerCase().split(" ")[0];
 
-      if (!program || !semester || !year || !role) {
-        alert("Please fill in all fields.");
-        return;
+      if (!program) {
+        programInput.classList.add('error');
+        programError.textContent = "Please enter your program";
+        programError.classList.add('show');
+        isValid = false;
+      } else if (!validStartWords.includes(programStart)) {
+        programInput.classList.add('error');
+        programError.classList.add('show');
+        isValid = false;
       }
 
-      if (!validStartWords.includes(programStart)) {
-        alert("Program must start with Bachelor, Diploma, Masters, or Basics.");
-        return;
+      // Validate semester
+      if (!semester) {
+        semesterInput.classList.add('error');
+        semesterError.classList.add('show');
+        isValid = false;
       }
 
+      // Validate year
+      if (!year) {
+        yearSelect.classList.add('error');
+        yearError.classList.add('show');
+        isValid = false;
+      }
+
+      // Validate role
+      if (!role) {
+        roleSelect.classList.add('error');
+        roleError.classList.add('show');
+        isValid = false;
+      }
+
+      // Validate lecturer code
       if (role === "Lecturer" && lectureCode !== "7907") {
-        alert("Incorrect lecturer code.");
+        lectureCodeInput.classList.add('error');
+        codeError.classList.add('show');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    // Continue Button
+    detailsForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if (!validateForm()) {
         return;
       }
 
-      const userDetails = { program, semester, year, role };
-      localStorage.setItem("userDetails", JSON.stringify(userDetails));
+      continueBtn.disabled = true;
+      continueBtn.classList.add('loading');
+      continueBtn.textContent = '';
 
-      window.location.href = "index.html";
+      const userDetails = {
+        program: programInput.value.trim(),
+        semester: semesterInput.value.trim(),
+        year: yearSelect.value,
+        role: roleSelect.value
+      };
+
+      detailsForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!validateForm()) return;
+
+  continueBtn.disabled = true;
+  continueBtn.classList.add('loading');
+  continueBtn.textContent = '';
+
+  const authUser = auth.currentUser;
+  if (!authUser) {
+    alert("User not authenticated");
+    return;
+  }
+
+  await setDoc(
+    doc(db, "users", authUser.uid),
+    {
+      program: programInput.value.trim(),
+      semester: semesterInput.value.trim(),
+      year: yearSelect.value,
+      role: roleSelect.value,
+      profileCompleted: true,
+      updatedAt: serverTimestamp()
+    },
+    { merge: true }
+  );
+
+  localStorage.setItem("userDetails", JSON.stringify({
+    program: programInput.value.trim(),
+    semester: semesterInput.value.trim(),
+    year: yearSelect.value,
+    role: roleSelect.value
+  }));
+
+  window.location.href = "index.html";
+});
+
+
+      // Simulate loading for better UX
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 500);
     });
   </script>
 
