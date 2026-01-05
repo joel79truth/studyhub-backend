@@ -226,7 +226,10 @@ if (tokenError) {
     tokens,
     notification: {
       title: "📚 New Notes Uploaded",
-      body: `${subject} notes for Semester ${semester} available`,
+      
+      body: `${program}
+
+      ${subject} notes for Semester ${semester} available`,
     },
     data: {
       program,
