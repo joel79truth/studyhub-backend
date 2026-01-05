@@ -556,7 +556,33 @@ from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
+ const messaging = getMessaging(app);
 
+    async function registerForNotifications() {
+      if (!("serviceWorker" in navigator)) return;
+
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") return;
+
+      const registration = await navigator.serviceWorker.ready;
+
+      const token = await getToken(messaging, {
+        vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
+        serviceWorkerRegistration: registration
+      });
+
+      if (!token) return;
+
+      console.log("📨 FCM TOKEN:", token);
+
+      await fetch("/save-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token })
+      });
+    }
+
+    window.addEventListener("load", registerForNotifications);
     // Elements
     const loginCard = document.getElementById("loginCard");
     const detailsCard = document.getElementById("detailsCard");
@@ -726,32 +752,9 @@ if (storedDetails) {
     }
 
     // Continue Button
-    detailsForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      if (!validateForm()) {
-        return;
-      }
-
-      continueBtn.disabled = true;
-      continueBtn.classList.add('loading');
-      continueBtn.textContent = '';
-
-      const userDetails = {
-        program: programInput.value.trim(),
-        semester: semesterInput.value.trim(),
-        year: yearSelect.value,
-        role: roleSelect.value
-      };
-
-      detailsForm.addEventListener("submit", async (e) => {
+    detailsForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   if (!validateForm()) return;
-
-  continueBtn.disabled = true;
-  continueBtn.classList.add('loading');
-  continueBtn.textContent = '';
 
   const authUser = auth.currentUser;
   if (!authUser) {
@@ -759,35 +762,40 @@ if (storedDetails) {
     return;
   }
 
-  await setDoc(
-    doc(db, "users", authUser.uid),
-    {
+  continueBtn.disabled = true;
+  continueBtn.classList.add("loading");
+
+  try {
+    await setDoc(
+      doc(db, "users", authUser.uid),
+      {
+        program: programInput.value.trim(),
+        semester: semesterInput.value.trim(),
+        year: yearSelect.value,
+        role: roleSelect.value,
+        profileCompleted: true,
+        updatedAt: serverTimestamp()
+      },
+      { merge: true }
+    );
+
+    localStorage.setItem("userDetails", JSON.stringify({
       program: programInput.value.trim(),
       semester: semesterInput.value.trim(),
       year: yearSelect.value,
-      role: roleSelect.value,
-      profileCompleted: true,
-      updatedAt: serverTimestamp()
-    },
-    { merge: true }
-  );
+      role: roleSelect.value
+    }));
 
-  localStorage.setItem("userDetails", JSON.stringify({
-    program: programInput.value.trim(),
-    semester: semesterInput.value.trim(),
-    year: yearSelect.value,
-    role: roleSelect.value
-  }));
+    window.location.href = "index.html";
 
-  window.location.href = "index.html";
+  } catch (error) {
+    alert(error.code + " — " + error.message);
+    continueBtn.disabled = false;
+    continueBtn.classList.remove("loading");
+  }
 });
 
-
-      // Simulate loading for better UX
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 500);
-    });
+      
   </script>
 
 </body>

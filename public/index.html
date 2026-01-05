@@ -994,42 +994,76 @@
   <button id="installBtn">Install App</button>
 
  
-  <script>
-    // Load saved profile picture
-    window.addEventListener("load", () => {
-      const savedPic = localStorage.getItem("userProfilePic");
-      if (savedPic) document.getElementById("youProfilePic").src = savedPic;
-    });
+  
+ <!-- Firebase SDK -->
 
-    // Sidebar toggle
-    const sidebar = document.getElementById('sidebar');
-    const menuIcon = document.getElementById('menuIcon');
-    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-    menuIcon.addEventListener('click', () => sidebar.classList.add('active'));
-    closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('active'));
+<script type="module">
+/* ===============================
+   FIREBASE SETUP
+================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getFirestore, doc, onSnapshot, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
-    // PWA install
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', e => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installBtn').style.display = 'inline-block';
-    });
-    document.getElementById('installBtn').addEventListener('click', () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
-        deferredPrompt = null;
-        document.getElementById('installBtn').style.display = 'none';
-      });
-    });
+const firebaseConfig = {
+  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
+  projectId: "studyhub-backend",
+  storageBucket: "studyhub-backend.firebasestorage.app",
+  messagingSenderId: "985257842533",
+  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
+};
 
-    // Splash screen fade out
-  window.addEventListener("load", () => {
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const messaging = getMessaging(app);
+
+/* ===============================
+   APP DATA
+================================ */
+const votingOpen = false;
+const votingPageUrl = "voting.html";
+
+const campusStars = [
+  {
+    id: "pemphero_gwetse",
+    name: "Pemphero Gwetse",
+    position: "Entertainment Director",
+    program: "BSc Food Technology",
+    year: "Year 4",
+    description: "Making NRC entertainment great",
+    image: "images/gwetse.jpeg"
+  },
+  {
+    id: "vice_president_picture",
+    name: "Picture",
+    position: "Vice President",
+    program: "BSc Environmental Science",
+    year: "Year 2",
+    description: "Transparent leadership and better campus facilities.",
+    image: "images/pic.jpeg"
+  },
+  {
+    id: "mike_jonazi",
+    name: "Mike Jonazi",
+    position: "Speaker of Student Parliament",
+    program: "BSc Food Science",
+    year: "Year 4",
+    description: "Ensuring student voices are heard.",
+    image: "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+  }
+];
+
+/* ===============================
+   SPLASH SCREEN (ONCE)
+================================ */
+window.addEventListener("load", () => {
   const splash = document.getElementById("splash-screen");
   if (!splash) return;
 
-  if (localStorage.getItem("splashShown") === "true") {
+  if (localStorage.getItem("splashShown")) {
     splash.remove();
     return;
   }
@@ -1037,287 +1071,152 @@
   localStorage.setItem("splashShown", "true");
 
   setTimeout(() => {
-    splash.style.transition = "opacity 3s ease";
     splash.style.opacity = "0";
-
-    setTimeout(() => {
-      splash.remove();
-    }, 3000);
-  }, 6000);
+    splash.style.transition = "opacity 2s ease";
+    setTimeout(() => splash.remove(), 2000);
+  }, 4000);
 });
 
-</script>
- <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
+/* ===============================
+   SIDEBAR
+================================ */
+const sidebar = document.getElementById("sidebar");
+document.getElementById("menuIcon").onclick = () => sidebar.classList.add("active");
+document.getElementById("closeSidebarBtn").onclick = () => sidebar.classList.remove("active");
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-      authDomain: "studyhub-backend.firebaseapp.com",
-      projectId: "studyhub-backend",
-      storageBucket: "studyhub-backend.firebasestorage.app",
-      messagingSenderId: "985257842533",
-      appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
-    };
+/* ===============================
+   PWA INSTALL
+================================ */
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById("installBtn").style.display = "block";
+});
 
-    const app = initializeApp(firebaseConfig);
-    const messaging = getMessaging(app);
+document.getElementById("installBtn").onclick = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById("installBtn").style.display = "none";
+};
 
-    async function registerForNotifications() {
-      if (!("serviceWorker" in navigator)) return;
+/* ===============================
+   RENDER CANDIDATES
+================================ */
+const grid = document.getElementById("campusStarsGrid");
 
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") return;
+campusStars.forEach(star => {
+  const card = document.createElement("div");
+  card.className = "star-card";
 
-      const registration = await navigator.serviceWorker.ready;
+  card.innerHTML = `
+    <img class="star-image" src="${star.image}" alt="${star.name}">
+    <div class="star-info">
+      <div class="star-name">${star.name}</div>
+      <div class="star-position">${star.position}</div>
+      <div class="star-program">${star.program}</div>
+      <div class="star-year">${star.year}</div>
+      <div class="star-description">"${star.description}"</div>
 
-      const token = await getToken(messaging, {
-        vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
-        serviceWorkerRegistration: registration
-      });
-
-      if (!token) return;
-
-      console.log("📨 FCM TOKEN:", token);
-
-      await fetch("/save-token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token })
-      });
-    }
-
-    window.addEventListener("load", registerForNotifications);
-  </script>
-
-<script>
-    // Election Candidates Data
-    const campusStars = [
-      {
-        name: "Sarah Banda",
-        position: "Student Union President",
-        program: "BSc Agriculture",
-        year: "Year 3",
-        description: "Committed to improving student welfare and creating more opportunities for academic excellence. Together we can build a better LUANAR!",
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-        likes: 245
-      },
-      {
-        name: "James Phiri",
-        position: "Vice President",
-        program: "BSc Environmental Science",
-        year: "Year 2",
-        description: "Fighting for transparent leadership and better campus facilities. Your voice matters, and I'm here to amplify it!",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-        likes: 189
-      },
-      {
-        name: "Grace Mwale",
-        position: "Social Welfare Director",
-        program: "BSc Food Science",
-        year: "Year 4",
-        description: "Dedicated to enhancing student life through social events, mental health support, and community building programs.",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
-        likes: 312
-      },
-      {
-        name: "Patrick Mbewe",
-        position: "Religious Director",
-        program: "BSc Agribusiness",
-        year: "Year 1",
-        description: "Promoting spiritual growth and interfaith harmony on campus. Let's strengthen our faith community together!",
-        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
-        likes: 156
-      },
-      {
-        name: "Mercy Chirwa",
-        position: "Sports Director",
-        program: "BSc Animal Science",
-        year: "Year 3",
-        description: "Passionate about sports development and student fitness. Let's make LUANAR a sporting powerhouse!",
-        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop",
-        likes: 278
-      },
-      {
-        name: "Daniel Tembo",
-        position: "Academic Affairs Director",
-        program: "BSc Forestry",
-        year: "Year 2",
-        description: "Working to improve learning resources, library services, and student-lecturer relationships for academic success.",
-        image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop",
-        likes: 201
-      },
-      {
-        name: "Chisomo Banda",
-        position: "Entertainment Director",
-        program: "BSc Horticulture",
-        year: "Year 4",
-        description: "Bringing joy and excitement to campus through quality entertainment and cultural events. Vote for more fun!",
-        image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop",
-        likes: 334
-      },
-      {
-        name: "Michael Kadzamira",
-        position: "Secretary General",
-        program: "BSc Aquaculture",
-        year: "Year 1",
-        description: "Ensuring efficient communication and record keeping. Transparency and accountability are my priorities!",
-        image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=400&fit=crop",
-        likes: 167
-      }
-    ];
-
-    // Voting is currently closed - change this to true when voting opens
-    const votingOpen = false;
-    const votingPageUrl = "voting.html"; // URL where voting actually happens
-
-    // Render Campus Stars
-    const grid = document.getElementById('campusStarsGrid');
-    
-    campusStars.forEach((star, index) => {
-      const card = document.createElement('div');
-      card.className = 'star-card';
-      card.innerHTML = `
-        <img loading="lazy" src="${star.image}" alt="${star.name}" class="star-image">
-
-        <div class="star-info">
-          <div class="star-name">${star.name}</div>
-          <div class="star-position">📌 ${star.position}</div>
-          <div class="star-program">${star.program}</div>
-          <div class="star-year">${star.year}</div>
-          <div class="star-description">"${star.description}"</div>
-          
-          <div class="star-actions">
-            <button class="action-btn like-btn" data-index="${index}">
-              <span class="heart">❤️</span>
-              <span class="like-text">Like</span>
-            </button>
-            <button class="action-btn share-btn" onclick="shareProfile('${star.name}', '${star.position}')">
-              <span>📤</span>
-              <span>Share</span>
-            </button>
-            <div class="vote-btn-container">
-              <button class="action-btn vote-btn ${votingOpen ? 'active' : ''}" data-index="${index}" data-name="${star.name}">
-                <span>🗳️</span>
-                <span>Vote</span>
-              </button>
-            </div>
-          </div>
-          
-          <div class="like-count" id="likeCount${index}">${star.likes} likes</div>
+      <div class="star-actions">
+        <button class="action-btn like-btn" data-id="${star.id}">❤️ Like</button>
+        <button class="action-btn share-btn">📤 Share</button>
+        <div class="vote-btn-container">
+          <button class="action-btn vote-btn ${votingOpen ? "active" : ""}" data-name="${star.name}">
+            🗳️ Vote
+          </button>
         </div>
-      `;
-      grid.appendChild(card);
-    });
+      </div>
 
-    // Event delegation for like buttons
-    grid.addEventListener("click", e => {
-      const btn = e.target.closest(".like-btn");
-      if (!btn) return;
-      const index = btn.dataset.index;
-      toggleLike(btn, index);
-    });
+      <div class="like-count" id="likes-${star.id}">0 likes</div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
 
-    // Event delegation for vote buttons
-    grid.addEventListener("click", e => {
-      const btn = e.target.closest(".vote-btn");
-      if (!btn) return;
-      
-      if (votingOpen) {
-        // Redirect to voting page with candidate info
-        const candidateName = btn.dataset.name;
-        window.location.href = `${votingPageUrl}?candidate=${encodeURIComponent(candidateName)}`;
-      } else {
-        // Show modal that voting is not open
-        openModal();
-      }
-    });
+document.querySelectorAll(".like-btn").forEach(btn => {
+  const id = btn.dataset.id;
+  if (localStorage.getItem(`liked_${id}`)) {
+    btn.classList.add("liked");
+    btn.textContent = "❤️ Liked";
+  }
+});
 
-    // Like functionality
-    function toggleLike(btn, index) {
-      const star = campusStars[index];
-      const likeCountEl = document.getElementById(`likeCount${index}`);
-      
-      if (btn.classList.contains('liked')) {
-        btn.classList.remove('liked');
-        star.likes--;
-        btn.querySelector('.like-text').textContent = 'Like';
-      } else {
-        btn.classList.add('liked');
-        star.likes++;
-        btn.querySelector('.like-text').textContent = 'Liked';
-        
-        // Add animation
-        btn.style.transform = 'scale(1.2)';
-        setTimeout(() => {
-          btn.style.transform = 'scale(1)';
-        }, 200);
-      }
-      
-      likeCountEl.textContent = `${star.likes} likes`;
-      
-      // Save to localStorage
-      localStorage.setItem(`star_${index}_liked`, btn.classList.contains('liked'));
-      localStorage.setItem(`star_${index}_likes`, star.likes);
+
+/* ===============================
+   LIVE LIKES
+================================ */
+import { getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+campusStars.forEach(async star => {
+  const ref = doc(db, "candidates", star.id);
+
+  const snap = await getDoc(ref);
+
+  // ✅ Create ONLY if missing
+  if (!snap.exists()) {
+    await setDoc(ref, { likes: 0 });
+  }
+
+  // ✅ Live updates
+  onSnapshot(ref, snap => {
+    if (!snap.exists()) return;
+    document.getElementById(`likes-${star.id}`).textContent =
+      `${snap.data().likes || 0} likes`;
+  });
+});
+
+/* ===============================
+   CLICK HANDLING (FAST & CLEAN)
+================================ */
+grid.addEventListener("click", async e => {
+  const likeBtn = e.target.closest(".like-btn");
+  const voteBtn = e.target.closest(".vote-btn");
+
+  if (likeBtn) {
+  const id = likeBtn.dataset.id;
+
+  if (localStorage.getItem(`liked_${id}`)) {
+    alert("You already liked this 😏");
+    return;
+  }
+
+  await updateDoc(doc(db, "candidates", id), {
+    likes: increment(1)
+  });
+
+  localStorage.setItem(`liked_${id}`, "true");
+  likeBtn.classList.add("liked");
+  likeBtn.textContent = "❤️ Liked";
+}
+
+  if (voteBtn) {
+    if (!votingOpen) {
+      document.getElementById("votingModal").classList.add("active");
+    } else {
+      window.location.href =
+        `${votingPageUrl}?candidate=${encodeURIComponent(voteBtn.dataset.name)}`;
     }
+  }
+});
 
-    // Share functionality
-    function shareProfile(name, position) {
-      const shareText = `Vote for ${name} for ${position} at LUANAR Student Elections 2026! 🗳️`;
-      
-      if (navigator.share) {
-        navigator.share({
-          title: `${name} - ${position}`,
-          text: shareText,
-          url: window.location.href
-        }).catch(() => {});
-      } else {
-        // Fallback - copy to clipboard
-        const url = window.location.href;
-        const fullText = `${shareText}\n${url}`;
-        navigator.clipboard.writeText(fullText).then(() => {
-          alert('Link copied to clipboard! Share it with your friends!');
-        });
-      }
-    }
+/* ===============================
+   MODAL
+================================ */
+window.closeModal = () =>
+  document.getElementById("votingModal").classList.remove("active");
 
-    // Modal functions
-    function openModal() {
-      document.getElementById('votingModal').classList.add('active');
-    }
+/* ===============================
+   PROFILE PIC
+================================ */
+const pic = localStorage.getItem("userProfilePic");
+if (pic) document.getElementById("youProfilePic").src = pic;
+</script>
 
-    function closeModal() {
-      document.getElementById('votingModal').classList.remove('active');
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('votingModal').addEventListener('click', (e) => {
-      if (e.target.id === 'votingModal') {
-        closeModal();
-      }
-    });
-
-    // Load saved likes on page load
-    window.addEventListener('load', () => {
-      campusStars.forEach((star, index) => {
-        const wasLiked = localStorage.getItem(`star_${index}_liked`) === 'true';
-        const savedLikes = localStorage.getItem(`star_${index}_likes`);
-        
-        if (savedLikes) {
-          star.likes = parseInt(savedLikes);
-          document.getElementById(`likeCount${index}`).textContent = `${star.likes} likes`;
-        }
-        
-        if (wasLiked) {
-          const likeBtn = document.querySelectorAll('.like-btn')[index];
-          likeBtn.classList.add('liked');
-          likeBtn.querySelector('.like-text').textContent = 'Liked';
-        }
-      });
-    });
-  </script>
 
 </body>
 
 </html>
+ 
