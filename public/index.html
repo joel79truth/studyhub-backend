@@ -850,26 +850,7 @@
 
 <body>
 
-  <!-- Splash Screen -->
-  <div id="splash-screen">
-    <div style="position:absolute; top:10%; left:10%; opacity:0.2; font-size:40px;">❄</div>
-    <div style="position:absolute; bottom:15%; right:15%; opacity:0.2; font-size:30px;">❄</div>
-
-    <img src="images/luanar-logo.png" alt="StudyHub Logo">
-
-    <h2>StudyHub LUANAR</h2>
-    <div class="version-tag">Version 2026</div>
-
-    <p>Built with love ... shared with joy</p>
-
-    <p>LOADING YOUR CAMPUS...</p>
-    <br>
-  </div>
-
-  <!-- Christmas Decorations (subtle) -->
-  <div class="christmas-sparkle" style="top: 15%; left: 5%;">✨</div>
-  <div class="christmas-sparkle" style="top: 25%; right: 8%; animation-delay: 1s;">🎄</div>
-  <div class="christmas-sparkle" style="bottom: 20%; left: 10%; animation-delay: 2s;">⭐</div>
+ 
 
   <!-- Header -->
   <header>
@@ -1151,23 +1132,6 @@ const campusStars = [
 /* ===============================
    SPLASH SCREEN (ONCE)
 ================================ */
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splash-screen");
-  if (!splash) return;
-
-  if (localStorage.getItem("splashShown")) {
-    splash.remove();
-    return;
-  }
-
-  localStorage.setItem("splashShown", "true");
-
-  setTimeout(() => {
-    splash.style.opacity = "0";
-    splash.style.transition = "opacity 2s ease";
-    setTimeout(() => splash.remove(), 2000);
-  }, 4000);
-});
 
 /* ===============================
    SIDEBAR
