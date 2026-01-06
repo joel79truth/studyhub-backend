@@ -836,21 +836,30 @@
 }
 
   </style>
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-RP8NY538W2');
-</script>
-
 </head>
 
 <body>
 
- 
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div style="position:absolute; top:10%; left:10%; opacity:0.2; font-size:40px;">❄</div>
+    <div style="position:absolute; bottom:15%; right:15%; opacity:0.2; font-size:30px;">❄</div>
+
+    <img src="images/luanar-logo.png" alt="StudyHub Logo">
+
+    <h2>StudyHub LUANAR</h2>
+    <div class="version-tag">Version 2026</div>
+
+    <p>Built with love ... shared with joy</p>
+
+    <p>LOADING YOUR CAMPUS...</p>
+    <br>
+  </div>
+
+  <!-- Christmas Decorations (subtle) -->
+  <div class="christmas-sparkle" style="top: 15%; left: 5%;">✨</div>
+  <div class="christmas-sparkle" style="top: 25%; right: 8%; animation-delay: 1s;">🎄</div>
+  <div class="christmas-sparkle" style="bottom: 20%; left: 10%; animation-delay: 2s;">⭐</div>
 
   <!-- Header -->
   <header>
@@ -938,7 +947,7 @@
 
     <!-- Welcome Section -->
     <div class="welcome-section">
-      <h3>Welcome to StudyHub LUANAR<br>app for notes, programs, and campus updates</h3>
+      <h3>Welcome to StudyHub LUANAR<br>Student Elections 2026</h3>
       <p>Meet your candidates and vote for change! 🗳️</p>
     </div>
 
@@ -985,29 +994,209 @@
   <button id="installBtn">Install App</button>
 
  
-  
- <!-- Firebase SDK -->
+  <script>
+/* =======================
+   BASIC UI LOGIC
+======================= */
 
+// Load saved profile picture
+window.addEventListener("load", () => {
+  const savedPic = localStorage.getItem("userProfilePic");
+  if (savedPic) {
+    const img = document.getElementById("youProfilePic");
+    if (img) img.src = savedPic;
+  }
+});
+
+// Sidebar toggle
+const sidebar = document.getElementById("sidebar");
+const menuIcon = document.getElementById("menuIcon");
+const closeSidebarBtn = document.getElementById("closeSidebarBtn");
+
+menuIcon?.addEventListener("click", () => sidebar.classList.add("active"));
+closeSidebarBtn?.addEventListener("click", () => sidebar.classList.remove("active"));
+
+// PWA install
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById("installBtn").style.display = "inline-block";
+});
+
+document.getElementById("installBtn")?.addEventListener("click", () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.finally(() => {
+    deferredPrompt = null;
+    document.getElementById("installBtn").style.display = "none";
+  });
+});
+
+// Splash screen
+window.addEventListener("load", () => {
+  const splash = document.getElementById("splash-screen");
+  if (!splash) return;
+
+  if (localStorage.getItem("splashShown") === "true") {
+    splash.remove();
+    return;
+  }
+
+  localStorage.setItem("splashShown", "true");
+
+  setTimeout(() => {
+    splash.style.transition = "opacity 2s ease";
+    splash.style.opacity = "0";
+    setTimeout(() => splash.remove(), 2000);
+  }, 4000);
+});
+
+/* =======================
+   CANDIDATE DATA
+======================= */
+
+const campusStars = [
+  {
+    id: "pemphero_",
+    name: "Pemphero Gwetse",
+    position: "Entertainment Director",
+    program: "BSc Food Technology",
+    year: "Year 4",
+    description: "Making NRC entertainment great",
+    image: "images/gwetse.jpeg"
+  },
+  {
+    id: "pi1",
+    name: "Picture",
+    position: "Moments",
+    program: "",
+    year: "",
+    description: "Lifestyle",
+    image: "images/4.jpeg"
+  },
+  {
+    id: "pi2",
+    name: "Picture",
+    position: "NRC Campus",
+    program: "Beautiful",
+    year: "",
+    description: "Campus vibes",
+    image: "images/6.jpg"
+  },
+  {
+    id: "billy",
+    name: "Billy",
+    position: "Student @ NRC",
+    program: "Agro-food Processing",
+    year: "",
+    description: "Support and love to campus",
+    image: "images/billy.jpeg"
+  }
+];
+
+window.campusStars = campusStars; // 🔥 expose to module safely
+
+/* =======================
+   RENDER CARDS
+======================= */
+
+const votingOpen = false;
+const votingPageUrl = "voting.html";
+const grid = document.getElementById("campusStarsGrid");
+
+campusStars.forEach((star, index) => {
+  const card = document.createElement("div");
+  card.className = "star-card";
+  card.innerHTML = `
+    <img src="${star.image}" class="star-image" alt="${star.name}">
+
+    <div class="star-info">
+      <div class="star-name">${star.name}</div>
+      <div class="star-position">📌 ${star.position}</div>
+      <div class="star-program">${star.program}</div>
+      <div class="star-year">${star.year}</div>
+      <div class="star-description">"${star.description}"</div>
+
+      <div class="star-actions">
+        <button class="action-btn like-btn" data-id="${star.id}">
+          ❤️ <span class="like-text">Like</span>
+        </button>
+
+        <button class="action-btn share-btn"
+          onclick="shareProfile('${star.name}','${star.position}')">
+          📤 Share
+        </button>
+
+        <button class="action-btn vote-btn ${votingOpen ? "active" : ""}"
+          data-name="${star.name}">
+          🗳️ Vote
+        </button>
+      </div>
+
+      <div class="like-count">0 likes</div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+/* =======================
+   EVENT DELEGATION
+======================= */
+
+grid.addEventListener("click", e => {
+  const likeBtn = e.target.closest(".like-btn");
+  if (likeBtn) {
+    toggleLike(likeBtn.dataset.id, likeBtn);
+    return;
+  }
+
+  const voteBtn = e.target.closest(".vote-btn");
+  if (voteBtn) {
+    if (votingOpen) {
+      window.location.href =
+        `${votingPageUrl}?candidate=${encodeURIComponent(voteBtn.dataset.name)}`;
+    } else {
+      openModal();
+    }
+  }
+});
+
+// Share
+function shareProfile(name, position) {
+  const text = `Vote for ${name} for ${position}! 🗳️`;
+  if (navigator.share) {
+    navigator.share({ title: name, text, url: location.href });
+  } else {
+    navigator.clipboard.writeText(`${text}\n${location.href}`);
+    alert("Link copied!");
+  }
+}
+
+// Modal helpers
+function openModal() {
+  document.getElementById("votingModal")?.classList.add("active");
+}
+function closeModal() {
+  document.getElementById("votingModal")?.classList.remove("active");
+}
+</script>
 <script type="module">
-/* ===============================
-   FIREBASE SETUP
-================================ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
 import {
   getFirestore,
   doc,
   onSnapshot,
   updateDoc,
   increment,
-  setDoc,
-  getDoc
+  setDoc
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-import {
-  getMessaging,
-  getToken,
-  onMessage
-} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
+
+/* =======================
+   FIREBASE INIT
+======================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
@@ -1020,234 +1209,94 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 const messaging = getMessaging(app);
+const db = getFirestore(app);
 
-/* ===============================
-   FCM
-================================ */
-async function initFCM() {
-  try {
-    if (!("serviceWorker" in navigator)) return;
+/* =======================
+   FCM REGISTER
+======================= */
 
-    const registration = await navigator.serviceWorker.register(
-      "/firebase-messaging-sw.js"
-    );
+async function registerForNotifications() {
+  if (!("serviceWorker" in navigator)) return;
 
-    const permission = await Notification.requestPermission();
-    if (permission !== "granted") return;
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") return;
 
-    const token = await getToken(messaging, {
-      vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
-      serviceWorkerRegistration: registration
-    });
-
-    if (token) {
-      localStorage.setItem("fcmToken", token);
-      console.log("FCM token ready");
-    }
-
-    onMessage(messaging, payload => {
-      if (Notification.permission === "granted") {
-        new Notification(payload.notification.title, {
-          body: payload.notification.body
-        });
-      }
-    });
-  } catch (err) {
-    console.error("FCM error:", err);
-  }
-}
-
-initFCM();
-
-/* ===============================
-   AUTH STATE
-================================ */
-onAuthStateChanged(auth, async user => {
-  console.log("Auth:", user ? user.uid : "guest");
-
+  const user = auth.currentUser;
   if (!user) return;
 
-  if (user.email && document.getElementById("email")) {
-    document.getElementById("email").value = user.email;
-  }
+  const token = await getToken(messaging, {
+    vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
+    serviceWorkerRegistration: await navigator.serviceWorker.ready
+  });
 
-  const token = localStorage.getItem("fcmToken");
-  if (token) {
-    try {
-      const idToken = await user.getIdToken();
-      await fetch("/save-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + idToken
-        },
-        body: JSON.stringify({ token })
-      });
-      console.log("FCM token saved");
-    } catch (err) {
-      console.error("Token save failed:", err);
-    }
-  }
-});
+  await fetch("/save-token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${await user.getIdToken()}`
+    },
+    body: JSON.stringify({ token })
+  });
+}
 
-/* ===============================
-   APP DATA
-================================ */
-const votingOpen = false;
-const votingPageUrl = "voting.html";
+window.addEventListener("load", registerForNotifications);
 
-const campusStars = [
-  {
-    id: "pemphero_gwetse",
-    name: "Pemphero Gwetse",
-    position: "Entertainment Director",
-    program: "BSc Food Technology",
-    year: "Year 4",
-    description: "Making NRC entertainment great",
-    image: "images/gwetse.jpeg"
-  },
-  {
-    id: "picture_1",
-    name: "Picture",
-    position: "Moments",
-    program: "",
-    year: "",
-    description: "Lifestyle.",
-    image: "images/4.jpeg"
-  },
-  {
-    id: "picture_2",
-    name: "Picture",
-    position: "NRC Campus",
-    program: "Beautiful",
-    year: "",
-    description: "Leading with integrity and vision",
-    image: "images/6.jpg"
-  },
-  {
-    id: "billy",
-    name: "Billy",
-    position: "Student @ NRC",
-    program: "Agro-food Processing",
-    year: "",
-    description: "Showed support and love to the campus",
-    image: "images/billy.jpeg"
-  }
-];
+/* =======================
+   LIVE LIKE SYNC
+======================= */
 
-/* ===============================
-   SIDEBAR
-================================ */
-const sidebar = document.getElementById("sidebar");
-document.getElementById("menuIcon")?.addEventListener("click", () =>
-  sidebar.classList.add("active")
-);
-document.getElementById("closeSidebarBtn")?.addEventListener("click", () =>
-  sidebar.classList.remove("active")
-);
-
-/* ===============================
-   PWA INSTALL
-================================ */
-let deferredPrompt;
-window.addEventListener("beforeinstallprompt", e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById("installBtn").style.display = "block";
-});
-
-document.getElementById("installBtn")?.addEventListener("click", async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
-  deferredPrompt = null;
-});
-
-/* ===============================
-   RENDER CARDS
-================================ */
-const grid = document.getElementById("campusStarsGrid");
-
-campusStars.forEach(star => {
-  const card = document.createElement("div");
-  card.className = "star-card";
-  card.innerHTML = `
-    <img class="star-image" src="${star.image}">
-    <div class="star-info">
-      <div class="star-name">${star.name}</div>
-      <div class="star-position">${star.position}</div>
-      <div class="star-program">${star.program}</div>
-      <div class="star-year">${star.year}</div>
-      <div class="star-description">"${star.description}"</div>
-      <div class="star-actions">
-        <button class="action-btn like-btn" data-id="${star.id}">❤️ Like</button>
-        <button class="action-btn vote-btn" data-name="${star.name}">🗳️ Vote</button>
-      </div>
-      <div class="like-count" id="likes-${star.id}">0 likes</div>
-    </div>
-  `;
-  grid.appendChild(card);
-});
-
-/* ===============================
-   LIVE LIKES
-================================ */
-campusStars.forEach(async star => {
+window.campusStars.forEach(star => {
   const ref = doc(db, "candidates", star.id);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) await setDoc(ref, { likes: 0 });
 
-  onSnapshot(ref, s => {
-    document.getElementById(`likes-${star.id}`).textContent =
-      `${s.data().likes || 0} likes`;
+  onSnapshot(ref, snap => {
+    if (!snap.exists()) return;
+
+    const likes = snap.data().likes || 0;
+    const btn = document.querySelector(`[data-id="${star.id}"]`);
+    if (!btn) return;
+
+    // update count
+    btn.closest(".star-card")
+      .querySelector(".like-count")
+      .textContent = `${likes} likes`;
+
+    // 🔥 restore liked state
+    const key = `liked_${star.id}`;
+    if (localStorage.getItem(key)) {
+      btn.classList.add("liked");
+      btn.querySelector(".like-text").textContent = "Liked";
+    }
   });
 });
 
-/* ===============================
-   INTERACTIONS
-================================ */
-grid.addEventListener("click", async e => {
-  const likeBtn = e.target.closest(".like-btn");
-  const voteBtn = e.target.closest(".vote-btn");
+/* =======================
+   LIKE HANDLER
+======================= */
 
-  if (likeBtn) {
-    const id = likeBtn.dataset.id;
-    if (localStorage.getItem(`liked_${id}`)) return alert("Already liked 😄");
+window.toggleLike = async function (id, btn) {
+  if (!id) return alert("Candidate misconfigured");
 
-    await updateDoc(doc(db, "candidates", id), {
-      likes: increment(1)
-    });
+  const key = `liked_${id}`;
 
-    localStorage.setItem(`liked_${id}`, "true");
-    likeBtn.textContent = "❤️ Liked";
-    likeBtn.classList.add("liked");
+  if (localStorage.getItem(key)) {
+    alert("You already liked this 👍");
+    return;
   }
 
-  if (voteBtn) {
-    if (!votingOpen) {
-      document.getElementById("votingModal").classList.add("active");
-    } else {
-      window.location.href =
-        `${votingPageUrl}?candidate=${encodeURIComponent(voteBtn.dataset.name)}`;
-    }
-  }
-});
+  // 🔥 instant UI feedback
+  btn.classList.add("liked");
+  btn.querySelector(".like-text").textContent = "Liked";
 
-/* ===============================
-   MODAL + PROFILE
-================================ */
-window.closeModal = () =>
-  document.getElementById("votingModal").classList.remove("active");
+  const ref = doc(db, "candidates", id);
 
-const pic = localStorage.getItem("userProfilePic");
-if (pic && document.getElementById("youProfilePic")) {
-  document.getElementById("youProfilePic").src = pic;
-}
+  await setDoc(ref, { likes: 0 }, { merge: true });
+  await updateDoc(ref, { likes: increment(1) });
+
+  localStorage.setItem(key, "true");
+};
+
 </script>
-
-
 
 </body>
 
