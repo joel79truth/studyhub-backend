@@ -992,10 +992,22 @@
 /* ===============================
    FIREBASE SETUP
 ================================ */
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getFirestore, doc, onSnapshot, updateDoc, increment, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  onSnapshot,
+  updateDoc,
+  increment,
+  setDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import {
+  getMessaging,
+  getToken,
+  onMessage
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
@@ -1007,80 +1019,78 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const messaging = getMessaging(app);
 
+/* ===============================
+   FCM
+================================ */
 async function initFCM() {
   try {
-    // Register service worker
-    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    if (!("serviceWorker" in navigator)) return;
 
-    // Request notification permission
+    const registration = await navigator.serviceWorker.register(
+      "/firebase-messaging-sw.js"
+    );
+
     const permission = await Notification.requestPermission();
-    if (permission !== "granted") {
-      console.warn("Notifications not allowed");
-      return;
-    }
+    if (permission !== "granted") return;
 
-    // Get FCM token
-    const fcmToken = await getToken(messaging, {
+    const token = await getToken(messaging, {
       vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
-      serviceWorkerRegistration: registration,
+      serviceWorkerRegistration: registration
     });
 
-    if (fcmToken) {
-      console.log("FCM Token obtained:", fcmToken);
-      // Save locally until user logs in
-      localStorage.setItem("fcmToken", fcmToken);
+    if (token) {
+      localStorage.setItem("fcmToken", token);
+      console.log("FCM token ready");
     }
 
-    // Foreground notifications
-    onMessage(messaging, (payload) => {
+    onMessage(messaging, payload => {
       if (Notification.permission === "granted") {
         new Notification(payload.notification.title, {
-          body: payload.notification.body,
+          body: payload.notification.body
         });
       }
     });
-
   } catch (err) {
-    console.error("FCM registration failed:", err);
+    console.error("FCM error:", err);
   }
 }
 
-// Run immediately
 initFCM();
 
-onAuthStateChanged(auth, async (user) => {
- 
+/* ===============================
+   AUTH STATE
+================================ */
+onAuthStateChanged(auth, async user => {
+  console.log("Auth:", user ? user.uid : "guest");
 
-  console.log("USER PROVIDER:", auth.currentUser.providerData);
+  if (!user) return;
 
-  if (user?.email) {
+  if (user.email && document.getElementById("email")) {
     document.getElementById("email").value = user.email;
   }
 
-  // Send token to backend if it exists
-  const fcmToken = localStorage.getItem("fcmToken");
-  if (fcmToken) {
+  const token = localStorage.getItem("fcmToken");
+  if (token) {
     try {
       const idToken = await user.getIdToken();
       await fetch("/save-token", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + idToken,
+          Authorization: "Bearer " + idToken
         },
-        body: JSON.stringify({ token: fcmToken }),
+        body: JSON.stringify({ token })
       });
-      console.log("FCM token saved for user");
+      console.log("FCM token saved");
     } catch (err) {
-      console.error("Failed to save FCM token for user:", err);
+      console.error("Token save failed:", err);
     }
   }
 });
-
 
 /* ===============================
    APP DATA
@@ -1099,46 +1109,44 @@ const campusStars = [
     image: "images/gwetse.jpeg"
   },
   {
-    id: "vice_president_picture",
+    id: "picture_1",
     name: "Picture",
-    position: "moments",
+    position: "Moments",
     program: "",
     year: "",
-    description: "lifestyle.",
+    description: "Lifestyle.",
     image: "images/4.jpeg"
   },
-  
-
-{    id: "john_doe",
-    name: "picture",
+  {
+    id: "picture_2",
+    name: "Picture",
     position: "NRC Campus",
-    program: "beautiful",
+    program: "Beautiful",
     year: "",
     description: "Leading with integrity and vision",
-    image: "images/6.jpg"},
-
-    {    id: "billy",
+    image: "images/6.jpg"
+  },
+  {
+    id: "billy",
     name: "Billy",
     position: "Student @ NRC",
-    program: "Agro- food Processing",
+    program: "Agro-food Processing",
     year: "",
-    description: "showed support and love to the campus",
-    image: "images/billy.jpeg"},
-
-
-
+    description: "Showed support and love to the campus",
+    image: "images/billy.jpeg"
+  }
 ];
-
-/* ===============================
-   SPLASH SCREEN (ONCE)
-================================ */
 
 /* ===============================
    SIDEBAR
 ================================ */
 const sidebar = document.getElementById("sidebar");
-document.getElementById("menuIcon").onclick = () => sidebar.classList.add("active");
-document.getElementById("closeSidebarBtn").onclick = () => sidebar.classList.remove("active");
+document.getElementById("menuIcon")?.addEventListener("click", () =>
+  sidebar.classList.add("active")
+);
+document.getElementById("closeSidebarBtn")?.addEventListener("click", () =>
+  sidebar.classList.remove("active")
+);
 
 /* ===============================
    PWA INSTALL
@@ -1150,103 +1158,72 @@ window.addEventListener("beforeinstallprompt", e => {
   document.getElementById("installBtn").style.display = "block";
 });
 
-document.getElementById("installBtn").onclick = async () => {
+document.getElementById("installBtn")?.addEventListener("click", async () => {
   if (!deferredPrompt) return;
   deferredPrompt.prompt();
   await deferredPrompt.userChoice;
   deferredPrompt = null;
-  document.getElementById("installBtn").style.display = "none";
-};
+});
 
 /* ===============================
-   RENDER CANDIDATES
+   RENDER CARDS
 ================================ */
 const grid = document.getElementById("campusStarsGrid");
 
 campusStars.forEach(star => {
   const card = document.createElement("div");
   card.className = "star-card";
-
   card.innerHTML = `
-    <img class="star-image" src="${star.image}" alt="${star.name}">
+    <img class="star-image" src="${star.image}">
     <div class="star-info">
       <div class="star-name">${star.name}</div>
       <div class="star-position">${star.position}</div>
       <div class="star-program">${star.program}</div>
       <div class="star-year">${star.year}</div>
       <div class="star-description">"${star.description}"</div>
-
       <div class="star-actions">
         <button class="action-btn like-btn" data-id="${star.id}">❤️ Like</button>
-        <button class="action-btn share-btn">📤 Share</button>
-        <div class="vote-btn-container">
-          <button class="action-btn vote-btn ${votingOpen ? "active" : ""}" data-name="${star.name}">
-            🗳️ Vote
-          </button>
-        </div>
+        <button class="action-btn vote-btn" data-name="${star.name}">🗳️ Vote</button>
       </div>
-
       <div class="like-count" id="likes-${star.id}">0 likes</div>
     </div>
   `;
   grid.appendChild(card);
 });
 
-document.querySelectorAll(".like-btn").forEach(btn => {
-  const id = btn.dataset.id;
-  if (localStorage.getItem(`liked_${id}`)) {
-    btn.classList.add("liked");
-    btn.textContent = "❤️ Liked";
-  }
-});
-
-
 /* ===============================
    LIVE LIKES
 ================================ */
-import { getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-
 campusStars.forEach(async star => {
   const ref = doc(db, "candidates", star.id);
-
   const snap = await getDoc(ref);
+  if (!snap.exists()) await setDoc(ref, { likes: 0 });
 
-  // ✅ Create ONLY if missing
-  if (!snap.exists()) {
-    await setDoc(ref, { likes: 0 });
-  }
-
-  // ✅ Live updates
-  onSnapshot(ref, snap => {
-    if (!snap.exists()) return;
+  onSnapshot(ref, s => {
     document.getElementById(`likes-${star.id}`).textContent =
-      `${snap.data().likes || 0} likes`;
+      `${s.data().likes || 0} likes`;
   });
 });
 
 /* ===============================
-   CLICK HANDLING (FAST & CLEAN)
+   INTERACTIONS
 ================================ */
 grid.addEventListener("click", async e => {
   const likeBtn = e.target.closest(".like-btn");
   const voteBtn = e.target.closest(".vote-btn");
 
   if (likeBtn) {
-  const id = likeBtn.dataset.id;
+    const id = likeBtn.dataset.id;
+    if (localStorage.getItem(`liked_${id}`)) return alert("Already liked 😄");
 
-  if (localStorage.getItem(`liked_${id}`)) {
-    alert("You already liked this 😏");
-    return;
+    await updateDoc(doc(db, "candidates", id), {
+      likes: increment(1)
+    });
+
+    localStorage.setItem(`liked_${id}`, "true");
+    likeBtn.textContent = "❤️ Liked";
+    likeBtn.classList.add("liked");
   }
-
-  await updateDoc(doc(db, "candidates", id), {
-    likes: increment(1)
-  });
-
-  localStorage.setItem(`liked_${id}`, "true");
-  likeBtn.classList.add("liked");
-  likeBtn.textContent = "❤️ Liked";
-}
 
   if (voteBtn) {
     if (!votingOpen) {
@@ -1259,17 +1236,17 @@ grid.addEventListener("click", async e => {
 });
 
 /* ===============================
-   MODAL
+   MODAL + PROFILE
 ================================ */
 window.closeModal = () =>
   document.getElementById("votingModal").classList.remove("active");
 
-/* ===============================
-   PROFILE PIC
-================================ */
 const pic = localStorage.getItem("userProfilePic");
-if (pic) document.getElementById("youProfilePic").src = pic;
+if (pic && document.getElementById("youProfilePic")) {
+  document.getElementById("youProfilePic").src = pic;
+}
 </script>
+
 
 
 </body>
