@@ -223,23 +223,18 @@ if (tokenError) {
   const tokens = rows.map(r => r.token);
 
   const response = await admin.messaging().sendEachForMulticast({
-    tokens,
-    notification: {
-      title: "📚 New Notes Uploaded",
-      
-      body: `${program}
+  tokens,
+  data: {
+    title: "📚 New Notes Uploaded",
+    body: `${program} ${subject} notes for Semester ${semester} available`,
+    program,
+    semester: String(semester),
+    subject,
+    fileId: id,
+    url: `/program.html?program=${encodeURIComponent(program)}`
+  }
+});
 
-      ${subject} notes for Semester ${semester} available`,
-    },
-    data: {
-      program,
-      semester: String(semester),
-      subject,
-      fileId: id,
-      url: `/program.html?program=${encodeURIComponent(program)}`
-
-    },
-  });
 
   /* 🔥 CLEAN UP DEAD TOKENS */
   const invalidTokens = [];
