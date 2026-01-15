@@ -1,1203 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StudyHub LUANAR</title>
-
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1E90FF" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="StudyHub LUANAR" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-RP8NY538W2');
-</script>
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #fff;
-      overflow-x: hidden;
-      padding-bottom: 80px;
-    }
-
-    /* Festive Splash Screen 2026 */
-#splash-screen {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at center, #1a472a 0%, #050a05 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 30000;
-  color: #ffffff;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  overflow: hidden;
-
-  opacity: 1;            /* 🔥 REQUIRED */
-}
-
-
-    #splash-screen::before {
-      content: " \2744  \2745  \2746 ";
-      position: absolute;
-      top: -20px;
-      width: 100%;
-      text-align: center;
-      font-size: 24px;
-      opacity: 0.3;
-      animation: fall 10s linear infinite;
-      white-space: pre;
-    }
-
-    #splash-screen img {
-      width: 110px;
-      margin-bottom: 20px;
-      filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
-      animation: pulse 2s infinite ease-in-out;
-    }
-
-    #splash-screen h2 {
-      margin: 0;
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      background: linear-gradient(to right, #fff, #ffd700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    #splash-screen .version-tag {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      text-transform: uppercase;
-      margin-top: 10px;
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      color: #ffd700;
-    }
-
-    #splash-screen p {
-      margin-top: 20px;
-      font-size: 14px;
-      font-weight: 300;
-      letter-spacing: 2px;
-      opacity: 0.7;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes fall {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(100vh); }
-    }
-
-    /* Sticky Header */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: rgba(15, 23, 42, 0.95);
-     backdrop-filter: blur(6px);
-
-      padding: 15px 20px;
-      box-shadow: 0 2px 20px rgba(59, 130, 246, 0.3);
-      border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-    }
-
-    header h1 {
-      font-size: 24px;
-      text-align: center;
-      background: linear-gradient(90deg, #60a5fa, #3b82f6, #60a5fa);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shimmer 3s linear infinite;
-      line-height: 1.3;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-
-    /* Menu Button */
-    .menu-btn {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      width: 45px;
-      height: 45px;
-      background: linear-gradient(135deg, #4f46e5, #3b82f6);
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      z-index: 1001;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
-      transition: all 0.3s ease;
-    }
-
-    .menu-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.7);
-    }
-
-    .menu-btn .bar {
-      width: 22px;
-      height: 3px;
-      background: white;
-      border-radius: 2px;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 280px;
-      max-width: 85vw;
-      height: 100vh;
-      background: linear-gradient(180deg, #817cd8, #0f1011);
-      color: white;
-      padding: 20px 15px;
-      box-shadow: 3px 0 12px rgba(59, 130, 246, 0.6);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      z-index: 10001;
-      transform: translateX(-110%);
-      transition: transform 0.3s ease;
-      overflow-y: auto;
-    }
-
-    .sidebar.active {
-      transform: translateX(0);
-    }
-
-    .close-btn {
-      align-self: flex-end;
-      background: transparent;
-      border: none;
-      font-size: 30px;
-      color: white;
-      cursor: pointer;
-      margin-bottom: 15px;
-      transition: color 0.3s ease;
-    }
-
-    .nav-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      flex-grow: 1;
-    }
-
-    .nav-list li + li {
-      margin-top: 12px;
-    }
-
-    .nav-list a {
-      color: white;
-      text-decoration: none;
-      font-size: 1.05rem;
-      padding: 12px 15px;
-      display: block;
-      border-radius: 10px;
-      transition: background-color 0.25s ease;
-      user-select: none;
-    }
-
-    .nav-list a:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .dark-mode-btn {
-      margin-top: 20px;
-      background: rgba(255, 255, 255, 0.15);
-      border: none;
-      padding: 12px 15px;
-      font-size: 1.05rem;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .dark-mode-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Profile Button */
-    .profile-container {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      z-index: 1001;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .profile-container .profile-picture {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #3b82f6;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-
-      transition: transform 0.3s ease;
-    }
-
-    .profile-container .profile-picture:hover {
-      transform: scale(1.1);
-    }
-
-    .profile-container .btn-label {
-      margin-top: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #60a5fa;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    /* Sticky Glass Buttons */
-    .glass-btn-row {
-      position: sticky;
-      top: 70px;
-      z-index: 999;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin: 15px auto;
-      padding: 10px;
-      width: 95%;
-      max-width: 450px;
-      background: rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(6px);
-      border-radius: 20px;
-     box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      transition: all 0.3s ease;
-    }
-
-    .glass-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .glass-button .icon-btn {
-      width: 50px;
-      height: 50px;
-      border-radius: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #4f46e5, #3b82f6);
-     box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
-
-    .glass-button .icon-btn:hover {
-      background: linear-gradient(135deg, #4338ca, #2563eb);
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-
-      transform: translateY(-3px);
-    }
-
-    .glass-button .btn-label {
-      font-size: 11px;
-      color: white;
-      margin-top: 6px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    /* Main Container */
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px 15px;
-    }
-
-    /* Welcome Section */
-    .welcome-section {
-      text-align: center;
-      margin: 20px 0 30px;
-      padding: 0 15px;
-    }
-
-    .welcome-section h3 {
-      font-size: 20px;
-      font-weight: 700;
-      background: linear-gradient(90deg, #fff, #60a5fa, #fff);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shimmer 3s linear infinite;
-      margin-bottom: 10px;
-      line-height: 1.4;
-    }
-
-    .welcome-section p {
-      font-size: 14px;
-      opacity: 0.8;
-      color: #94a3b8;
-    }
-
-    /* Campus Stars Section */
-    .section-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-      margin: 30px 0 20px;
-      padding: 0 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .section-title::before {
-      content: '🗳️';
-      font-size: 24px;
-      animation: twinkle 2s ease-in-out infinite;
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.2); }
-    }
-
-    /* Campus Star Card */
-    .campus-stars-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      padding: 0 15px;
-      margin-bottom: 30px;
-    }
-
-    .star-card {
-      background: rgba(30, 41, 59, 0.8);
-      backdrop-filter: blur(6px);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      transition: all 0.3s ease;
-    }
-
-    .star-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-      border-color: rgba(59, 130, 246, 0.5);
-    }
-
-    .star-image {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .star-info {
-      padding: 15px;
-    }
-
-    .star-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 5px;
-    }
-
-    .star-position {
-      font-size: 14px;
-      font-weight: 600;
-      color: #fbbf24;
-      margin-bottom: 8px;
-      display: inline-block;
-      background: rgba(251, 191, 36, 0.1);
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(251, 191, 36, 0.3);
-    }
-
-    .star-program {
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 4px;
-    }
-
-    .star-year {
-      font-size: 12px;
-      color: #64748b;
-      margin-bottom: 12px;
-    }
-
-    .star-description {
-      font-size: 13px;
-      color: #cbd5e1;
-      line-height: 1.5;
-      margin-bottom: 15px;
-      font-style: italic;
-      border-left: 3px solid rgba(59, 130, 246, 0.5);
-      padding-left: 10px;
-    }
-
-    .star-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .vote-btn-container {
-      grid-column: 1 / -1;
-    }
-
-    .action-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .like-btn {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: white;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-    }
-
-    .like-btn:hover {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
-      transform: scale(1.05);
-    }
-
-    .like-btn.liked {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-    }
-
-    .share-btn {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: white;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-    }
-
-    .share-btn:hover {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      transform: scale(1.05);
-    }
-
-    .vote-btn {
-      background: linear-gradient(135deg, #64748b, #475569);
-      color: rgba(255, 255, 255, 0.5);
-      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
-      cursor: not-allowed;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .vote-btn::after {
-      content: '🔒';
-      position: absolute;
-      right: 10px;
-      font-size: 16px;
-    }
-
-    .vote-btn:hover {
-      background: linear-gradient(135deg, #475569, #334155);
-    }
-
-    .vote-btn.active {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-    }
-
-    .vote-btn.active::after {
-      content: '✓';
-    }
-
-    .vote-btn.active:hover {
-      background: linear-gradient(135deg, #059669, #047857);
-      transform: scale(1.02);
-    }
-
-    .like-count {
-      font-size: 12px;
-      color: #94a3b8;
-      margin-top: 8px;
-    }
-
-    /* Modal for voting message */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 20000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(5px);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: linear-gradient(180deg, #1e293b, #0f172a);
-      padding: 30px;
-      border-radius: 20px;
-      text-align: center;
-      max-width: 400px;
-      margin: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateY(-50px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .modal-content h3 {
-      font-size: 24px;
-      margin-bottom: 15px;
-      color: #fbbf24;
-    }
-
-    .modal-content p {
-      font-size: 16px;
-      color: #cbd5e1;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
-    .modal-close-btn {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: white;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-    }
-
-    .modal-close-btn:hover {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      transform: scale(1.05);
-    }
-
-    /* Christmas decoration - subtle */
-    .christmas-sparkle {
-      position: fixed;
-      font-size: 20px;
-      opacity: 0.15;
-      pointer-events: none;
-      z-index: 1;
-      animation: float 4s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-    }
-
-    /* Bottom Navigation */
-    .bottom-buttons {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-around;
-      background: rgba(15, 23, 42, 0.95);
-   backdrop-filter: blur(6px);
-      padding: 12px 10px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-      border-top: 1px solid rgba(59, 130, 246, 0.2);
-      z-index: 998;
-    }
-
-    .button-with-label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .button-with-label .icon-btn {
-      background: linear-gradient(135deg, #4f46e5, #3b82f6);
-      color: white;
-      border: none;
-      width: 45px;
-      height: 45px;
-      border-radius: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-      text-decoration: none;
-      font-size: 18px;
-    }
-
-    .button-with-label .icon-btn:hover {
-      background: linear-gradient(135deg, #4338ca, #2563eb);
-      transform: translateY(-3px);
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.6);
-    }
-
-    .button-with-label .btn-label {
-      font-size: 11px;
-      color: #94a3b8;
-      font-weight: 600;
-    }
-
-    /* Install Button */
-    #installBtn {
-      position: fixed;
-      bottom: 90px;
-      right: 20px;
-      background-color: #1E90FF;
-      color: white;
-      border-radius: 12px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: bold;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-      border: none;
-      cursor: pointer;
-      z-index: 10000;
-      display: none;
-      transition: all 0.3s ease;
-    }
-
-    #installBtn:hover {
-      background-color: #0f6cd3;
-      transform: scale(1.05);
-    }
-
-    /* Mobile Responsiveness */
-   @media (max-width: 768px) {
-  header,
-  .glass-btn-row,
-  .bottom-buttons,
-  .star-card {
-    backdrop-filter: none;
-    background: rgba(15,23,42,0.95);
-  }
-
-      .glass-button .icon-btn {
-        width: 45px;
-        height: 45px;
-      }
-
-      .glass-button .icon-btn svg {
-        width: 30px;
-        height: 30px;
-      }
-
-      .glass-button .btn-label {
-        font-size: 10px;
-      }
-
-      .welcome-section h3 {
-        font-size: 18px;
-      }
-
-      .section-title {
-        font-size: 20px;
-      }
-
-      .campus-stars-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-      }
-
-      .star-image {
-        height: 320px;
-      }
-
-      .button-with-label .icon-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
-      }
-
-      .button-with-label .btn-label {
-        font-size: 10px;
-      }
-
-      .profile-container .profile-picture {
-        width: 40px;
-        height: 40px;
-      }
-
-      .menu-btn {
-        width: 40px;
-        height: 40px;
-      }
-
-      .modal-content {
-        max-width: 90%;
-        padding: 25px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .star-name {
-        font-size: 16px;
-      }
-
-      .star-program {
-        font-size: 12px;
-      }
-
-      .action-btn {
-        font-size: 13px;
-        padding: 8px;
-      }
-
-      .star-description {
-        font-size: 12px;
-      }
-    }
-
-    @media (max-width: 768px) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-.star-card,
-.icon-btn,
-.menu-btn {
-  will-change: transform;
-}
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduApp - Modern Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles/globals.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+    </style>
 </head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-blue-950/20 dark:via-background dark:to-purple-950/20">
+    
+    <!-- Mobile Header -->
+    <div class="lg:hidden" id="mobileHeader">
+     <!-- Main Header Bar -->
+<div class="flex items-center justify-between p-4 bg-card border-b border-border">
+    <div class="flex items-center gap-3">
+        <button id="menuToggle" class="p-2 hover:bg-accent rounded-md transition-colors">
+            <svg id="menuIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="4" x2="20" y1="6" y2="6"/>
+                <line x1="4" x2="20" y1="12" y2="12"/>
+                <line x1="4" x2="20" y1="18" y2="18"/>
+            </svg>
+            <svg id="closeIcon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m18 6-12 12"/>
+                <path d="m6 6 12 12"/>
+            </svg>
+        </button>
 
-<body>
+    <div class="flex items-center gap-2">
+  <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center overflow-hidden">
+    <img src="/images/luanar7.png" alt="LUANAR Logo">
 
-  <!-- Splash Screen -->
-  <div id="splash-screen">
-    <div style="position:absolute; top:10%; left:10%; opacity:0.2; font-size:40px;">❄</div>
-    <div style="position:absolute; bottom:15%; right:15%; opacity:0.2; font-size:30px;">❄</div>
-
-    <img src="images/luanar-logo.png" alt="StudyHub Logo">
-
-    <h2>StudyHub LUANAR</h2>
-    <div class="version-tag">Version 2026</div>
-
-    <p>Built with love ... shared with joy</p>
-
-    <p>LOADING YOUR CAMPUS...</p>
-    <br>
+       
+     
+  
   </div>
 
-  <!-- Christmas Decorations (subtle) -->
-  <div class="christmas-sparkle" style="top: 15%; left: 5%;">✨</div>
-  <div class="christmas-sparkle" style="top: 25%; right: 8%; animation-delay: 1s;">🎄</div>
-  <div class="christmas-sparkle" style="bottom: 20%; left: 10%; animation-delay: 2s;">⭐</div>
+  <h1 class="text-lg font-medium">
+  <span class="text-black">StudyHub</span>
+  <span class="text-green-800"> LUANAR</span>
+</h1>
 
-  <!-- Header -->
-  <header>
-    <h1>StudyHub<br>LUANAR</h1>
-  </header>
+</div>
+</div>
 
-  <!-- Menu Button -->
-  <button id="menuIcon" class="menu-btn">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-  </button>
+    <div class="flex items-center gap-2">
+        <button id="searchToggle" class="p-2 hover:bg-accent rounded-md transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+        </button>
 
-  <!-- Sidebar -->
-  <nav class="sidebar" id="sidebar">
-    <button id="closeSidebarBtn" class="close-btn">&times;</button>
-    <ul class="nav-list">
-      <li><a href="index.html">🏠 Home</a></li>
-      <li><a href="profile.html">👤 Your Profile</a></li>
-      <li><a href="upload.html">📤 Upload Notes</a></li>
-      <li><a href="request.html">📩 Request Notes</a></li>
-      <li><a href="developer.html">👨‍💻 About the Developer</a></li>
-      <li><a href="admin.html">🛠️ Admin Panel</a></li>
-      <li><a href="support.html">☕ Buy me coffee</a></li>
+        <!-- Profile Button -->
+       <!-- Profile Button -->
+<!-- Profile Button -->
+<div id="youButton" class="flex flex-col items-center cursor-pointer">
+  <a href="profile.html">
+    <img id="youProfilePic" src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
+      alt="Profile Picture" class="w-8 h-8 rounded-full border-2 border-blue-500 shadow-sm transition-transform duration-300 hover:scale-110">
+  </a>
+  <span class="text-xs font-semibold text-blue-400 mt-1">You</span>
+</div>
+
+
+    </div>
+</div>
+
+        <!-- Search Bar -->
+        <div id="searchBar" class="hidden p-4 bg-card border-b border-border">
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input 
+                    type="text" 
+                    placeholder="Search courses..." 
+                    class="w-full pl-10 pr-4 py-2 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+       <div class="p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+    <div class="text-center space-y-2">
+        <h2 id="welcomeName" class="text-xl font-medium">Welcome back!</h2>
+        <p class="text-sm text-muted-foreground">Continue your learning journey</p>
+    </div>
+</div>
+
+        </div>
+    </div>
+
+    <div class="flex h-screen lg:h-auto">
+        <!-- Sidebar Overlay -->
+        <div id="sidebarOverlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden"></div>
+        
+        <!-- Sidebar -->
+        <div id="sidebar" class="fixed lg:static top-0 left-0 h-full w-64 bg-gradient-to-b from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-r border-border/50 backdrop-blur-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50 flex flex-col">
+            <!-- Mobile Close Button -->
+            <div class="lg:hidden flex justify-end p-4">
+                <button id="sidebarClose" class="p-2 hover:bg-white/50 dark:hover:bg-black/20 rounded-md transition-colors">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Logo/Brand -->
+            
+
+            <!-- User Profile -->
+          <!-- User Profile -->
+<div class="px-6 pb-4">
+    <div class="flex items-center gap-3 p-3 rounded-xl bg-white/50 dark:bg-black/20 backdrop-blur-sm border border-white/20 shadow-sm">
+        <div id="sidebarInitials" class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium ring-2 ring-white/30">
+            JD
+        </div>
+        <div class="flex-1 min-w-0">
+            <p id="sidebarFullName" class="text-sm font-medium truncate">John Doe</p>
+            <p class="text-xs text-muted-foreground truncate">Student</p>
+        </div>
+    </div>
+</div>
+
+
+            <!-- Navigation -->
+           <nav class="flex-1 px-6">
+    <ul class="space-y-2">
+        <li>
+            <a href="upload.html" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9,22 9,12 15,12 15,22"/>
+                </svg>
+                Upload Notes
+            </a>
+        </li>
+        <li>
+            <a href="my_courses.html" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 hover:backdrop-blur-sm transition-all">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20l-5.5-6-5.5 6V2Z"/>
+                </svg>
+                My Courses
+            </a>
+        </li>
+        <li>
+            <a href="timetable.html" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 hover:backdrop-blur-sm transition-all">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Timetable
+            </a>
+        </li>
+        <li>
+            <a href="achievements.html" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 hover:backdrop-blur-sm transition-all">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="7"/>
+                    <polyline points="8.21,13.89 7,23 12,20 17,23 15.79,13.88"/>
+                </svg>
+                Achievements
+            </a>
+        </li>
+        <li>
+            <a href="profile.html" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 hover:backdrop-blur-sm transition-all">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Profile
+            </a>
+        </li>
+        <li>
+            <a href="settings.html" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 hover:backdrop-blur-sm transition-all">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Settings
+            </a>
+        </li>
     </ul>
-    <button id="toggleDarkMode" class="dark-mode-btn" aria-pressed="false">🌙 Toggle Dark Mode</button>
-  </nav>
-
-  <!-- Profile Button -->
-  <div class="profile-container" id="youButton">
-    <a href="profile.html">
-      <img id="youProfilePic" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Profile Picture"
-        class="profile-picture">
-    </a>
-    <div class="btn-label">You</div>
-  </div>
-
-  <!-- Glass Buttons (Sticky) -->
-  <div class="glass-btn-row">
-    <div class="glass-button">
-      <a href="message.html" class="icon-btn">
-        <svg width="30" height="30" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-          <g fill="#4CAF50" stroke="#2E7D32" stroke-width="2">
-            <rect x="8" y="12" width="48" height="36" rx="6" ry="6" />
-            <polygon points="8,48 32,36 56,48" fill="#81C784" />
-          </g>
-        </svg>
-      </a>
-      <div class="btn-label">studyhub AI</div>
-    </div>
-
-    <div class="glass-button">
-      <a href="program.html" class="icon-btn">
-        <svg width="30" height="30" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-          <g fill="#2196F3" stroke="#1565C0" stroke-width="2">
-            <rect x="8" y="12" width="48" height="40" rx="4" ry="4" />
-            <line x1="16" y1="20" x2="48" y2="20" stroke="#BBDEFB" stroke-width="2" />
-            <line x1="16" y1="28" x2="48" y2="28" stroke="#BBDEFB" stroke-width="2" />
-            <line x1="16" y1="36" x2="48" y2="36" stroke="#BBDEFB" stroke-width="2" />
-          </g>
-        </svg>
-      </a>
-      <div class="btn-label">Programs</div>
-    </div>
-
-    <div class="glass-button">
-      <a href="past-paper.html" class="icon-btn">
-        <svg width="30" height="30" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-          <g fill="#FF9800" stroke="#EF6C00" stroke-width="2">
-            <circle cx="32" cy="32" r="20" />
-            <circle cx="32" cy="32" r="8" fill="#FFF3E0" />
-            <line x1="32" y1="12" x2="32" y2="20" stroke="#EF6C00" stroke-width="2" />
-            <line x1="32" y1="44" x2="32" y2="52" stroke="#EF6C00" stroke-width="2" />
-            <line x1="12" y1="32" x2="20" y2="32" stroke="#EF6C00" stroke-width="2" />
-            <line x1="44" y1="32" x2="52" y2="32" stroke="#EF6C00" stroke-width="2" />
-          </g>
-        </svg>
-      </a>
-      <div class="btn-label">Past Papers</div>
-    </div>
-  </div>
-
-  <!-- Main Container -->
-  <main class="container">
-
-    <!-- Welcome Section -->
-    <div class="welcome-section">
-      <h3>Welcome to StudyHub LUANAR<br>Student Elections 2026</h3>
-      <p>Meet your candidates and vote for change! 🗳️</p>
-    </div>
-
-    <!-- Campus Stars Section -->
-    <h2 class="section-title">Election Candidates</h2>
-
-    <div class="campus-stars-grid" id="campusStarsGrid">
-      <!-- Star cards will be dynamically added here -->
-    </div>
-
-  </main>
-
-  <!-- Voting Modal -->
-  <div class="modal" id="votingModal">
-    <div class="modal-content">
-      <h3>🔒 Voting Not Open Yet</h3>
-      <p>The voting period has not started. Please check back later when elections officially begin!</p>
-      <p style="font-size: 14px; color: #94a3b8; margin-top: 10px;">Stay tuned for announcements.</p>
-      <button class="modal-close-btn" onclick="closeModal()">Got it!</button>
-    </div>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <div class="bottom-buttons">
-    <div class="button-with-label">
-      <a href="feedback.html" class="icon-btn">📝</a>
-      <div class="btn-label">Feedback</div>
-    </div>
-    <div class="button-with-label">
-      <a href="videolesson.html" class="icon-btn">▶️</a>
-      <div class="btn-label">Video</div>
-    </div>
-    <div class="button-with-label">
-      <a href="request.html" class="icon-btn">📩</a>
-      <div class="btn-label">Request</div>
-    </div>
-    <div class="button-with-label">
-      <a href="wisdom.html" class="icon-btn">💡</a>
-      <div class="btn-label">Wisdom</div>
-    </div>
-  </div>
-
-  <!-- PWA Install Button -->
-  <button id="installBtn">Install App</button>
-
+</nav>
  
-  <script>
-/* =======================
-   BASIC UI LOGIC
-======================= */
+            <!-- Footer -->
+            <div class="p-6">
+                <div class="h-px bg-border/30 mb-4"></div>
+                <div class="text-xs text-muted-foreground text-center">
+                    © 2024 EduApp. All rights reserved.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-hidden lg:ml-0">
+            <div class="h-full overflow-y-auto">
+                <div class="p-4 lg:p-8 space-y-6 lg:space-y-8">
+                    <!-- Desktop Header -->
+                    <div class="hidden lg:block space-y-6">
+                        <div class="text-left space-y-2">
+                            <h1 class="text-3xl font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                Welcome back, John!
+                            </h1>
+                            <p class="text-muted-foreground">
+                                Continue your learning journey and achieve your goals 🚀
+                            </p>
+                        </div>
 
-// Load saved profile picture
-window.addEventListener("load", () => {
-  const savedPic = localStorage.getItem("userProfilePic");
-  if (savedPic) {
-    const img = document.getElementById("youProfilePic");
-    if (img) img.src = savedPic;
-  }
-});
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <div class="relative flex-1 max-w-md">
+                                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                                <input 
+                                    type="text" 
+                                    placeholder="Search courses, instructors, or topics..." 
+                                    class="w-full pl-10 pr-4 py-3 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                                >
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button class="flex items-center gap-2 px-4 py-3 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg hover:bg-accent transition-all">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>    
+                                    </svg>
+                                    Filter
+                                </button>
+                                
+                                <button class="relative flex items-center gap-2 px-4 py-3 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg hover:bg-accent transition-all">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                                    </svg>
+                                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center text-xs">3</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                      <!-- Glass Buttons -->
+                        <div class="flex flex-col items-center gap-8">
+                            <!-- Main Glass Buttons -->
+<div class="flex items-center justify-around w-full max-w-xs p-2 bg-black/10 dark:bg-black/40 backdrop-blur-xl rounded-2xl border border-white/20">
+  <!-- Past Papers -->
+  <div class="glass-button flex flex-col items-center">
+    <button id="btnPastPapers" class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </button>
+    <span class="text-xs font-medium mt-1.5">Past Papers</span>
+  </div>
 
-// Sidebar toggle
-const sidebar = document.getElementById("sidebar");
-const menuIcon = document.getElementById("menuIcon");
-const closeSidebarBtn = document.getElementById("closeSidebarBtn");
+  <!-- Programs -->
+  <div class="glass-button flex flex-col items-center">
+    <button id="btnPrograms" class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20l-5.5-6-5.5 6V2Z"/>
+      </svg>
+    </button>
+    <span class="text-xs font-medium mt-1.5">Programs</span>
+  </div>
 
-menuIcon?.addEventListener("click", () => sidebar.classList.add("active"));
-closeSidebarBtn?.addEventListener("click", () => sidebar.classList.remove("active"));
+  <!-- AI Tutor -->
+  <div class="glass-button flex flex-col items-center">
+    <button id="btnAITutor" class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+        <line x1="8" y1="21" x2="16" y2="21"/>
+        <line x1="12" y1="17" x2="12" y2="21"/>
+      </svg>
+    </button>
+    <span class="text-xs font-medium mt-1.5">AI Tutor</span>
+  </div>
+</div>
 
-// PWA install
-let deferredPrompt;
-window.addEventListener("beforeinstallprompt", e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById("installBtn").style.display = "inline-block";
-});
+                    <!-- Mobile Features -->
+                    <div class="lg:hidden space-y-6" id="mobileFeatures">
+                        <!-- Image Carousel -->
+                        <div class="relative w-full h-48 rounded-2xl overflow-hidden shadow-xl">
+                            <div class="carousel-container">
+                                <div class="carousel-slide active">
+                                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" alt="Students studying" class="w-full h-full object-cover">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=600&h=400&fit=crop" alt="Online learning" class="w-full h-full object-cover">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop" alt="Education technology" class="w-full h-full object-cover">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop" alt="Group study" class="w-full h-full object-cover">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=600&h=400&fit=crop" alt="Books and learning" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            
+                            <!-- Carousel Indicators -->
+                            <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
+                                <button class="carousel-indicator active w-2 h-2 rounded-full bg-white" data-slide="0"></button>
+                                <button class="carousel-indicator w-2 h-2 rounded-full bg-white/50" data-slide="1"></button>
+                                <button class="carousel-indicator w-2 h-2 rounded-full bg-white/50" data-slide="2"></button>
+                                <button class="carousel-indicator w-2 h-2 rounded-full bg-white/50" data-slide="3"></button>
+                                <button class="carousel-indicator w-2 h-2 rounded-full bg-white/50" data-slide="4"></button>
+                            </div>
+                        </div>
 
-document.getElementById("installBtn")?.addEventListener("click", () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.finally(() => {
-    deferredPrompt = null;
-    document.getElementById("installBtn").style.display = "none";
-  });
-});
+                      
+                          
+                    <!-- Stats Cards -->
+                   <!-- Stats Cards -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6" id="statsCards">
 
-// Splash screen
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splash-screen");
-  if (!splash) return;
-
-  if (localStorage.getItem("splashShown") === "true") {
-    splash.remove();
-    return;
-  }
-
-  localStorage.setItem("splashShown", "true");
-
-  setTimeout(() => {
-    splash.style.transition = "opacity 2s ease";
-    splash.style.opacity = "0";
-    setTimeout(() => splash.remove(), 2000);
-  }, 4000);
-});
-
-/* =======================
-   CANDIDATE DATA
-======================= */
-
-const campusStars = [
-  {
-    id: "pemphero_",
-    name: "Pemphero Gwetse",
-    position: "Entertainment Director",
-    program: "BSc Food Technology",
-    year: "Year 4",
-    description: "Making NRC entertainment great",
-    image: "images/gwetse.jpeg"
-  },
-  {
-    id: "pi1",
-    name: "Picture",
-    position: "Moments",
-    program: "",
-    year: "",
-    description: "Lifestyle",
-    image: "images/4.jpeg"
-  },
-  {
-    id: "pi2",
-    name: "Picture",
-    position: "NRC Campus",
-    program: "Beautiful",
-    year: "",
-    description: "Campus vibes",
-    image: "images/6.jpg"
-  },
-  {
-    id: "billy",
-    name: "Billy",
-    position: "Student @ NRC",
-    program: "Agro-food Processing",
-    year: "",
-    description: "Support and love to campus",
-    image: "images/billy.jpeg"
-  }
-];
-
-window.campusStars = campusStars; // 🔥 expose to module safely
-
-/* =======================
-   RENDER CARDS
-======================= */
-
-const votingOpen = false;
-const votingPageUrl = "voting.html";
-const grid = document.getElementById("campusStarsGrid");
-
-campusStars.forEach((star, index) => {
-  const card = document.createElement("div");
-  card.className = "star-card";
-  card.innerHTML = `
-    <img src="${star.image}" class="star-image" alt="${star.name}">
-
-    <div class="star-info">
-      <div class="star-name">${star.name}</div>
-      <div class="star-position">📌 ${star.position}</div>
-      <div class="star-program">${star.program}</div>
-      <div class="star-year">${star.year}</div>
-      <div class="star-description">"${star.description}"</div>
-
-      <div class="star-actions">
-        <button class="action-btn like-btn" data-id="${star.id}">
-          ❤️ <span class="like-text">Like</span>
-        </button>
-
-        <button class="action-btn share-btn"
-          onclick="shareProfile('${star.name}','${star.position}')">
-          📤 Share
-        </button>
-
-        <button class="action-btn vote-btn ${votingOpen ? "active" : ""}"
-          data-name="${star.name}">
-          🗳️ Vote
-        </button>
+  <!-- Courses Enrolled -->
+  <div class="bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-xs lg:text-sm font-medium">Courses Enrolled</h3>
+      <div class="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg">
+        <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20l-5.5-6-5.5 6V2Z"/>
+        </svg>
       </div>
-
-      <div class="like-count">0 likes</div>
     </div>
-  `;
-  grid.appendChild(card);
+    <div id="coursesCount" class="text-2xl font-bold">0</div>
+    <p id="coursesDelta" class="text-xs text-muted-foreground"></p>
+  </div>
+
+  <!-- Hours Learned -->
+  <div class="bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-xs lg:text-sm font-medium">Hours Learned</h3>
+      <div class="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
+        <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12,6 12,12 16,14"/>
+        </svg>
+      </div>
+    </div>
+    <div id="hoursLearned" class="text-2xl font-bold">0</div>
+  </div>
+
+  <!-- Certificates Earned -->
+  <div class="bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-xs lg:text-sm font-medium">Certificates Earned</h3>
+      <div class="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg">
+        <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="8" r="7"/>
+          <polyline points="8.21,13.89 7,23 12,20 17,23 15.79,13.88"/>
+        </svg>
+      </div>
+    </div>
+    <div id="certificatesCount" class="text-2xl font-bold">0</div>
+  </div>
+
+  <!-- Learning Streak -->
+  <div class="bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-xs lg:text-sm font-medium">Learning Streak</h3>
+      <div class="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 shadow-lg">
+        <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+        </svg>
+      </div>
+    </div>
+    <div id="streakCount" class="text-2xl font-bold">0 days</div>
+  </div>
+
+</div>
+
+                    <!-- Course Grid -->
+                    <div class="space-y-8">
+                        <!-- Continue Learning Section -->
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-xl font-medium">Continue Learning</h2>
+                                <button class="text-sm font-medium text-blue-600 hover:text-blue-700">View All</button>
+                            </div>
+                            
+                           <div id="courseGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                              <!-- Supabase files will be injected here -->
+                             </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <script>
+
+
+
+    
+/* ===============================
+   UI STATE
+================================ */
+let isSidebarOpen = false;
+let isSearchOpen = false;
+let currentSlide = 0;
+let carouselInterval;
+
+/* ===============================
+   DOM ELEMENTS
+================================ */
+const menuToggle = document.getElementById("menuToggle");
+const menuIcon = document.getElementById("menuIcon");
+const closeIcon = document.getElementById("closeIcon");
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const sidebarClose = document.getElementById("sidebarClose");
+const searchToggle = document.getElementById("searchToggle");
+const searchBar = document.getElementById("searchBar");
+
+/* ===============================
+   INIT
+================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  initSidebar();
+  initSearch();
+  initCarousel();
+  initGlassButtons();
+  initProgressBars();
 });
 
-/* =======================
-   EVENT DELEGATION
-======================= */
 
-grid.addEventListener("click", e => {
-  const likeBtn = e.target.closest(".like-btn");
-  if (likeBtn) {
-    toggleLike(likeBtn.dataset.id, likeBtn);
-    return;
-  }
+ // Button click handlers
+  document.getElementById("btnPastPapers").addEventListener("click", () => {
+    // Example action: navigate to past papers page
+    window.location.href = "/past-papers.html";
+  });
 
-  const voteBtn = e.target.closest(".vote-btn");
-  if (voteBtn) {
-    if (votingOpen) {
-      window.location.href =
-        `${votingPageUrl}?candidate=${encodeURIComponent(voteBtn.dataset.name)}`;
-    } else {
-      openModal();
-    }
+  document.getElementById("btnPrograms").addEventListener("click", () => {
+    // Example action: navigate to programs page
+    window.location.href = "/program.html";
+  });
+
+  document.getElementById("btnAITutor").addEventListener("click", () => {
+    // Example action: open AI tutor modal
+    // Could also redirect: window.location.href = "/ai-tutor.html";
+    alert("Launching AI Tutor... 🚀");
+     window.location.href = "/ai-tutor.html";
+  });
+
+
+/* ===============================
+   SIDEBAR
+================================ */
+function initSidebar() {
+  menuToggle?.addEventListener("click", toggleSidebar);
+  sidebarClose?.addEventListener("click", closeSidebar);
+  sidebarOverlay?.addEventListener("click", closeSidebar);
+}
+
+function toggleSidebar() {
+  isSidebarOpen = !isSidebarOpen;
+  updateSidebar();
+}
+
+function closeSidebar() {
+  isSidebarOpen = false;
+  updateSidebar();
+}
+
+function updateSidebar() {
+  sidebar.classList.toggle("-translate-x-full", !isSidebarOpen);
+  sidebarOverlay.classList.toggle("hidden", !isSidebarOpen);
+  menuIcon.classList.toggle("hidden", isSidebarOpen);
+  closeIcon.classList.toggle("hidden", !isSidebarOpen);
+  document.body.style.overflow = isSidebarOpen ? "hidden" : "";
+}
+const sidebarInitials = document.getElementById("sidebarInitials");
+const sidebarFullName = document.getElementById("sidebarFullName");
+
+
+/* ===============================
+   SEARCH
+================================ */
+function initSearch() {
+  searchToggle?.addEventListener("click", () => {
+    isSearchOpen = !isSearchOpen;
+    searchBar.classList.toggle("hidden", !isSearchOpen);
+    searchBar.querySelector("input")?.focus();
+  });
+}
+
+/* ===============================
+   CAROUSEL
+================================ */
+function initCarousel() {
+  const slides = document.querySelectorAll(".carousel-slide");
+  if (!slides.length) return;
+  startCarousel();
+}
+
+function startCarousel() {
+  stopCarousel();
+  carouselInterval = setInterval(() => {
+    const slides = document.querySelectorAll(".carousel-slide");
+    slides.forEach(s => s.classList.remove("active"));
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add("active");
+  }, 4000);
+}
+
+function stopCarousel() {
+  clearInterval(carouselInterval);
+}
+
+/* ===============================
+   GLASS BUTTONS
+================================ */
+function initGlassButtons() {
+  document.querySelectorAll(".glass-button button").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      const label = btn.innerText.toLowerCase();
+
+      btn.style.transform = "scale(0.95)";
+      setTimeout(() => (btn.style.transform = ""), 150);
+
+      if (label.includes("past")) location.href = "past-papers.html";
+      else if (label.includes("program")) location.href = "program.html";
+      else if (label.includes("ai")) location.href = "ai-tutor.html";
+    });
+  });
+}
+
+/* ===============================
+   PROGRESS BARS
+================================ */
+function initProgressBars() {
+  document.querySelectorAll("[style*='width']").forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = "0%";
+    setTimeout(() => (bar.style.width = w), 300);
+  });
+}
+
+
+//profile picture toggle
+const youProfilePic = document.getElementById("youProfilePic");
+
+// Load cached picture on page load
+const cachedPic = localStorage.getItem("userProfilePic");
+if (cachedPic) youProfilePic.src = cachedPic;
+
+// Update "You" button whenever the main profile picture changes
+function updateYouButtonPic(newPic) {
+  youProfilePic.src = newPic;
+  localStorage.setItem("userProfilePic", newPic);
+}
+
+// Sync with your existing profilePic upload logic
+profilePic.addEventListener("click", () => uploadInput.click());
+changePicBtn.addEventListener("click", () => uploadInput.click());
+
+uploadInput.addEventListener("change", function() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const newPhoto = e.target.result;
+      profilePic.src = newPhoto;
+      updateYouButtonPic(newPhoto); // <-- Update "You" button here
+      if (auth.currentUser) updateProfile(auth.currentUser, { photoURL: newPhoto });
+    };
+    reader.readAsDataURL(file);
   }
 });
 
-// Share
-function shareProfile(name, position) {
-  const text = `Vote for ${name} for ${position}! 🗳️`;
-  if (navigator.share) {
-    navigator.share({ title: name, text, url: location.href });
-  } else {
-    navigator.clipboard.writeText(`${text}\n${location.href}`);
-    alert("Link copied!");
-  }
-}
-
-// Modal helpers
-function openModal() {
-  document.getElementById("votingModal")?.classList.add("active");
-}
-function closeModal() {
-  document.getElementById("votingModal")?.classList.remove("active");
-}
 </script>
 <script type="module">
+/* ===============================
+   IMPORTS
+================================ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging.js";
-import {
-  getFirestore,
-  doc,
-  onSnapshot,
-  updateDoc,
-  increment,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-/* =======================
-   FIREBASE INIT
-======================= */
-
+/* ===============================
+   FIREBASE
+================================ */
 const firebaseConfig = {
   apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
   authDomain: "studyhub-backend.firebaseapp.com",
@@ -1209,96 +610,306 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const messaging = getMessaging(app);
 const db = getFirestore(app);
+// Handle user login and FCM token registration
+let swRegistration;
+let messageListenerAttached = false;
 
-/* =======================
-   FCM REGISTER
-======================= */
-
-async function registerForNotifications() {
-  if (!("serviceWorker" in navigator)) return;
-
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") return;
-
-  const user = auth.currentUser;
-  if (!user) return;
-
-  const token = await getToken(messaging, {
-    vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
-    serviceWorkerRegistration: await navigator.serviceWorker.ready
-  });
-
-  await fetch("/save-token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${await user.getIdToken()}`
-    },
-    body: JSON.stringify({ token })
-  });
-}
-
-window.addEventListener("load", registerForNotifications);
-
-/* =======================
-   LIVE LIKE SYNC
-======================= */
-
-window.campusStars.forEach(star => {
-  const ref = doc(db, "candidates", star.id);
-
-  onSnapshot(ref, snap => {
-    if (!snap.exists()) return;
-
-    const likes = snap.data().likes || 0;
-    const btn = document.querySelector(`[data-id="${star.id}"]`);
-    if (!btn) return;
-
-    // update count
-    btn.closest(".star-card")
-      .querySelector(".like-count")
-      .textContent = `${likes} likes`;
-
-    // 🔥 restore liked state
-    const key = `liked_${star.id}`;
-    if (localStorage.getItem(key)) {
-      btn.classList.add("liked");
-      btn.querySelector(".like-text").textContent = "Liked";
-    }
-  });
-});
-
-/* =======================
-   LIKE HANDLER
-======================= */
-
-window.toggleLike = async function (id, btn) {
-  if (!id) return alert("Candidate misconfigured");
-
-  const key = `liked_${id}`;
-
-  if (localStorage.getItem(key)) {
-    alert("You already liked this 👍");
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert("Please log in first before uploading files.");
+    window.location.href = "login.html";
     return;
   }
 
-  // 🔥 instant UI feedback
-  btn.classList.add("liked");
-  btn.querySelector(".like-text").textContent = "Liked";
+  console.log("USER PROVIDER:", user.providerData);
 
-  const ref = doc(db, "candidates", id);
+  // Fill email
+  const emailInput = document.getElementById("email");
+  if (emailInput && user.email) {
+    emailInput.value = user.email;
+  }
 
-  await setDoc(ref, { likes: 0 }, { merge: true });
-  await updateDoc(ref, { likes: increment(1) });
+  try {
+    // Register SW ONCE
+    if (!swRegistration) {
+      swRegistration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    }
 
-  localStorage.setItem(key, "true");
-};
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      console.warn("Notifications denied");
+      return;
+    }
 
+    const fcmToken = await getToken(messaging, {
+      vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
+      serviceWorkerRegistration: swRegistration,
+    });
+
+    if (!fcmToken) return;
+
+    // 🔐 Prevent duplicate token saves
+    const savedToken = localStorage.getItem("fcmToken");
+
+    if (savedToken !== fcmToken) {
+      const idToken = await user.getIdToken();
+
+      await fetch("/save-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ token: fcmToken }),
+      });
+
+      localStorage.setItem("fcmToken", fcmToken);
+      console.log("FCM token saved");
+    } else {
+      console.log("Same FCM token — not resending");
+    }
+
+    // Foreground notifications (safe)
+    if (!messageListenerAttached) {
+      onMessage(messaging, (payload) => {
+        if (!payload.notification) return;
+
+        new Notification(payload.notification.title || "StudyHub", {
+          body: payload.notification.body || "New update",
+          icon: "/icons/icon-192.png",
+        });
+      });
+
+      messageListenerAttached = true;
+    }
+
+  } catch (err) {
+    console.error("FCM setup failed:", err);
+  }
+});
+/* ===============================
+   SUPABASE
+================================ */
+const supabase = createClient(
+  "https://qosudbigoxwzbdqkdecz.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ "
+);
+
+/* ===============================
+   AUTH FLOW
+================================ */
+onAuthStateChanged(auth, async user => {
+  if (!user) return;
+
+  /* ---- USER PROGRAM ---- */
+  const userSnap = await getDoc(doc(db, "users", user.uid));
+  if (!userSnap.exists()) return console.error("No user profile");
+
+  const program = userSnap.data().program;
+  if (!program) return console.error("Program missing");
+const welcomeName = document.getElementById("welcomeName");
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // Use displayName if set, otherwise fallback to email prefix
+        const nameToShow = user.displayName || user.email.split("@")[0];
+        welcomeName.textContent = `Welcome back, ${nameToShow}!`;
+    } else {
+        welcomeName.textContent = "Welcome back!";
+    }
+});
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // Full name
+        const fullName = user.displayName || user.email.split("@")[0];
+        sidebarFullName.textContent = fullName;
+
+        // Initials
+        const names = fullName.trim().split(" ");
+        let initials = names.length === 1 ? names[0][0] : names[0][0] + names[names.length - 1][0];
+        initials = initials.toUpperCase();
+        sidebarInitials.textContent = initials;
+    } else {
+        sidebarFullName.textContent = "Guest";
+        sidebarInitials.textContent = "G";
+    }
+});
+
+  /* ---- STATS ---- */
+  const statsRef = doc(db, "users", user.uid, "stats", "main");
+  await setDoc(statsRef, { streak: 1 }, { merge: true });
+
+  onSnapshot(statsRef, snap => {
+    const d = snap.data();
+    document.getElementById("coursesCount").textContent = d?.coursesEnrolled ?? 0;
+    document.getElementById("hoursLearned").textContent = d?.hoursLearned ?? 0;
+    document.getElementById("certificatesCount").textContent = d?.certificates ?? 0;
+    document.getElementById("streakCount").textContent = `${d?.streak ?? 0} days`;
+  });
+
+  /* ---- FILES ---- */
+ async function loadFiles(program) {
+  try {
+    const { data, error } = await supabase
+      .from("files")
+      .select("*")
+      .ilike("program", `%${program.trim()}%`)  // case-insensitive match
+      .order("uploaded_at", { ascending: false })
+      .limit(6);
+
+    console.log("Program:", program);
+    console.log("Files:", data);
+    console.log("Error:", error);
+
+    if (error) {
+      console.error("Supabase error:", error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      console.warn("No files found for this program");
+      return;
+    }
+
+    renderFiles(data);
+
+  } catch (err) {
+    console.error("loadFiles crashed:", err);
+  }
+}
+
+
+  // Call loadFiles with the user's program
+  loadFiles(program);
+
+}); // <-- This closes the onAuthStateChanged callback
+
+
+/* ===============================
+   RENDER FILES
+================================ */
+/* ===============================
+   RENDER FILES
+================================ */
+/* ===============================
+   RENDER FILES (Useful metadata)
+================================ */
+/* ===============================
+   RENDER FILES (Course and Semester instead of author/size)
+================================ */
+/* ===============================
+   RENDER FILES (Subject and Semester)
+================================ */
+function renderFiles(files) {
+  const grid = document.getElementById("courseGrid");
+  grid.innerHTML = "";
+
+  files.forEach(file => {
+    // Determine which URL to use
+    const fileUrl = file.url || (file.file_path 
+      ? supabase.storage.from("notes").getPublicUrl(file.file_path).data.publicUrl
+      : null);
+
+    if (!fileUrl) {
+      console.warn("Skipping file with missing URL:", file);
+      return;
+    }
+
+    // ======= Useful metadata =======
+    const title = file.title || file.filename || "Untitled File";
+    const subject = file.subject || "Unknown Subject";    // previously author
+    const semester = file.semester || "N/A";              // previously size/duration
+    const category = file.category || "General";
+    const downloads = file.downloads || 0;                // for progress bar
+    const rating = file.rating ? file.rating.toFixed(1) : "N/A";
+
+    // ======= Determine file type icon =======
+    const lowerTitle = title.toLowerCase();
+    let imageUrl;
+    if (lowerTitle.endsWith(".pdf")) {
+      imageUrl = "https://cdn-icons-png.flaticon.com/512/337/337946.png"; // PDF
+    } else if (lowerTitle.endsWith(".doc") || lowerTitle.endsWith(".docx")) {
+      imageUrl = "https://cdn-icons-png.flaticon.com/512/337/337932.png"; // Word
+    } else if (lowerTitle.endsWith(".ppt") || lowerTitle.endsWith(".pptx")) {
+      imageUrl = "https://cdn-icons-png.flaticon.com/512/337/337951.png"; // PowerPoint
+    } else {
+      imageUrl = `https://source.unsplash.com/400x300/?${encodeURIComponent(title)}`;
+    }
+
+    // ======= Render card =======
+    grid.innerHTML += `
+      <div class="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
+        <div class="relative h-48 overflow-hidden">
+          <img src="${imageUrl}" 
+               alt="${title}" 
+               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+          <div class="absolute top-3 left-3">
+            <span class="px-2 py-1 bg-background/90 backdrop-blur-sm text-xs font-medium rounded-md">
+              ${category}
+            </span>
+          </div>
+          <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+            <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5,3 19,12 5,21"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <h3 class="font-medium mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">${title}</h3>
+          <p class="text-sm text-muted-foreground mb-2">Subject: ${subject}</p>
+
+          <div class="mb-2">
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span class="text-muted-foreground">Semester</span>
+              <span class="font-medium">${semester}</span>
+            </div>
+            <div class="w-full bg-muted rounded-full h-2">
+              <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300" 
+                   style="width: ${downloads > 100 ? 100 : downloads}%"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-sm text-muted-foreground mb-4">
+            <div class="flex items-center gap-1">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12,6 12,12 16,14"/>
+              </svg>
+              <span>${semester}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1">
+                <svg class="w-4 h-4 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                </svg>
+                <span>${rating}</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>${downloads}</span>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="window.open('${fileUrl}', '_blank')" 
+                  class="w-full px-4 py-2 bg-transparent border border-border rounded-lg hover:bg-accent transition-colors">
+            Open File
+          </button>
+        </div>
+      </div>
+    `;
+  });
+}
+ 
 </script>
 
-</body>
 
+</body>
 </html>
- 
