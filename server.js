@@ -204,7 +204,7 @@ console.log("DECODED TOKEN:", decoded);
   subject,
   email: decoded.email || "anonymous",
   filename: file.originalname,
-  path: pathValue,
+  filepath: pathValue,
   url: publicUrl,
   storage_type,
   uploaded_at: new Date().toISOString(),
