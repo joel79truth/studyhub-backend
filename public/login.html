@@ -600,6 +600,9 @@ const db = getFirestore(app);
 
        const result = await signInWithPopup(auth, provider);
 const user = result.user;
+googleSignInBtn.addEventListener("click", () => {
+  console.log("Google button clicked");
+});
 
 // Save basic auth data in Firestore
 await setDoc(
