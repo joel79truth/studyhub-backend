@@ -26,6 +26,8 @@ async function requireAuth(req, res) {
 console.log("FIREBASE:", !!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64);
 console.log("SUPABASE:", !!process.env.SUPABASE_URL);
 console.log("DRIVE FOLDER:", process.env.GOOGLE_DRIVE_FOLDER_ID);
+console.log("OPENAI KEY:", !!process.env.OPENAI_API_KEY);
+
 
 /* ===== EXPRESS SETUP ===== */
 const app = express();
