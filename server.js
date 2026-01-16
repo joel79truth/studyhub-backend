@@ -215,6 +215,7 @@ console.log("DECODED TOKEN:", decoded);
     if (dbError) throw dbError;
 
    /* ===== PUSH NOTIFICATIONS ===== */
+/* ===== PUSH NOTIFICATIONS ===== */
 const { data: rows, error: tokenError } = await supabase
   .from("fcm_tokens")
   .select("token");
@@ -224,19 +225,23 @@ if (tokenError) {
 } else if (rows.length > 0) {
   const tokens = rows.map(r => r.token);
 
-  const response = await admin.messaging().sendEachForMulticast({
-  tokens,
-  data: {
-    title: "📚 New Notes Uploaded",
-    body: `${program} ${subject} notes for Semester ${semester} available`,
-    program,
-    semester: String(semester),
-    subject,
-    fileId: id,
-    url: `/program.html?program=${encodeURIComponent(program)}`
-  }
-});
+  const messagePayload = {
+    tokens,
+    notification: {
+      title: `📚 New Notes Uploaded: ${subject}`,
+      body: `A new file "${file.originalname}" for ${program}, Semester ${semester}, Subject: ${subject} is now available. Tap to view!`
+    },
+    data: {
+      program,
+      semester: String(semester),
+      subject,
+      filename: file.originalname,
+      fileId: id,
+      url: `/program.html?program=${encodeURIComponent(program)}&semester=${encodeURIComponent(semester)}&subject=${encodeURIComponent(subject)}`
+    }
+  };
 
+  const response = await admin.messaging().sendEachForMulticast(messagePayload);
 
   /* 🔥 CLEAN UP DEAD TOKENS */
   const invalidTokens = [];

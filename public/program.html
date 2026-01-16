@@ -610,32 +610,33 @@ function normalizeName(name) {
 function mergeSimilarPrograms(files) {
   const mergedCounts = {};
 
-  // Helper: normalize names by removing small filler words
-  function cleanName(name) {
-    return name
+  files.forEach(f => {
+    if (!f.program) return;
+
+    // Normalize name: lowercase, remove common filler words & punctuation
+    const cleaned = f.program
       .toLowerCase()
       .replace(/\b(in|of|and|the|at|on|for|by|to)\b/g, "")
       .replace(/[^a-z\s]/g, "")
       .replace(/\s+/g, " ")
       .trim();
-  }
 
-  files.forEach(f => {
-    if (!f.program) return;
+    // If a similar program already exists, increment its count
+    const existingKey = Object.keys(mergedCounts).find(k => {
+      const kClean = k.toLowerCase().replace(/\b(in|of|and|the|at|on|for|by|to)\b/g, "").replace(/[^a-z\s]/g, "").replace(/\s+/g, " ").trim();
+      return kClean === cleaned;
+    });
 
-    const cleaned = cleanName(f.program);
-
-    // Try to find an existing key that matches closely
-    let existingKey = Object.keys(mergedCounts).find(k => cleanName(k) === cleaned);
-
-    // If none found, create a new one
-    if (!existingKey) existingKey = f.program.trim();
-
-    mergedCounts[existingKey] = (mergedCounts[existingKey] || 0) + 1;
+    if (existingKey) {
+      mergedCounts[existingKey]++;
+    } else {
+      mergedCounts[f.program.trim()] = 1;
+    }
   });
 
   return mergedCounts;
 }
+
 
 // Load programs from backend
 async function loadPrograms() {

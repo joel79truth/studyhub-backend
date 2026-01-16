@@ -42,16 +42,20 @@ self.addEventListener("notificationclick", (event) => {
   const url = event.notification.data?.url || "/program.html";
 
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true })
-      .then((clientList) => {
-        for (const client of clientList) {
-          if (client.url.includes(url) && "focus" in client) {
-            return client.focus();
-          }
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      // Try to find an open tab with the same origin
+      for (const client of clientList) {
+        const clientUrl = new URL(client.url);
+        const targetUrl = new URL(url, self.origin); // make relative URL absolute
+        if (clientUrl.pathname === targetUrl.pathname && "focus" in client) {
+          return client.focus();
         }
-        if (clients.openWindow) {
-          return clients.openWindow(url);
-        }
-      })
+      }
+      // If no tab found, open new
+      if (clients.openWindow) {
+        return clients.openWindow(url);
+      }
+    })
   );
 });
+
