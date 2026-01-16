@@ -328,47 +328,20 @@
 
   <!-- Courses Enrolled -->
   <div class="bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="text-xs lg:text-sm font-medium">Courses Enrolled</h3>
-      <div class="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg">
-        <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-          <path d="M6.5 2H20v20l-5.5-6-5.5 6V2Z"/>
-        </svg>
-      </div>
+  <div class="flex items-center justify-between mb-2">
+    <h3 class="text-xs lg:text-sm font-medium">Days Until Exams</h3>
+    <div class="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg">
+      <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20l-5.5-6-5.5 6V2Z"/>
+      </svg>
     </div>
-    <div id="coursesCount" class="text-2xl font-bold">0</div>
-    <p id="coursesDelta" class="text-xs text-muted-foreground"></p>
   </div>
+  <div id="daysLeft" class="text-2xl font-bold">0</div>
+  <p id="daysDelta" class="text-xs text-muted-foreground"></p>
+</div>
 
-  <!-- Hours Learned -->
-  <div class="bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="text-xs lg:text-sm font-medium">Hours Learned</h3>
-      <div class="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
-        <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12,6 12,12 16,14"/>
-        </svg>
-      </div>
-    </div>
-    <div id="hoursLearned" class="text-2xl font-bold">0</div>
-  </div>
-
-  <!-- Certificates Earned -->
-  <div class="bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="text-xs lg:text-sm font-medium">Certificates Earned</h3>
-      <div class="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg">
-        <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="8" r="7"/>
-          <polyline points="8.21,13.89 7,23 12,20 17,23 15.79,13.88"/>
-        </svg>
-      </div>
-    </div>
-    <div id="certificatesCount" class="text-2xl font-bold">0</div>
-  </div>
-
+ 
   <!-- Learning Streak -->
   <div class="bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
     <div class="flex items-center justify-between mb-2">
@@ -389,7 +362,7 @@
                         <!-- Continue Learning Section -->
                         <div>
                             <div class="flex items-center justify-between mb-6">
-                                <h2 class="text-xl font-medium">Continue Learning</h2>
+                                <h2 class="text-xl font-medium">Recently uploaded<h2>
                                 <button class="text-sm font-medium text-blue-600 hover:text-blue-700">View All</button>
                             </div>
                             
@@ -613,6 +586,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const messaging = getMessaging(app);    
 // Handle user login and FCM token registration
 let swRegistration;
 let messageListenerAttached = false;
@@ -744,12 +718,30 @@ onAuthStateChanged(auth, (user) => {
 
   onSnapshot(statsRef, snap => {
     const d = snap.data();
-    document.getElementById("coursesCount").textContent = d?.coursesEnrolled ?? 0;
-    document.getElementById("hoursLearned").textContent = d?.hoursLearned ?? 0;
-    document.getElementById("certificatesCount").textContent = d?.certificates ?? 0;
     document.getElementById("streakCount").textContent = `${d?.streak ?? 0} days`;
   });
+ // Set your end-of-semester exam date here (YYYY, M-1, D)
+  const examDate = new Date(2026, 4, 10); // May 10, 2026
+  const today = new Date();
 
+  // Calculate difference in days
+  const diffTime = examDate - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  // Update HTML
+  const daysLeftEl = document.getElementById("daysLeft");
+  const daysDeltaEl = document.getElementById("daysDelta");
+
+  if (diffDays > 0) {
+    daysLeftEl.textContent = diffDays;
+    daysDeltaEl.textContent = "days left until exams";
+  } else if (diffDays === 0) {
+    daysLeftEl.textContent = "0";
+    daysDeltaEl.textContent = "Exams start today!";
+  } else {
+    daysLeftEl.textContent = "0";
+    daysDeltaEl.textContent = "Exams are over";
+  }
   /* ---- FILES ---- */
  async function loadFiles(program) {
   try {
