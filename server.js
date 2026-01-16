@@ -8,7 +8,7 @@ const { createClient } = require("@supabase/supabase-js");
 const { google } = require("googleapis");
 const { Readable } = require("stream");
 const fs = require("fs");
-const fetch = require("node-fetch"); // Add this if not already
+// Add this if not already
 
 dotenv.config();
 
