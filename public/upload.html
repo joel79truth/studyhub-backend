@@ -203,9 +203,11 @@
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging.js";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 // Firebase config
 const firebaseConfig = {
@@ -224,61 +226,80 @@ const auth = getAuth(app);
 const messaging = getMessaging(app);
 
 // Handle user login and FCM token registration
+let swRegistration;
+let messageListenerAttached = false;
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     alert("Please log in first before uploading files.");
     window.location.href = "login.html";
     return;
   }
-console.log("USER PROVIDER:", auth.currentUser.providerData);
 
+  console.log("USER PROVIDER:", user.providerData);
 
-  if (user?.email) {
-  document.getElementById("email").value = user.email;
-}
-
+  // Fill email
+  const emailInput = document.getElementById("email");
+  if (emailInput && user.email) {
+    emailInput.value = user.email;
+  }
 
   try {
-    // Register service worker
-    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    // Register SW ONCE
+    if (!swRegistration) {
+      swRegistration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    }
 
-    // Request notification permission
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      console.warn("Notifications not allowed");
+      console.warn("Notifications denied");
       return;
     }
 
-    // Get FCM token
     const fcmToken = await getToken(messaging, {
       vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
-      serviceWorkerRegistration: registration,
+      serviceWorkerRegistration: swRegistration,
     });
 
-    if (fcmToken) {
+    if (!fcmToken) return;
+
+    // 🔐 Prevent duplicate token saves
+    const savedToken = localStorage.getItem("fcmToken");
+
+    if (savedToken !== fcmToken) {
       const idToken = await user.getIdToken();
+
       await fetch("/save-token", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + idToken,
+          Authorization: `Bearer ${idToken}`,
         },
         body: JSON.stringify({ token: fcmToken }),
       });
+
+      localStorage.setItem("fcmToken", fcmToken);
+      console.log("FCM token saved");
+    } else {
+      console.log("Same FCM token — not resending");
     }
 
-    // Handle foreground notifications
-    onMessage(messaging, (payload) => {
-      if (Notification.permission === "granted") {
-        new Notification(payload.notification.title, {
-          body: payload.notification.body,
+    // Foreground notifications (safe)
+    if (!messageListenerAttached) {
+      onMessage(messaging, (payload) => {
+        if (!payload.notification) return;
+
+        new Notification(payload.notification.title || "StudyHub", {
+          body: payload.notification.body || "New update",
+          icon: "/icons/icon-192.png",
         });
-      }
-    });
-    
+      });
+
+      messageListenerAttached = true;
+    }
 
   } catch (err) {
-    console.error("FCM registration failed:", err);
+    console.error("FCM setup failed:", err);
   }
 });
 

@@ -402,6 +402,18 @@
         font-size: 14px;
       }
     }
+    .google-btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  right: 16px;
+}
+
   </style>
 
   <!-- Google Analytics -->
@@ -559,7 +571,6 @@ const db = getFirestore(app);
  
 
    
-    window.addEventListener("load", registerForNotifications);
     // Elements
     const loginCard = document.getElementById("loginCard");
     const detailsCard = document.getElementById("detailsCard");
@@ -591,8 +602,9 @@ const db = getFirestore(app);
 
     // Google Sign-In
     googleSignInBtn.addEventListener("click", async () => {
-      googleSignInBtn.disabled = true;
-      googleSignInBtn.classList.add('loading');
+     googleSignInBtn.disabled = true;
+googleSignInBtn.classList.add('loading');
+
       googleSignInBtn.textContent = '';
 
       try {
@@ -600,6 +612,9 @@ const db = getFirestore(app);
 
        const result = await signInWithPopup(auth, provider);
 const user = result.user;
+googleSignInBtn.addEventListener("click", () => {
+  console.log("Google button clicked");
+});
 
 // Save basic auth data in Firestore
 await setDoc(
