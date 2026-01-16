@@ -280,15 +280,27 @@ app.get("/api/drive/:fileId", async (req, res) => {
 });
 
 /* ===== METADATA ===== */
+// GET /api/files?uid=...&program=...
 app.get("/api/metadata", async (req, res) => {
-  const { data, error } = await supabase
+  const { uid, program } = req.query;
+
+  let query = supabase
     .from("files")
     .select("*")
     .order("uploaded_at", { ascending: false });
 
-  if (error) return res.status(500).json({ message: "Fetch failed" });
+  if (uid) query = query.eq("email", uid);
+  if (program) query = query.eq("program", program);
+
+  const { data, error } = await query;
+
+  if (error) {
+    return res.status(500).json({ message: "Fetch failed", error: error.message });
+  }
+
   res.json(data);
 });
+
 
 
 /* ===== GPT CHAT ENDPOINT ===== */
