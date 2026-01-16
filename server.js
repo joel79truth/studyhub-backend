@@ -8,7 +8,7 @@ const { createClient } = require("@supabase/supabase-js");
 const { google } = require("googleapis");
 const { Readable } = require("stream");
 const fs = require("fs");
-const fetch = require("node-fetch"); // Add this if not already
+// Add this if not already
 
 dotenv.config();
 
@@ -26,6 +26,8 @@ async function requireAuth(req, res) {
 console.log("FIREBASE:", !!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64);
 console.log("SUPABASE:", !!process.env.SUPABASE_URL);
 console.log("DRIVE FOLDER:", process.env.GOOGLE_DRIVE_FOLDER_ID);
+console.log("OPENAI KEY:", !!process.env.OPENAI_API_KEY);
+
 
 /* ===== EXPRESS SETUP ===== */
 const app = express();
@@ -306,30 +308,51 @@ app.get("/api/metadata", async (req, res) => {
 /* ===== GPT CHAT ENDPOINT ===== */
 app.post("/api/chat", async (req, res) => {
   const { message } = req.body;
-  if (!message) return res.status(400).json({ reply: "No message provided." });
+  if (!message) {
+    return res.status(400).json({ reply: "No message provided." });
+  }
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [
-          { role: "system", content: "You are a helpful AI tutor specialized in academic subjects: math, science, writing, agriculture, research." },
-          { role: "user", content: message }
+          {
+            role: "system",
+            content:
+              "You are a helpful AI tutor specialized in academic subjects: math, science, writing, agriculture, research.",
+          },
+          { role: "user", content: message },
         ],
-        temperature: 0.7
-      })
+        temperature: 0.7,
+      }),
     });
 
     const data = await response.json();
-    const reply = data.choices[0].message.content;
-    res.json({ reply });
+
+    if (!response.ok) {
+      console.error("OpenAI error response:", data);
+      return res.status(500).json({
+        reply: "AI service error",
+        error: data.error?.message || "Unknown OpenAI error",
+      });
+    }
+
+    if (!data.choices || !data.choices.length) {
+      console.error("Unexpected OpenAI payload:", data);
+      return res.status(500).json({
+        reply: "AI returned no response",
+      });
+    }
+
+    res.json({ reply: data.choices[0].message.content });
   } catch (err) {
-    console.error("GPT API error:", err);
+    console.error("GPT API fetch failed:", err);
     res.status(500).json({ reply: "Error connecting to GPT API" });
   }
 });
