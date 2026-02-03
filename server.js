@@ -128,6 +128,119 @@ app.post("/save-token", async (req, res) => {
   }
 });
 
+/*====push for request=====*/
+app.post("/submit-request", async (req, res) => {
+  try {
+    const { topic, course, program, semester, notes, email } = req.body;
+
+    if (!topic || !course || !program || !semester) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // 1. Save request (optional but recommended)
+    await supabase.from("note_requests").insert([{
+      topic,
+      course,
+      program,
+      semester,
+      notes,
+      email,
+      created_at: new Date().toISOString(),
+    }]);
+
+    // 2. Get all FCM tokens (admins or all users)
+    const { data: rows, error } = await supabase
+      .from("fcm_tokens")
+      .select("token");
+
+    if (error) throw error;
+    if (!rows || rows.length === 0) {
+      return res.json({ message: "Request saved, no tokens" });
+    }
+
+    const tokens = rows.map(r => r.token);
+
+    // 3. Send PUSH notification
+   // 3. Send PUSH notification (styled)
+const payload = {
+  tokens,
+
+  // 👀 What the user sees
+  notification: {
+    title: "📚 New Notes Requested",
+    body:
+      `🎓 Program: ${program}\n` +
+      `📘 Course: ${course}\n` +
+      `🗂 Semester: ${semester}\n` +
+      `📝 Topic: ${topic}`
+  },
+
+  // 🎨 Platform-specific styling
+  webpush: {
+   notification: {
+    title: "📚 New Notes Requested",
+    body: `🎓 Program: ${program}\n📘 Course: ${course}\n🗂 Semester: ${semester}\n📝 Topic: ${topic}`,
+    icon: "/icon.png",
+    badge: "/badge.png",
+    image: "/request-banner.png",
+    data: {
+      url: `/requested-notes.html?program=${encodeURIComponent(program)}&course=${encodeURIComponent(course)}&semester=${semester}&topic=${encodeURIComponent(topic)}`
+    },
+      actions: [
+        {
+          action: "open",
+          title: "📂 View Request"
+        }
+      ]
+    }
+  },
+
+  android: {
+    notification: {
+      icon: "ic_studyhub",        // white PNG in /public
+      color: "#4f46e5",           // accent color (Android only)
+      channelId: "studyhub_requests"
+    }
+  },
+
+  // 🧠 Data for click handling
+  data: {
+    type: "request",
+    url: `/requested-notes.html?program=${encodeURIComponent(program)}
+&course=${encodeURIComponent(course)}
+&semester=${semester}
+&topic=${encodeURIComponent(topic)}`
+
+  }
+};
+
+const response = await admin.messaging().sendEachForMulticast(payload);
+
+    // 4. Clean dead tokens (same logic you already use)
+    const invalidTokens = [];
+    response.responses.forEach((r, i) => {
+      if (!r.success) {
+        const code = r.error?.code || "";
+        if (
+          code.includes("registration-token-not-registered") ||
+          code.includes("invalid-registration-token")
+        ) {
+          invalidTokens.push(tokens[i]);
+        }
+      }
+    });
+
+    if (invalidTokens.length) {
+      await supabase.from("fcm_tokens").delete().in("token", invalidTokens);
+    }
+
+    res.json({ message: "Request submitted and notification sent" });
+
+  } catch (err) {
+    console.error("Request error:", err);
+    res.status(500).json({ message: "Failed to submit request" });
+  }
+});
 
 
 /* ===== UPLOAD ===== */
@@ -214,7 +327,7 @@ console.log("DECODED TOKEN:", decoded);
 
     if (dbError) throw dbError;
 
-   /* ===== PUSH NOTIFICATIONS ===== */
+   /* ===== PUSH NOTIFICATIONS for requst ===== */
 /* ===== PUSH NOTIFICATIONS ===== */
 const { data: rows, error: tokenError } = await supabase
   .from("fcm_tokens")

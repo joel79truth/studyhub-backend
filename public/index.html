@@ -175,12 +175,12 @@
             </a>
         </li>
         <li>
-            <a href="achievements.html" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 hover:backdrop-blur-sm transition-all">
+            <a href="request.html" class="nav-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 dark:hover:bg-black/20 hover:backdrop-blur-sm transition-all">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="8" r="7"/>
                     <polyline points="8.21,13.89 7,23 12,20 17,23 15.79,13.88"/>
                 </svg>
-                Achievements
+                Request Notea
             </a>
         </li>
         <li>
@@ -265,7 +265,7 @@
 <div class="flex items-center justify-around w-full max-w-xs p-2 bg-black/10 dark:bg-black/40 backdrop-blur-xl rounded-2xl border border-white/20">
   <!-- Past Papers -->
   <div class="glass-button flex flex-col items-center">
-    <button id="btnPastPapers" class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
+    <button id="btnPastPapers" class="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
@@ -275,7 +275,7 @@
 
   <!-- Programs -->
   <div class="glass-button flex flex-col items-center">
-    <button id="btnPrograms" class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
+    <button id="btnPrograms" class="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
         <path d="M6.5 2H20v20l-5.5-6-5.5 6V2Z"/>
@@ -286,7 +286,7 @@
 
   <!-- AI Tutor -->
   <div class="glass-button flex flex-col items-center">
-    <button id="btnAITutor" class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
+    <button id="btnAITutor" class="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-white shadow-lg border border-white/20 hover:scale-105 transition-transform">
       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
         <line x1="8" y1="21" x2="16" y2="21"/>
@@ -303,20 +303,9 @@
                         <div class="relative w-full h-48 rounded-2xl overflow-hidden shadow-xl">
                             <div class="carousel-container">
                                 <div class="carousel-slide active">
-                                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop" alt="Students studying" class="w-full h-full object-cover">
+                                    <img src="/night.jpg" alt="universty Number 1" class="w-full h-full object-cover">
                                 </div>
-                                <div class="carousel-slide">
-                                    <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=600&h=400&fit=crop" alt="Online learning" class="w-full h-full object-cover">
-                                </div>
-                                <div class="carousel-slide">
-                                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop" alt="Education technology" class="w-full h-full object-cover">
-                                </div>
-                                <div class="carousel-slide">
-                                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop" alt="Group study" class="w-full h-full object-cover">
-                                </div>
-                                <div class="carousel-slide">
-                                    <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=600&h=400&fit=crop" alt="Books and learning" class="w-full h-full object-cover">
-                                </div>
+                                
                             </div>
                             
                             <!-- Carousel Indicators -->
@@ -691,9 +680,15 @@ onAuthStateChanged(auth, async user => {
   const userSnap = await getDoc(doc(db, "users", user.uid));
   if (!userSnap.exists()) return console.error("No user profile");
 
-  const program = userSnap.data().program;
-  if (!program) return console.error("Program missing");
-const welcomeName = document.getElementById("welcomeName");
+ const program = userSnap.data().program;
+if (!program) {
+  console.error("Program missing");
+  return;
+}
+
+await loadFiles(program); // ✅ THIS WAS MISSING
+
+
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -730,7 +725,7 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("streakCount").textContent = `${d?.streak ?? 0} days`;
   });
  // Set your end-of-semester exam date here (YYYY, M-1, D)
-  const examDate = new Date(2026, 4, 10); // May 10, 2026
+  const examDate = new Date(2026, 6, 17); // june 17, 2026
   const today = new Date();
 
   // Calculate difference in days
@@ -751,19 +746,19 @@ onAuthStateChanged(auth, (user) => {
     daysLeftEl.textContent = "0";
     daysDeltaEl.textContent = "Exams are over";
   }
-  /* ---- FILES ---- */
- async function loadFiles(program) {
+/* ---- FILES ---- */
+async function loadFiles(program) {
   try {
     const { data, error } = await supabase
       .from("files")
       .select("*")
-      .ilike("program", `%${program.trim()}%`)  // case-insensitive match
+      // .ilike matches case-insensitively. 
+      // Removed % signs to ensure it matches the full program name exactly.
+      .ilike("program", program.trim()) 
       .order("uploaded_at", { ascending: false })
       .limit(6);
 
-    console.log("Program:", program);
-    console.log("Files:", data);
-    console.log("Error:", error);
+    console.log("Searching for Program:", program.trim());
 
     if (error) {
       console.error("Supabase error:", error);
@@ -772,6 +767,7 @@ onAuthStateChanged(auth, (user) => {
 
     if (!data || data.length === 0) {
       console.warn("No files found for this program");
+      // Optionally clear the UI here if no files are found
       return;
     }
 
@@ -781,10 +777,6 @@ onAuthStateChanged(auth, (user) => {
     console.error("loadFiles crashed:", err);
   }
 }
-
-
-  // Call loadFiles with the user's program
-  loadFiles(program);
 
 }); // <-- This closes the onAuthStateChanged callback
 

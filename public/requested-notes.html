@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Requested Notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #121212;
+      color: #ffffff;
+      margin: 0;
+      padding: 1.5rem;
+    }
+
+    .card {
+      max-width: 520px;
+      margin: auto;
+      background: #1e1e1e;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    .item {
+      margin: 0.75rem 0;
+      font-size: 1rem;
+    }
+
+    .label {
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+
+    .missing {
+      color: #9ca3af;
+      font-style: italic;
+    }
+
+    button {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 10px;
+      background: #3b82f6;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>📚 Requested Notes</h1>
+
+    <div class="item"><span class="label">🎓 Program:</span> <span id="program"></span></div>
+    <div class="item"><span class="label">📘 Course:</span> <span id="course"></span></div>
+    <div class="item"><span class="label">🗂 Semester:</span> <span id="semester"></span></div>
+    <div class="item"><span class="label">📝 Topic:</span> <span id="topic"></span></div>
+
+    <button onclick="goBack()">⬅ Back to StudyHub</button>
+    <button id="shareBtn">📤 Share Notes</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    function setValue(id, value) {
+      document.getElementById(id).textContent =
+        value || "Not provided";
+      if (!value) {
+        document.getElementById(id).classList.add("missing");
+      }
+    }
+
+    setValue("program", params.get("program"));
+    setValue("course", params.get("course"));
+    setValue("semester", params.get("semester"));
+    setValue("topic", params.get("topic"));
+
+    function goBack() {
+      window.location.href = "/";
+    }
+
+    // Share Notes button
+    const shareBtn = document.getElementById("shareBtn");
+    const notesFileUrl = params.get("file") || "https://example.com/notes.pdf";
+    const userEmail = params.get("email") || "user@example.com";
+
+    shareBtn.addEventListener("click", () => {
+        // Open mail client
+        const subject = encodeURIComponent("Your Requested Notes");
+        const body = encodeURIComponent(`Hi,\n\nHere are your requested notes: ${notesFileUrl}\n\nEnjoy!`);
+        window.location.href = `mailto:${userEmail}?subject=${subject}&body=${body}`;
+
+        // Open WhatsApp share
+        const whatsappMessage = encodeURIComponent(`Here are your requested notes: ${notesFileUrl}`);
+        const whatsappUrl = `https://wa.me/?text=${whatsappMessage}`;
+        window.open(whatsappUrl, "_blank");
+    });
+  </script>
+
+</body>
+</html>

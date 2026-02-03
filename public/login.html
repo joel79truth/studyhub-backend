@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>StudyHub LUANAR – Login</title>
-
-  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    * {
+    /* ... [Maintain all your existing CSS styles here] ... */
+      * {
       box-sizing: border-box;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       margin: 0;
@@ -413,259 +413,246 @@
   animation: spin 0.6s linear infinite;
   right: 16px;
 }
+    /* Additional Styles for Multi-Auth */
+    .auth-toggle-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .secondary-btn {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .secondary-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
 
+    .auth-section { transition: all 0.3s ease; }
+    
+    .phone-input-group {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .country-code {
+      width: 80px !important;
+      text-align: center;
+    }
+
+    /* Existing Style Overrides */
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+    body { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #1e293b; padding: 20px; }
+    .container { width: 100%; max-width: 480px; z-index: 1; }
+    .card { background: rgba(255, 255, 255, 0.98); border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); text-align: center; backdrop-filter: blur(10px); }
+    .logo { width: 64px; height: 64px; margin: 0 auto 16px; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+    h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #64748b; margin-bottom: 24px; }
+    .divider { display: flex; align-items: center; margin: 20px 0; color: #94a3b8; font-size: 12px; }
+    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #e2e8f0; }
+    .divider span { padding: 0 10px; }
+    button { border-radius: 10px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+    .google-btn { background: white; color: #1e293b; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 5px; }
+    .hidden { display: none; }
+    .error-message { color: #ef4444; font-size: 12px; display: none; text-align: left; }
+    .show { display: block; }
   </style>
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-0LTZS1S9W6');
-  </script>
-  
 </head>
 <body>
 
   <div class="container">
-    <!-- Step 1: Google Sign-In -->
     <div class="card" id="loginCard">
-      <div class="steps">
-        <div class="step active"></div>
-        <div class="step"></div>
-      </div>
-
-      <div class="logo-container">
-        <div class="logo">📚</div>
-        <h2>StudyHub LUANAR</h2>
-        <p class="subtitle">Your academic resource center for excellence</p>
-      </div>
+      <div class="logo">📚</div>
+      <h2>StudyHub LUANAR</h2>
+      <p class="subtitle">Select your preferred sign-in method</p>
 
       <button class="google-btn" id="googleSignInBtn">
-        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-        </svg>
+        <svg style="width:18px" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
         Continue with Google
       </button>
 
+      <div class="divider"><span>OR</span></div>
+
+      <div id="emailSection" class="auth-section">
+        <input type="email" id="loginEmail" placeholder="Email Address">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button id="emailAuthBtn" style="background:#0f172a; color:white;">Sign in with Email</button>
+      </div>
+
+      <div id="phoneSection" class="auth-section hidden">
+        <div class="phone-input-group">
+          <input type="text" class="country-code" value="+265" readonly>
+          <input type="tel" id="phoneNumber" placeholder="Phone Number">
+        </div>
+        <div id="recaptcha-container"></div>
+        <button id="phoneAuthBtn" style="background:#0f172a; color:white;">Send OTP</button>
+      </div>
+
+      <button class="secondary-btn" id="toggleAuthMethod">Use Phone Number instead</button>
+
       <div class="footer">
         <span>© 2026 StudyHub LUANAR</span>
-        <div class="footer-links">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-        </div>
       </div>
     </div>
 
-    <!-- Step 2: User Details -->
     <div class="card hidden" id="detailsCard">
-      <div class="steps">
-        <div class="step active"></div>
-        <div class="step active"></div>
-      </div>
-
-      <div class="logo-container">
         <h2>Complete Your Profile</h2>
-        <p class="subtitle">Help us personalize your experience</p>
-      </div>
-
-      <div class="info-badge">
-        <div class="info-badge-icon">ℹ️</div>
-        <div class="info-badge-text">
-          This information will help us provide you with relevant academic resources and connect you with your peers.
-        </div>
-      </div>
-
-      <form id="detailsForm">
-        <div class="form-group">
-          <label class="form-label">Program <span class="required">*</span></label>
-          <input 
-            type="text" 
-            id="program" 
-            placeholder="e.g., Bachelor of Science in Agriculture"
-            required
-          />
-          <div class="error-message" id="programError">Program must start with Bachelor, Diploma, Masters, or Basics</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Semester <span class="required">*</span></label>
-          <input 
-            type="text" 
-            id="semester" 
-            placeholder="e.g., Semester 1"
-            required
-          />
-          <div class="error-message" id="semesterError">Please enter your current semester</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Year of Study <span class="required">*</span></label>
-          <select id="year" required>
-            <option value="">Select your year</option>
-            <option value="Year 1">Year 1</option>
-            <option value="Year 2">Year 2</option>
-            <option value="Year 3">Year 3</option>
-            <option value="Year 4">Year 4</option>
-          </select>
-          <div class="error-message" id="yearError">Please select your year of study</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Role <span class="required">*</span></label>
-          <select id="role" required>
-            <option value="">Select your role</option>
-            <option value="Student">Student</option>
-            <option value="Lecturer">Lecturer</option>
-          </select>
-          <div class="error-message" id="roleError">Please select your role</div>
-        </div>
-
-        <div class="form-group hidden" id="lecturerCodeGroup">
-          <label class="form-label">Lecturer Authorization Code <span class="required">*</span></label>
-          <input 
-            type="password" 
-            id="lectureCode" 
-            placeholder="Enter authorization code"
-          />
-          <div class="error-message" id="codeError">Invalid authorization code</div>
-        </div>
-
-        <button type="submit" id="continueBtn">Complete Setup</button>
-      </form>
-
-      <div class="footer">
-        <span>Step 2 of 2</span>
-      </div>
+        <form id="detailsForm">
+            <input type="text" id="program" placeholder="Program (e.g. Bachelor of...)" required>
+            <input type="text" id="semester" placeholder="Semester" required>
+            <select id="year" required>
+                <option value="">Year of Study</option>
+                <option value="1">Year 1</option>
+                <option value="2">Year 2</option>
+            </select>
+            <select id="role" required>
+                <option value="">Role</option>
+                <option value="Student">Student</option>
+                <option value="Lecturer">Lecturer</option>
+            </select>
+            <div id="lecturerCodeGroup" class="hidden">
+                <input type="password" id="lectureCode" placeholder="Authorization Code">
+            </div>
+            <button type="submit" id="continueBtn" style="background:#3b82f6; color:white;">Complete Setup</button>
+        </form>
     </div>
   </div>
 
   <script type="module">
-    // Import Firebase SDKs
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, serverTimestamp } 
-from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
- 
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-      authDomain: "studyhub-backend.firebaseapp.com",
-      databaseURL: "https://studyhub-backend-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "studyhub-backend",
-      storageBucket: "studyhub-backend.firebasestorage.app",
-      messagingSenderId: "985257842533",
-      appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
-      measurementId: "G-2FHPEF5XBQ"
-    };
+    import { 
+        getAuth, 
+        GoogleAuthProvider, 
+        signInWithPopup, 
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        RecaptchaVerifier,
+        signInWithPhoneNumber,
+        onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-    // Initialize Firebase
+    const firebaseConfig = { 
+     apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+  authDomain: "studyhub-backend.firebaseapp.com",
+  projectId: "studyhub-backend",
+  storageBucket: "studyhub-backend.firebasestorage.app",
+  messagingSenderId: "985257842533",
+  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c" };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
-const db = getFirestore(app);
- 
 
-   
-    // Elements
+    // DOM Elements
     const loginCard = document.getElementById("loginCard");
     const detailsCard = document.getElementById("detailsCard");
-    const googleSignInBtn = document.getElementById("googleSignInBtn");
-    const detailsForm = document.getElementById("detailsForm");
-    const continueBtn = document.getElementById("continueBtn");
-    const roleSelect = document.getElementById("role");
-    const lecturerCodeGroup = document.getElementById("lecturerCodeGroup");
-    const lectureCodeInput = document.getElementById("lectureCode");
+    const emailSection = document.getElementById("emailSection");
+    const phoneSection = document.getElementById("phoneSection");
+    const toggleBtn = document.getElementById("toggleAuthMethod");
+// Profile form elements
+const detailsForm = document.getElementById("detailsForm");
+const programInput = document.getElementById("program");
+const semesterInput = document.getElementById("semester");
+const yearSelect = document.getElementById("year");
+const roleSelect = document.getElementById("role");
+const lecturerCodeGroup = document.getElementById("lecturerCodeGroup");
+const lectureCodeInput = document.getElementById("lectureCode");
+const continueBtn = document.getElementById("continueBtn");
 
-    // Form inputs
-    const programInput = document.getElementById("program");
-    const semesterInput = document.getElementById("semester");
-    const yearSelect = document.getElementById("year");
-
-    // Error messages
-    const programError = document.getElementById("programError");
-    const semesterError = document.getElementById("semesterError");
-    const yearError = document.getElementById("yearError");
-    const roleError = document.getElementById("roleError");
-    const codeError = document.getElementById("codeError");
-
-    // Auto redirect if already logged in
-    onAuthStateChanged(auth, (user) => {
-      if (user && localStorage.getItem("userDetails")) {
-        window.location.href = "index.html";
-      }
+    // 1. Toggle Logic
+    toggleBtn.addEventListener('click', () => {
+        const isEmail = !emailSection.classList.contains('hidden');
+        emailSection.classList.toggle('hidden', isEmail);
+        phoneSection.classList.toggle('hidden', !isEmail);
+        toggleBtn.textContent = isEmail ? "Use Email instead" : "Use Phone Number instead";
     });
 
-    // Google Sign-In
-    googleSignInBtn.addEventListener("click", async () => {
-     googleSignInBtn.disabled = true;
-googleSignInBtn.classList.add('loading');
-
-      googleSignInBtn.textContent = '';
-
-      try {
+    // 2. Auth Success Handler (Universal)
+    async function handleAuthSuccess(user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
         
+        if (userDoc.exists() && userDoc.data().profileCompleted) {
+            localStorage.setItem("userDetails", JSON.stringify(userDoc.data()));
+            window.location.href = "index.html";
+        } else {
+            loginCard.classList.add("hidden");
+            detailsCard.classList.remove("hidden");
+        }
+    }
 
-       const result = await signInWithPopup(auth, provider);
-const user = result.user;
-googleSignInBtn.addEventListener("click", () => {
-  console.log("Google button clicked");
-});
+    // 3. Google Sign In
+    document.getElementById("googleSignInBtn").onclick = async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            await handleAuthSuccess(result.user);
+        } catch (e) { alert(e.message); }
+    };
 
-// Save basic auth data in Firestore
-await setDoc(
-  doc(db, "users", user.uid),
-  {
-    uid: user.uid,
-    email: user.email,
-    name: user.displayName,
-    photoURL: user.photoURL,
-    provider: "google",
-    createdAt: serverTimestamp()
-  },
-  { merge: true }
-);
+    // 4. Email Auth (Simplified for demonstration - usually needs separate Login/Register)
+    document.getElementById("emailAuthBtn").onclick = async () => {
+    const email = document.getElementById("loginEmail").value;
+    const pass = document.getElementById("loginPassword").value;
+    
+    if(!email || !pass) return alert("Please fill in all fields");
 
-const storedDetails = localStorage.getItem("userDetails");
-if (storedDetails) {
-  window.location.href = "index.html";
-} else {
-  loginCard.classList.add("hidden");
-  detailsCard.classList.remove("hidden");
-}
+    try {
+        // Try to sign in
+        const result = await signInWithEmailAndPassword(auth, email, pass);
+        await handleAuthSuccess(result.user);
+    } catch (e) {
+        // If sign in fails, try to create an account
+        // Note: In production, you'd usually have a separate "Sign Up" button
+        try {
+            const reg = await createUserWithEmailAndPassword(auth, email, pass);
+            await handleAuthSuccess(reg.user);
+        } catch (regError) {
+            alert("Auth Error: " + regError.message);
+        }
+    }
+};
 
-      } catch (error) {
-        console.error("Login error:", error);
-        alert("Login failed. Please try again.");
-        googleSignInBtn.disabled = false;
-        googleSignInBtn.classList.remove('loading');
-        googleSignInBtn.innerHTML = `
-          <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-          </svg>
-          Continue with Google
-        `;
-      }
+    // 5. Phone Auth
+    document.getElementById("phoneAuthBtn").onclick = async () => {
+    const phone = "+265" + document.getElementById("phoneNumber").value;
+    
+    // Initialize verifier here to ensure the element exists
+    const appVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 
+        'size': 'invisible' 
     });
+
+    try {
+        const confirmationResult = await signInWithPhoneNumber(auth, phone, appVerifier);
+        const code = prompt("Enter the 6-digit OTP sent to " + phone);
+        if (code) {
+            const result = await confirmationResult.confirm(code);
+            await handleAuthSuccess(result.user);
+        }
+    } catch (e) { 
+        alert("Phone Auth Error: " + e.message); 
+        if (window.grecaptcha) { window.grecaptcha.reset(); }
+    }
+};
+    // 6. Profile Completion (Maintain your existing logic)
+// Remove this entire block, as the correct event handler is already present below.
+// The correct handler is the one starting with: detailsForm.addEventListener("submit", async (e) => { ... }
 
     // Show lecturer code input if lecturer selected
-    roleSelect.addEventListener("change", () => {
-      if (roleSelect.value === "Lecturer") {
-        lecturerCodeGroup.classList.remove("hidden");
-        lectureCodeInput.required = true;
-      } else {
-        lecturerCodeGroup.classList.add("hidden");
-        lectureCodeInput.required = false;
-        lectureCodeInput.value = "";
-      }
-    });
+   roleSelect.addEventListener("change", () => {
+  if (roleSelect.value === "Lecturer") {
+    lecturerCodeGroup.classList.remove("hidden");
+    lectureCodeInput.required = true;
+  } else {
+    lecturerCodeGroup.classList.add("hidden");
+    lectureCodeInput.required = false;
+    lectureCodeInput.value = "";
+  }
+});
+
 
     // Clear errors on input
     [programInput, semesterInput, yearSelect, roleSelect, lectureCodeInput].forEach(input => {
@@ -679,69 +666,41 @@ if (storedDetails) {
       });
     });
 
-    // Form validation
-    function validateForm() {
-      let isValid = true;
+   function validateForm() {
+  if (!programInput.value.trim()) {
+    alert("Program is required");
+    programInput.focus();
+    return false;
+  }
 
-      // Reset errors
-      [programError, semesterError, yearError, roleError, codeError].forEach(el => {
-        el.classList.remove('show');
-      });
-      [programInput, semesterInput, yearSelect, roleSelect, lectureCodeInput].forEach(el => {
-        el.classList.remove('error');
-      });
+  if (!semesterInput.value.trim()) {
+    alert("Semester is required");
+    semesterInput.focus();
+    return false;
+  }
 
-      const program = programInput.value.trim();
-      const semester = semesterInput.value.trim();
-      const year = yearSelect.value;
-      const role = roleSelect.value;
-      const lectureCode = lectureCodeInput.value.trim();
+  if (!yearSelect.value) {
+    alert("Select year of study");
+    yearSelect.focus();
+    return false;
+  }
 
-      // Validate program
-      const validStartWords = ["bachelor", "diploma", "masters", "basics"];
-      const programStart = program.toLowerCase().split(" ")[0];
+  if (!roleSelect.value) {
+    alert("Select role");
+    roleSelect.focus();
+    return false;
+  }
 
-      if (!program) {
-        programInput.classList.add('error');
-        programError.textContent = "Please enter your program";
-        programError.classList.add('show');
-        isValid = false;
-      } else if (!validStartWords.includes(programStart)) {
-        programInput.classList.add('error');
-        programError.classList.add('show');
-        isValid = false;
-      }
+  if (roleSelect.value === "Lecturer" && !lectureCodeInput.value.trim()) {
+    alert("Lecturer authorization code required");
+    lectureCodeInput.focus();
+    return false;
+  }
 
-      // Validate semester
-      if (!semester) {
-        semesterInput.classList.add('error');
-        semesterError.classList.add('show');
-        isValid = false;
-      }
+  return true;
+}
 
-      // Validate year
-      if (!year) {
-        yearSelect.classList.add('error');
-        yearError.classList.add('show');
-        isValid = false;
-      }
 
-      // Validate role
-      if (!role) {
-        roleSelect.classList.add('error');
-        roleError.classList.add('show');
-        isValid = false;
-      }
-
-      // Validate lecturer code
-      if (role === "Lecturer" && lectureCode !== "7907") {
-        lectureCodeInput.classList.add('error');
-        codeError.classList.add('show');
-        isValid = false;
-      }
-
-      return isValid;
-    }
 
     // Continue Button
     detailsForm.addEventListener("submit", async (e) => {
@@ -787,8 +746,9 @@ if (storedDetails) {
   }
 });
 
-      
-  </script>
+       // ... [Your existing validation and Firestore setDoc code here] ...
+    ;
 
+  </script>
 </body>
 </html>

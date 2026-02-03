@@ -287,13 +287,29 @@ onAuthStateChanged(auth, async (user) => {
     // Foreground notifications (safe)
     if (!messageListenerAttached) {
       onMessage(messaging, (payload) => {
-        if (!payload.notification) return;
+  console.log("📬 Foreground message:", payload);
 
-        new Notification(payload.notification.title || "StudyHub", {
-          body: payload.notification.body || "New update",
-          icon: "/icons/icon-192.png",
-        });
-      });
+  const title = payload.notification?.title || "StudyHub";
+  const body = payload.notification?.body || "New update";
+
+  const url =
+    payload.data?.url ||
+    payload.notification?.data?.url ||
+    "/";
+
+  if (Notification.permission === "granted") {
+    const notification = new Notification(title, {
+      body,
+      icon: "/icons/icon-192.png",
+      data: { url }
+    });
+
+    notification.onclick = () => {
+      window.focus();
+      window.location.href = url;
+    };
+  }
+});
 
       messageListenerAttached = true;
     }
