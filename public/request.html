@@ -1,165 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Request Notes | StudyHub LUANAR</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Request Notes | StudyHub LUANAR</title>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-* { margin:0; padding:0; box-sizing:border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
-body {
-  font-family: 'Inter', sans-serif;
-  min-height:100vh;
-  background:#000;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:2rem;
-  color:#fff;
-}
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height:100vh;
+      background:#000;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:2rem;
+      color:#fff;
+    }
 
-.container {
-  background:#111;
-  border-radius:16px;
-  padding:2.5rem 2rem;
-  width:100%;
-  max-width:480px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-  border:1px solid #1f1f1f;
-}
+    .container {
+      background:#111;
+      border-radius:16px;
+      padding:2.5rem 2rem;
+      width:100%;
+      max-width:480px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      border:1px solid #1f1f1f;
+    }
 
-h1 {
-  font-size:1.9rem;
-  font-weight:700;
-  text-align:center;
-  margin-bottom:1.5rem;
-  letter-spacing:0.4px;
-}
+    h1 {
+      font-size:1.9rem;
+      font-weight:700;
+      text-align:center;
+      margin-bottom:1.5rem;
+      letter-spacing:0.4px;
+    }
 
-form {
-  display:flex;
-  flex-direction:column;
-  gap:0.9rem;
-}
+    form {
+      display:flex;
+      flex-direction:column;
+      gap:0.9rem;
+    }
 
-label {
-  font-size:0.9rem;
-  font-weight:600;
-  color:#d1d1d1;
-}
+    label {
+      font-size:0.9rem;
+      font-weight:600;
+      color:#d1d1d1;
+    }
 
-input {
-  padding:0.8rem 0.9rem;
-  border-radius:10px;
-  border:1px solid #2a2a2a;
-  background:#0b0b0b;
-  color:#fff;
-  font-size:0.95rem;
-  transition: border 0.2s ease, background 0.2s ease;
-}
+    input {
+      padding:0.8rem 0.9rem;
+      border-radius:10px;
+      border:1px solid #2a2a2a;
+      background:#0b0b0b;
+      color:#fff;
+      font-size:0.95rem;
+      transition: border 0.2s ease, background 0.2s ease;
+    }
 
-input::placeholder {
-  color:#777;
-}
+    input::placeholder {
+      color:#777;
+    }
 
-input:focus {
-  outline:none;
-  border-color:#3b82f6;
-  background:#0f0f0f;
-}
+    input:focus {
+      outline:none;
+      border-color:#3b82f6;
+      background:#0f0f0f;
+    }
 
-button {
-  margin-top:10px;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  cursor:pointer;
-  font-size:0.95rem;
-  font-weight:600;
-  background:#1f2937;
-  color:#fff;
-  transition: background 0.2s ease, opacity 0.2s ease;
-  position:relative;
-  overflow:hidden;
-}
+    button {
+      margin-top:10px;
+      padding:14px;
+      border-radius:12px;
+      border:none;
+      cursor:pointer;
+      font-size:0.95rem;
+      font-weight:600;
+      background:#1f2937;
+      color:#fff;
+      transition: background 0.2s ease, opacity 0.2s ease;
+      position:relative;
+      overflow:hidden;
+    }
 
-button:hover {
-  background:#273449;
-}
+    button:hover {
+      background:#273449;
+    }
 
-button:disabled {
-  opacity:0.6;
-  cursor:not-allowed;
-}
+    button:disabled {
+      opacity:0.6;
+      cursor:not-allowed;
+    }
 
-/* Sending animation */
-button.loading {
-  pointer-events:none;
-}
+    /* Sending animation */
+    button.loading {
+      pointer-events:none;
+    }
 
-button.loading span {
-  visibility:hidden;
-}
+    button.loading span {
+      visibility:hidden;
+    }
 
-button.loading::after {
-  content:"Sending";
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-}
+    button.loading::after {
+      content:"Sending";
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+    }
 
-button.loading::before {
-  content:"...";
-  position:absolute;
-  left:calc(50% + 38px);
-  top:50%;
-  transform:translateY(-50%);
-  animation:dots 0.9s infinite steps(3);
-}
+    button.loading::before {
+      content:"...";
+      position:absolute;
+      left:calc(50% + 38px);
+      top:50%;
+      transform:translateY(-50%);
+      animation:dots 0.9s infinite steps(3);
+    }
 
-@keyframes dots {
-  0% { content:"."; }
-  33% { content:".."; }
-  66% { content:"..."; }
-}
+    @keyframes dots {
+      0% { content:"."; }
+      33% { content:".."; }
+      66% { content:"..."; }
+    }
 
-.success {
-  margin-top:14px;
-  font-size:0.9rem;
-  font-weight:600;
-  color:#22c55e;
-  display:none;
-  animation: fadeIn 0.25s ease forwards;
-}
+    .success {
+      margin-top:14px;
+      font-size:0.9rem;
+      font-weight:600;
+      color:#22c55e;
+      display:none;
+      animation: fadeIn 0.25s ease forwards;
+    }
 
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(3px); }
-  to { opacity:1; transform:none; }
-}
+    .error-message {
+      margin-top:14px;
+      font-size:0.9rem;
+      font-weight:600;
+      color:#ef4444;
+      display:none;
+      animation: fadeIn 0.25s ease forwards;
+    }
 
-.back-link {
-  display:block;
-  margin-top:22px;
-  text-align:center;
-  font-size:0.9rem;
-  font-weight:600;
-  color:#9ca3af;
-  text-decoration:none;
-}
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(3px); }
+      to { opacity:1; transform:none; }
+    }
 
-.back-link:hover {
-  text-decoration:underline;
-  color:#e5e7eb;
-}
+    .back-link {
+      display:block;
+      margin-top:22px;
+      text-align:center;
+      font-size:0.9rem;
+      font-weight:600;
+      color:#9ca3af;
+      text-decoration:none;
+    }
 
-@media(max-width:480px){
-  .container { padding:2rem 1.5rem; }
-}
-</style>
+    .back-link:hover {
+      text-decoration:underline;
+      color:#e5e7eb;
+    }
+
+    @media(max-width:480px){
+      .container { padding:2rem 1.5rem; }
+    }
+  </style>
 </head>
 
 <body>
@@ -191,131 +200,171 @@ button.loading::before {
     </button>
 
     <p class="success" id="successMsg">Request submitted successfully.</p>
+    <p class="error-message" id="errorMsg">Something went wrong. Please try again.</p>
   </form>
 
   <a href="index.html" class="back-link">← Back to Home</a>
 </div>
+
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-  authDomain: "studyhub-backend.firebaseapp.com",
-  projectId: "studyhub-backend",
-  messagingSenderId: "985257842533",
-  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
-};
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+    authDomain: "studyhub-backend.firebaseapp.com",
+    projectId: "studyhub-backend",
+    messagingSenderId: "985257842533",
+    appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
+  };
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
-</script>
-<script>
-async function setupPushNotifications() {
-  if (!("serviceWorker" in navigator)) return;
-
-  const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") {
-    console.log("❌ Notifications denied");
-    return;
-  }
-
-  const token = await messaging.getToken({
-         vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
-
-    serviceWorkerRegistration: registration
-  });
-
-  if (!token) return;
-
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-
-  const idToken = await user.getIdToken();
-
-  await fetch("/save-token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${idToken}`
-    },
-    body: JSON.stringify({ token })
-  });
-
-  console.log("✅ Push notifications ready");
-}
-
-setupPushNotifications();
-</script>
-<script>
-messaging.onMessage((payload) => {
-  console.log("📬 Foreground message:", payload);
-
-  const title = payload.notification?.title || "StudyHub Update";
-  const body = payload.notification?.body || "New update available";
-
-  const url =
-    payload.data?.url ||
-    payload.notification?.data?.url ||
-    "/";
-
-  if (Notification.permission === "granted") {
-    const notification = new Notification(title, {
-      body,
-      icon: "/icon.png",
-      data: { url }
-    });
-
-    notification.onclick = () => {
-      window.focus();
-      window.location.href = url;
-    };
-  }
-});
-
+  firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
 </script>
 
 <script>
-document.getElementById("requestForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+  // Push notifications setup (with error handling)
+  async function setupPushNotifications() {
+    try {
+      if (!("serviceWorker" in navigator)) return;
 
-  const btn = document.getElementById("submitBtn");
-  const success = document.getElementById("successMsg");
+      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
 
-  btn.classList.add("loading");
-  btn.disabled = true;
-  success.style.display = "none";
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        console.log("❌ Notifications denied");
+        return;
+      }
 
-  try {
-    const res = await fetch("/submit-request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        topic: topic.value,
-        course: course.value,
-        program: program.value,
-        semester: semester.value,
-        notes: notes.value,
-        email: email.value
-      })
-    });
+      const token = await messaging.getToken({
+        vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
+        serviceWorkerRegistration: registration
+      });
 
-    if (res.ok) {
-      success.style.display = "block";
-      e.target.reset();
-    } else {
-      alert("Request failed. Try again.");
+      if (!token) return;
+
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+
+      const idToken = await user.getIdToken();
+
+      await fetch("https://studyhub-backend-opdd.onrender.com/save-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ token })
+      });
+
+      console.log("✅ Push notifications ready");
+    } catch (err) {
+      console.error("Push notification setup failed:", err);
+      // Non‑blocking – the page still works
     }
-  } catch {
-    alert("Request failed. Try again.");
   }
 
-  btn.classList.remove("loading");
-  btn.disabled = false;
-});
+  setupPushNotifications();
+</script>
+
+<script>
+  // Handle foreground messages
+  messaging.onMessage((payload) => {
+    console.log("📬 Foreground message:", payload);
+
+    const title = payload.notification?.title || "StudyHub Update";
+    const body = payload.notification?.body || "New update available";
+
+    const url =
+      payload.data?.url ||
+      payload.notification?.data?.url ||
+      "/";
+
+    if (Notification.permission === "granted") {
+      const notification = new Notification(title, {
+        body,
+        icon: "/icon.png",
+        data: { url }
+      });
+
+      notification.onclick = () => {
+        window.focus();
+        window.location.href = url;
+      };
+    }
+  });
+</script>
+
+<script>
+  document.getElementById("requestForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Get form elements
+    const topicInput = document.getElementById("topic");
+    const courseInput = document.getElementById("course");
+    const programInput = document.getElementById("program");
+    const semesterInput = document.getElementById("semester");
+    const notesInput = document.getElementById("notes");
+    const emailInput = document.getElementById("email");
+
+    const btn = document.getElementById("submitBtn");
+    const successMsg = document.getElementById("successMsg");
+    const errorMsg = document.getElementById("errorMsg");
+
+    // Hide any previous messages
+    successMsg.style.display = "none";
+    errorMsg.style.display = "none";
+
+    // Show loading state
+    btn.classList.add("loading");
+    btn.disabled = true;
+
+    try {
+      // Use absolute URL so it always goes to the correct backend
+      const backendUrl = "https://studyhub-backend-opdd.onrender.com/submit-request";
+
+      const res = await fetch(backendUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topic: topicInput.value,
+          course: courseInput.value,
+          program: programInput.value,
+          semester: semesterInput.value,
+          notes: notesInput.value,
+          email: emailInput.value
+        })
+      });
+
+      if (res.ok) {
+        successMsg.style.display = "block";
+        e.target.reset(); // clear the form
+      } else {
+        // Try to get more error info from the response
+        let errorText = "";
+        try {
+          errorText = await res.text();
+        } catch (readError) {
+          // ignore
+        }
+        console.error("Server responded with:", res.status, errorText);
+        // Show a user-friendly message, but you could include status if you want
+        errorMsg.style.display = "block";
+        errorMsg.textContent = `Request failed (${res.status}). Please try again later.`;
+      }
+    } catch (err) {
+      console.error("Network or other error:", err);
+      errorMsg.style.display = "block";
+      errorMsg.textContent = "Unable to connect. Check your internet and try again.";
+    } finally {
+      // Always remove loading state
+      btn.classList.remove("loading");
+      btn.disabled = false;
+    }
+  });
 </script>
 
 </body>
