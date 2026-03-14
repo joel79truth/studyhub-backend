@@ -1,225 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎥 Video Lessons</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-/* ===== Global ===== */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #0f172a;
-  color: #f1f5f9;
-  display: flex; flex-direction: column;
-  min-height: 100vh;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎥 Video Lessons</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & GLOBAL ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-/* ===== Header ===== */
-header {
-  background: linear-gradient(90deg, #2563eb, #16a34a);
-  padding: 15px 25px;
-  font-size: 22px; font-weight: 700; text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  position: sticky; top: 0; z-index: 10;
-}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
 
-/* ===== Toolbar ===== */
-.toolbar {
-  display: flex; flex-wrap: wrap; gap: 10px;
-  justify-content: center; padding: 15px; background: #1e293b;
-}
-.toolbar input {
-  flex: 1; min-width: 200px; max-width: 400px;
-  padding: 10px 15px; border-radius: 25px; border: none;
-  background: rgba(255,255,255,0.1); color: #fff;
-}
-.toolbar select, .toolbar button {
-  padding: 10px 15px; border-radius: 25px; border: none;
-  background: #2563eb; color: #fff; font-weight: 600;
-  cursor: pointer; transition: 0.3s;
-}
-.toolbar button:hover, .toolbar select:hover { background: #1d4ed8; }
+    header {
+      width: 100%;
+      background: linear-gradient(90deg, #0066da, #2ab431);
+      color: white;
+      padding: 15px;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-/* ===== Player ===== */
-.player {
-  padding: 20px; background: #111827; text-align: center;
-}
-.player iframe {
-  width: 100%; height: 420px; border-radius: 12px;
-  border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-}
-.player h3 { margin-top: 12px; font-size: 18px; font-weight: 600; }
-.player p { font-size: 14px; color: #94a3b8; }
+    .logo-container {
+      margin: 20px 0 10px;
+      animation: fadeInDown 1s ease;
+    }
 
-/* ===== Video Grid ===== */
-.video-grid {
-  display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
-  gap: 20px; padding: 20px; flex: 1;
-}
-.video-card {
-  background: rgba(255,255,255,0.08);
-  border-radius: 16px; overflow: hidden;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-  transition: transform .3s, box-shadow .3s;
-  cursor: pointer; position: relative;
-}
-.video-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-}
-.thumbnail img { width: 100%; height: 160px; object-fit: cover; }
-.video-info { padding: 12px; }
-.video-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
-.video-info p { font-size: 13px; color: #cbd5e1; }
+    .luanar-logo {
+      width: 120px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      transition: transform 0.3s ease;
+    }
 
-/* Favorite badge */
-.favorite { position: absolute; top: 10px; right: 10px; font-size: 18px; cursor: pointer; }
-.favorite.active { color: #facc15; }
+    .luanar-logo:hover {
+      transform: scale(1.1);
+    }
 
-/* Responsive */
-@media(max-width:768px){ .player iframe { height: 240px; } }
-</style>
-  
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    /* Search Bar */
+    #searchBar {
+      width: 85%;
+      max-width: 500px;
+      padding: 12px 15px;
+      margin: 15px auto;
+      border-radius: 25px;
+      border: 2px solid #00bcd4;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
 
-  gtag('config', 'G-RP8NY538W2');
-</script>
+    #searchBar:focus {
+      border-color: #0066da;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
 
+    /* Video Player */
+    .player {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      border-radius: 16px;
+      padding: 20px;
+      width: 90%;
+      max-width: 800px;
+      margin: 20px auto;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    #mainPlayer {
+      width: 100%;
+      height: 250px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+
+    #videoTitle {
+      margin: 15px 0 5px;
+      font-size: 1.4rem;
+      color: #fff;
+    }
+
+    #videoCategory {
+      color: #a5f3fc;
+      font-size: 1rem;
+    }
+
+    /* Video Grid */
+    .video-grid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+      width: 100%;
+      max-width: 600px;
+      padding: 20px 0 50px;
+    }
+
+    .video-card {
+      background: rgba(255,255,255,0.95);
+      padding: 15px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transform: translateY(30px) scale(0.95);
+      opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .video-card.visible {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .video-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+
+    .thumbnail {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s;
+    }
+
+    .video-card:hover .thumbnail img {
+      transform: scale(1.05);
+    }
+
+    .video-info h4 {
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+
+    .video-info p {
+      color: #334155;
+      font-size: 0.9rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      #mainPlayer { height: 400px; }
+    }
+  </style>
 </head>
-
-
-
-  
 <body>
 
 <header>🎥 Video Lessons Hub</header>
 
-<!-- Toolbar -->
-<div class="toolbar">
-  <input type="text" id="searchBar" placeholder="Search videos..." onkeyup="filterVideos()">
-  <select id="categorySelect" onchange="filterCategory()">
-    <option value="All">All Categories</option>
-    <option value="Tutorial">Tutorial</option>
-    <option value="Exam Prep">Exam Prep</option>
-    <option value="Skills">Skills</option>
-    <option value="Recorded Lecture">Recorded Lecture</option>
-  </select>
-  <select id="sortSelect" onchange="sortVideos()">
-    <option value="newest">Newest</option>
-    <option value="oldest">Oldest</option>
-    <option value="title">Title A–Z</option>
-  </select>
-  <button onclick="showFavorites()">⭐ Favorites</button>
-  <button onclick="showHistory()">🕒 History</button>
-  <button onclick="window.location.href='index.html'">⬅ Back</button>
+<div class="logo-container">
+  <img src="images/luanar logo.png" alt="LUANAR Logo" class="luanar-logo" onerror="this.style.display='none'">
 </div>
+
+<!-- Search Bar -->
+<input type="text" id="searchBar" placeholder="🔍 Search lessons..." oninput="filterVideos()">
 
 <!-- Player -->
-<div class="player" id="player">
-  <iframe id="mainPlayer" src="" allowfullscreen></iframe>
-  <h3 id="videoTitle">Select a lesson to start learning</h3>
-  <p id="videoCategory"></p>
+<div class="player">
+  <iframe id="mainPlayer" src="https://www.youtube.com/embed/lJM4GuUd3Hk" allowfullscreen></iframe>
+  <h3 id="videoTitle">How to Study Effectively</h3>
+  <p id="videoCategory">Tutorial</p>
 </div>
 
-<!-- Grid -->
+<!-- Video Grid -->
 <div class="video-grid" id="videoList"></div>
 
 <script>
-const videos = [
-  { title:"How to Study Effectively", youtubeId:"lJM4GuUd3Hk", category:"Tutorial", date:"2023-07-20" },
-  { title:"Past Exam Review 2022", youtubeId:"utEMUiC59F4", category:"Exam Prep", date:"2022-11-01" },
-  { title:"Excel Skills Basics", youtubeId:"DW4rItB20h4", category:"Skills", date:"2024-02-15" },
-  { title:"Recorded Lecture: Biology", youtubeId:"046-DygKrhc", category:"Recorded Lecture", date:"2023-05-10" },
-];
+  (function() {
+    // ----- Video Data -----
+    const videos = [
+      { title: "How to Study Effectively", youtubeId: "lJM4GuUd3Hk", category: "Tutorial", date: "2023-07-20" },
+      { title: "Past Exam Review 2022", youtubeId: "utEMUiC59F4", category: "Exam Prep", date: "2022-11-01" },
+      { title: "Excel Skills Basics", youtubeId: "DW4rItB20h4", category: "Skills", date: "2024-02-15" },
+      { title: "Recorded Lecture: Biology", youtubeId: "046-DygKrhc", category: "Recorded Lecture", date: "2023-05-10" },
+    ];
 
-let favorites = JSON.parse(localStorage.getItem("favorites")||"[]");
-let history = JSON.parse(localStorage.getItem("history")||"[]");
+    // DOM elements
+    const container = document.getElementById('videoList');
+    const player = document.getElementById('mainPlayer');
+    const titleEl = document.getElementById('videoTitle');
+    const categoryEl = document.getElementById('videoCategory');
+    const searchInput = document.getElementById('searchBar');
 
-const container = document.getElementById('videoList');
-const player = document.getElementById('mainPlayer');
-const titleEl = document.getElementById('videoTitle');
-const categoryEl = document.getElementById('videoCategory');
+    // ----- Render videos (filtered list) -----
+    function renderVideos(list) {
+      container.innerHTML = '';
+      list.forEach(video => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.setAttribute('data-id', video.youtubeId);
+        card.innerHTML = `
+          <div class="thumbnail">
+            <img src="https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg" alt="${video.title}" loading="lazy">
+          </div>
+          <div class="video-info">
+            <h4>${video.title}</h4>
+            <p>${video.category}</p>
+          </div>
+        `;
+        // Click to play
+        card.addEventListener('click', () => playVideo(video));
+        container.appendChild(card);
+      });
 
-// Render
-function renderVideos(list){
-  container.innerHTML="";
-  list.forEach(video=>{
-    const card=document.createElement("div");
-    card.className="video-card";
-    card.innerHTML=`
-      <span class="favorite ${favorites.includes(video.youtubeId)?"active":""}" 
-        onclick="toggleFavorite(event,'${video.youtubeId}')">★</span>
-      <div class="thumbnail">
-        <img src="https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg">
-      </div>
-      <div class="video-info">
-        <h4>${video.title}</h4>
-        <p>${video.category}</p>
-      </div>
-    `;
-    card.onclick=()=>playVideo(video);
-    container.appendChild(card);
-  });
-}
-renderVideos(videos);
+      // Re-run observer for new cards
+      observeVideos();
+    }
 
-// Play
-function playVideo(video){
-  player.src=`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1`;
-  titleEl.textContent=video.title;
-  categoryEl.textContent=video.category;
-  // save history
-  history.unshift(video);
-  history=[...new Map(history.map(v=>[v.youtubeId,v])).values()].slice(0,10);
-  localStorage.setItem("history",JSON.stringify(history));
-}
+    // ----- Play video in main player -----
+    function playVideo(video) {
+      player.src = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1`;
+      titleEl.textContent = video.title;
+      categoryEl.textContent = video.category;
+    }
 
-// Search
-function filterVideos(){
-  const term=document.getElementById('searchBar').value.toLowerCase();
-  renderVideos(videos.filter(v=>v.title.toLowerCase().includes(term)));
-}
+    // ----- Filter videos based on search input -----
+    window.filterVideos = function() {
+      const term = searchInput.value.toLowerCase();
+      const filtered = videos.filter(v => v.title.toLowerCase().includes(term));
+      renderVideos(filtered);
+    };
 
-// Category
-function filterCategory(){
-  const cat=document.getElementById('categorySelect').value;
-  if(cat==="All") renderVideos(videos);
-  else renderVideos(videos.filter(v=>v.category===cat));
-}
+    // ----- Intersection Observer for fade-in effect -----
+    function observeVideos() {
+      const cards = document.querySelectorAll('.video-card');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target); // only once
+          }
+        });
+      }, { threshold: 0.2 });
 
-// Sort
-function sortVideos(){
-  const sort=document.getElementById('sortSelect').value;
-  let sorted=[...videos];
-  if(sort==="newest") sorted.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  if(sort==="oldest") sorted.sort((a,b)=>new Date(a.date)-new Date(b.date));
-  if(sort==="title") sorted.sort((a,b)=>a.title.localeCompare(b.title));
-  renderVideos(sorted);
-}
+      cards.forEach(card => observer.observe(card));
+    }
 
-// Favorites
-function toggleFavorite(e,id){
-  e.stopPropagation();
-  if(favorites.includes(id)) favorites=favorites.filter(f=>f!==id);
-  else favorites.push(id);
-  localStorage.setItem("favorites",JSON.stringify(favorites));
-  renderVideos(videos);
-}
-function showFavorites(){
-  renderVideos(videos.filter(v=>favorites.includes(v.youtubeId)));
-}
-// History
-function showHistory(){
-  renderVideos(history);
-}
+    // ----- Initial render -----
+    renderVideos(videos);
+
+    // Optionally set first video as default (already done in HTML)
+    // If you want to sync player with first video, uncomment:
+    // if (videos.length) playVideo(videos[0]);
+  })();
 </script>
 </body>
 </html>

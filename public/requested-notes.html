@@ -2,116 +2,381 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Requested Notes</title>
+  <title>StudyHub · requested notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #121212;
-      color: #ffffff;
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f1217;
+      color: #edf2f7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 1.5rem;
+      line-height: 1.5;
     }
 
     .card {
-      max-width: 520px;
-      margin: auto;
-      background: #1e1e1e;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      max-width: 580px;
+      width: 100%;
+      background: #1a1e26;
+      border-radius: 28px;
+      padding: 2rem 2rem 2.2rem;
+      box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.7), 0 1px 3px rgba(255, 255, 255, 0.03) inset;
+      border: 1px solid #2b313c;
     }
 
     h1 {
-      margin-top: 0;
-      font-size: 1.5rem;
-      text-align: center;
+      font-size: 2rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #e6edf5;
+      border-left: 4px solid #3b82f6;
+      padding-left: 1.25rem;
+    }
+
+    h1 span {
+      background: #2c3543;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #a0b8d4;
+      margin-left: 0.75rem;
+    }
+
+    .detail-grid {
+      background: #13171f;
+      border-radius: 22px;
+      padding: 1.6rem 1.8rem;
+      margin-bottom: 2rem;
+      border: 1px solid #2d3542;
     }
 
     .item {
-      margin: 0.75rem 0;
-      font-size: 1rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.8rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #262e3a;
+    }
+
+    .item:last-of-type {
+      border-bottom: none;
     }
 
     .label {
-      font-weight: 600;
-      color: #e0e0e0;
+      font-weight: 550;
+      color: #9db4d0;
+      min-width: 88px;
+      font-size: 0.98rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .value {
+      color: #f0f6ff;
+      font-weight: 400;
+      word-break: break-word;
+      flex: 1;
     }
 
     .missing {
-      color: #9ca3af;
+      color: #7f8b9f;
       font-style: italic;
     }
 
-    button {
-      margin-top: 1rem;
-      width: 100%;
-      padding: 0.75rem;
-      border: none;
-      border-radius: 10px;
-      background: #3b82f6;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s ease;
+    /* special email row styling */
+    .email-item {
+      margin-top: 0.3rem;
+      background: #1e2733;
+      border-radius: 14px;
+      padding: 0.7rem 1rem 0.7rem 1.2rem;
+      border: 1px solid #34465c;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
     }
 
-    button:hover {
+    .email-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #cbd5e8;
+      font-weight: 480;
+    }
+
+    .email-value {
+      color: #b8d1ff;
+      font-weight: 500;
+      background: #1f2b39;
+      padding: 0.3rem 1rem;
+      border-radius: 60px;
+      border: 1px solid #3e5670;
+      font-size: 0.98rem;
+      word-break: break-all;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin-top: 1.8rem;
+    }
+
+    button {
+      border: none;
+      border-radius: 60px;
+      padding: 0.95rem 1.4rem;
+      font-size: 1.08rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+      border: 1px solid transparent;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
       background: #2563eb;
+      color: white;
+      box-shadow: 0 6px 14px rgba(30, 100, 230, 0.25);
+      border-color: #3b6df0;
+    }
+
+    .btn-primary:hover {
+      background: #1f4fcf;
+      border-color: #6185f0;
+    }
+
+    .btn-secondary {
+      background: #262f3e;
+      color: #d4e0f0;
+      border-color: #3d4759;
+    }
+
+    .btn-secondary:hover {
+      background: #2f3b4e;
+      border-color: #556683;
+    }
+
+    .file-hint {
+      background: #1b222c;
+      border-radius: 18px;
+      padding: 0.6rem 1.2rem;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #a6bbd9;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px dashed #3b4b62;
+    }
+
+    .file-hint code {
+      background: #1f2a36;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      color: #bfd5ff;
+      border: 1px solid #3d506b;
+      font-size: 0.85rem;
+    }
+
+    .status-note {
+      font-size: 0.9rem;
+      text-align: center;
+      color: #9aafc9;
+      background: #1d2531;
+      padding: 0.6rem 1rem;
+      border-radius: 40px;
+      margin-top: 0.8rem;
     }
   </style>
 </head>
 <body>
+<div class="card">
+  <h1>
+    📋 requested notes
+    <span>share via email</span>
+  </h1>
 
-  <div class="card">
-    <h1>📚 Requested Notes</h1>
-
-    <div class="item"><span class="label">🎓 Program:</span> <span id="program"></span></div>
-    <div class="item"><span class="label">📘 Course:</span> <span id="course"></span></div>
-    <div class="item"><span class="label">🗂 Semester:</span> <span id="semester"></span></div>
-    <div class="item"><span class="label">📝 Topic:</span> <span id="topic"></span></div>
-
-    <button onclick="goBack()">⬅ Back to StudyHub</button>
-    <button id="shareBtn">📤 Share Notes</button>
+  <!-- main details panel -->
+  <div class="detail-grid">
+    <div class="item">
+      <span class="label">🎓 Program</span>
+      <span class="value" id="program"></span>
+    </div>
+    <div class="item">
+      <span class="label">📘 Course</span>
+      <span class="value" id="course"></span>
+    </div>
+    <div class="item">
+      <span class="label">🗂 Semester</span>
+      <span class="value" id="semester"></span>
+    </div>
+    <div class="item">
+      <span class="label">📝 Topic</span>
+      <span class="value" id="topic"></span>
+    </div>
   </div>
 
-  <script>
+  <!-- EMAIL FIELD – prominently displayed (NEW) -->
+  <div class="email-item">
+    <span class="email-label">📧 requester email</span>
+    <span class="email-value" id="emailDisplay">—</span>
+  </div>
+
+  <!-- hidden helper: store raw email and file -->
+  <div style="display: none;" id="rawEmail" data-email=""></div>
+  <div style="display: none;" id="rawFile" data-file=""></div>
+
+  <!-- subtle file info (only if exists) -->
+  <div class="file-hint" id="fileHint">
+    <span>📎 notes link</span>
+    <code id="fileUrlPreview">example.com/notes.pdf</code>
+  </div>
+
+  <!-- action buttons -->
+  <div class="button-group">
+    <button class="btn-primary" id="shareBtn">📤 Share notes to this email</button>
+    <button class="btn-secondary" id="backBtn">← Back to StudyHub</button>
+  </div>
+
+  <div class="status-note" id="statusMessage">
+    ⚡ share will open your mail client with all details prefilled
+  </div>
+</div>
+
+<script>
+  (function() {
     const params = new URLSearchParams(window.location.search);
 
-    function setValue(id, value) {
-      document.getElementById(id).textContent =
-        value || "Not provided";
-      if (!value) {
-        document.getElementById(id).classList.add("missing");
+    // ---------- helper: set regular fields ----------
+    function setTextField(id, fallback = "Not provided") {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const raw = params.get(id)?.trim() || "";
+      if (raw) {
+        el.textContent = raw;
+        el.classList.remove("missing");
+      } else {
+        el.textContent = fallback;
+        el.classList.add("missing");
       }
+      return raw;
     }
 
-    setValue("program", params.get("program"));
-    setValue("course", params.get("course"));
-    setValue("semester", params.get("semester"));
-    setValue("topic", params.get("topic"));
+    setTextField("program");
+    setTextField("course");
+    setTextField("semester");
+    setTextField("topic");
 
-    function goBack() {
+    // ---------- email handling (display) ----------
+    const emailInput = params.get("email")?.trim() || "";
+    const emailDisplaySpan = document.getElementById("emailDisplay");
+    const rawEmailHolder = document.getElementById("rawEmail");
+
+    if (emailInput) {
+      emailDisplaySpan.textContent = emailInput;
+      emailDisplaySpan.classList.remove("missing");
+      rawEmailHolder.dataset.email = emailInput;
+    } else {
+      emailDisplaySpan.textContent = "Not provided";
+      emailDisplaySpan.classList.add("missing");
+      rawEmailHolder.dataset.email = "";
+    }
+
+    // ---------- file / notes link ----------
+    const fileParam = params.get("file")?.trim() || "";
+    const fileUrlPreview = document.getElementById("fileUrlPreview");
+    const rawFileHolder = document.getElementById("rawFile");
+
+    let notesLink = fileParam;
+    if (!notesLink) {
+      notesLink = "https://example.com/notes.pdf";   // fallback placeholder
+      fileUrlPreview.textContent = "not provided (using placeholder)";
+      fileUrlPreview.style.opacity = "0.8";
+    } else {
+      // shorten display if too long
+      let displayUrl = notesLink.length > 45 ? notesLink.substring(0, 42) + "…" : notesLink;
+      fileUrlPreview.textContent = displayUrl;
+    }
+    rawFileHolder.dataset.file = notesLink;   // store full link
+
+    // hide file hint if we want? we keep it visible.
+
+    // ---------- back button ----------
+    document.getElementById("backBtn").addEventListener("click", () => {
       window.location.href = "/";
-    }
+    });
 
-    // Share Notes button
+    // ---------- share button (improved: only email, with full details) ----------
     const shareBtn = document.getElementById("shareBtn");
-    const notesFileUrl = params.get("file") || "https://example.com/notes.pdf";
-    const userEmail = params.get("email") || "user@example.com";
+    const statusEl = document.getElementById("statusMessage");
 
     shareBtn.addEventListener("click", () => {
-        // Open mail client
-        const subject = encodeURIComponent("Your Requested Notes");
-        const body = encodeURIComponent(`Hi,\n\nHere are your requested notes: ${notesFileUrl}\n\nEnjoy!`);
-        window.location.href = `mailto:${userEmail}?subject=${subject}&body=${body}`;
+      const email = rawEmailHolder.dataset.email;
+      if (!email) {
+        alert("No email address provided. Please add ?email=... to the URL.");
+        statusEl.innerHTML = '⚠️ missing email – cannot share';
+        return;
+      }
 
-        // Open WhatsApp share
-        const whatsappMessage = encodeURIComponent(`Here are your requested notes: ${notesFileUrl}`);
-        const whatsappUrl = `https://wa.me/?text=${whatsappMessage}`;
-        window.open(whatsappUrl, "_blank");
+      // collect all fields (use params or fallback text)
+      const program = params.get("program")?.trim() || "Not provided";
+      const course = params.get("course")?.trim() || "Not provided";
+      const semester = params.get("semester")?.trim() || "Not provided";
+      const topic = params.get("topic")?.trim() || "Not provided";
+      const file = rawFileHolder.dataset.file || "not provided";
+
+      // build a clean email body with all details
+      const subject = "Your requested notes from StudyHub";
+      const body = `Hello,
+
+You requested the following notes:
+
+🎓 Program: ${program}
+📘 Course: ${course}
+🗂 Semester: ${semester}
+📝 Topic: ${topic}
+
+📎 Notes link: ${file}
+
+— Sent via StudyHub request page`;
+
+      const mailtoHref = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      // open default mail client
+      window.location.href = mailtoHref;
+
+      // update status
+      statusEl.innerHTML = `📨 composer opened for <strong>${email}</strong> (with full details)`;
     });
-  </script>
 
+    // if email missing, we slightly dim the indicator
+    if (!emailInput) {
+      const emailItem = document.querySelector('.email-item');
+      if (emailItem) emailItem.style.opacity = '0.75';
+    }
+  })();
+</script>
 </body>
 </html>

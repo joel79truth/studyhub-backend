@@ -7,275 +7,122 @@ const admin = require("firebase-admin");
 const { createClient } = require("@supabase/supabase-js");
 const { google } = require("googleapis");
 const { Readable } = require("stream");
+const path = require("path");
 const fs = require("fs");
-// Add this if not already
 
 dotenv.config();
 
-async function requireAuth(req, res) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ")) {
-    throw new Error("Unauthorized");
-  }
-  const token = authHeader.split(" ")[1];
-  return await admin.auth().verifyIdToken(token);
+/* ===== INITIALISATION ===== */
+// Firebase Admin SDK
+if (!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
+  throw new Error("Missing FIREBASE_SERVICE_ACCOUNT_BASE64");
 }
-
-
-/* ===== LOG ENV VARS ===== */
-console.log("FIREBASE:", !!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64);
-console.log("SUPABASE:", !!process.env.SUPABASE_URL);
-console.log("DRIVE FOLDER:", process.env.GOOGLE_DRIVE_FOLDER_ID);
-console.log("OPENAI KEY:", !!process.env.OPENAI_API_KEY);
-
-
-/* ===== EXPRESS SETUP ===== */
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static("public"));
-
-/* ===== FIREBASE ===== */
-const firebaseAccount = JSON.parse(
-  Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, "base64").toString("utf8")
+const serviceAccount = JSON.parse(
+  Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, "base64").toString()
 );
-
 admin.initializeApp({
-  credential: admin.credential.cert(firebaseAccount),
+  credential: admin.credential.cert(serviceAccount),
 });
 
-
-
-/* ===== MULTER ===== */
-const upload = multer({ storage: multer.memoryStorage() });
-
-/* ===== SUPABASE ===== */
+// Supabase
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+  throw new Error("Missing Supabase credentials");
+}
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_ANON_KEY
 );
 
-/* ===== GOOGLE DRIVE (OAuth 2.0 via ENV) ===== */
-
-if (!process.env.GOOGLE_REFRESH_TOKEN) {
-  throw new Error("❌ GOOGLE_REFRESH_TOKEN missing");
+// Google Drive OAuth
+if (!process.env.OAUTH_CLIENT_JSON || !process.env.GOOGLE_REFRESH_TOKEN) {
+  throw new Error("Missing Google OAuth credentials");
 }
-
-if (!process.env.OAUTH_CLIENT_JSON) {
-  throw new Error("❌ OAUTH_CLIENT_JSON missing");
-}
-
 const oauthCreds = JSON.parse(process.env.OAUTH_CLIENT_JSON);
-
 const { client_id, client_secret, redirect_uris } =
   oauthCreds.installed || oauthCreds.web;
-
-// ✅ CREATE auth FIRST
 const auth = new google.auth.OAuth2(
   client_id,
   client_secret,
   redirect_uris[0]
 );
-
-// ✅ SET credentials ONCE
-auth.setCredentials({
-  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-});
-
-// optional debug
-auth.on("tokens", (tokens) => {
-  if (tokens.access_token) {
-    console.log("✅ Google Drive access token refreshed");
-  }
-});
-
+auth.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
 const drive = google.drive({ version: "v3", auth });
 
+// Multer (memory storage)
+const upload = multer({ storage: multer.memoryStorage() });
 
-/* ===== SAVE FCM TOKEN ===== */
-const { getAuth } = require("firebase-admin/auth");
-app.post("/save-token", async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ")) {
+// Express app
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(express.static("public"));
+
+/* ===== HELPER FUNCTIONS ===== */
+async function requireAuth(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const token = authHeader.split(" ")[1];
+    const decoded = await admin.auth().verifyIdToken(token);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    console.error("Auth error:", err);
     return res.status(401).json({ message: "Unauthorized" });
   }
+}
 
+// SSE clients for real-time messages
+let sseClients = [];
+
+/* ===== ROUTES ===== */
+
+// Health check
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+
+// Save FCM token (protected)
+app.post("/save-token", requireAuth, async (req, res) => {
   try {
-    const idToken = authHeader.split(" ")[1];
-    const decoded = await getAuth().verifyIdToken(idToken);
-
     const { token } = req.body;
     if (!token) {
       return res.status(400).json({ message: "Missing token" });
     }
 
-    const { error } = await supabase
-      .from("fcm_tokens")
-      .upsert(
-        {
-          uid: decoded.uid,
-          token,
-        },
-        { onConflict: "token" }
-      );
+    const { error } = await supabase.from("fcm_tokens").upsert(
+      { uid: req.user.uid, token },
+      { onConflict: "token" }
+    );
 
     if (error) throw error;
-
-    res.json({ message: "Token stored", uid: decoded.uid });
+    res.json({ message: "Token stored", uid: req.user.uid });
   } catch (err) {
     console.error("Save token error:", err);
-    res.status(401).json({ message: "Invalid token" });
+    res.status(500).json({ message: "Failed to store token" });
   }
 });
 
-/*====push for request=====*/
-app.post("/submit-request", async (req, res) => {
-  try {
-    const { topic, course, program, semester, notes, email } = req.body;
-
-    if (!topic || !course || !program || !semester) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    // 1. Save request (optional but recommended)
-    await supabase.from("note_requests").insert([{
-      topic,
-      course,
-      program,
-      semester,
-      notes,
-      email,
-      created_at: new Date().toISOString(),
-    }]);
-
-    // 2. Get all FCM tokens (admins or all users)
-    const { data: rows, error } = await supabase
-      .from("fcm_tokens")
-      .select("token");
-
-    if (error) throw error;
-    if (!rows || rows.length === 0) {
-      return res.json({ message: "Request saved, no tokens" });
-    }
-
-    const tokens = rows.map(r => r.token);
-
-    // 3. Send PUSH notification
-   // 3. Send PUSH notification (styled)
-const payload = {
-  tokens,
-
-  // 👀 What the user sees
-  notification: {
-    title: "📚 New Notes Requested",
-    body:
-      `🎓 Program: ${program}\n` +
-      `📘 Course: ${course}\n` +
-      `🗂 Semester: ${semester}\n` +
-      `📝 Topic: ${topic}`
-  },
-
-  // 🎨 Platform-specific styling
-  webpush: {
-   notification: {
-    title: "📚 New Notes Requested",
-    body: `🎓 Program: ${program}\n📘 Course: ${course}\n🗂 Semester: ${semester}\n📝 Topic: ${topic}`,
-    icon: "/icon.png",
-    badge: "/badge.png",
-    image: "/request-banner.png",
-    data: {
-      url: `/requested-notes.html?program=${encodeURIComponent(program)}&course=${encodeURIComponent(course)}&semester=${semester}&topic=${encodeURIComponent(topic)}`
-    },
-      actions: [
-        {
-          action: "open",
-          title: "📂 View Request"
-        }
-      ]
-    }
-  },
-
-  android: {
-    notification: {
-      icon: "ic_studyhub",        // white PNG in /public
-      color: "#4f46e5",           // accent color (Android only)
-      channelId: "studyhub_requests"
-    }
-  },
-
-  // 🧠 Data for click handling
-  data: {
-    type: "request",
-    url: `/requested-notes.html?program=${encodeURIComponent(program)}
-&course=${encodeURIComponent(course)}
-&semester=${semester}
-&topic=${encodeURIComponent(topic)}`
-
-  }
-};
-
-const response = await admin.messaging().sendEachForMulticast(payload);
-
-    // 4. Clean dead tokens (same logic you already use)
-    const invalidTokens = [];
-    response.responses.forEach((r, i) => {
-      if (!r.success) {
-        const code = r.error?.code || "";
-        if (
-          code.includes("registration-token-not-registered") ||
-          code.includes("invalid-registration-token")
-        ) {
-          invalidTokens.push(tokens[i]);
-        }
-      }
-    });
-
-    if (invalidTokens.length) {
-      await supabase.from("fcm_tokens").delete().in("token", invalidTokens);
-    }
-
-    res.json({ message: "Request submitted and notification sent" });
-
-  } catch (err) {
-    console.error("Request error:", err);
-    res.status(500).json({ message: "Failed to submit request" });
-  }
-});
-
-
-/* ===== UPLOAD ===== */
-app.post("/upload", upload.single("file"), async (req, res) => {
-
-  
-/* ===== AUTH MIDDLEWARE ===== */
-const authHeader = req.headers.authorization;
-if (!authHeader?.startsWith("Bearer ")) {
-  return res.status(401).json({ message: "Unauthorized" });
-}
-
-const idToken = authHeader.split(" ")[1];
-const decoded = await admin.auth().verifyIdToken(idToken);
-
-console.log("DECODED TOKEN:", decoded);
-
+// Upload file (protected)
+app.post("/upload", requireAuth, upload.single("file"), async (req, res) => {
   try {
     const { program, semester, subject } = req.body;
     const file = req.file;
 
-    if (!program || !semester || !subject || !file)
+    if (!program || !semester || !subject || !file) {
       return res.status(400).json({ message: "Missing fields or file" });
+    }
 
-    const USE_GDRIVE = file.size > 50 * 1024; // 50KB threshold
-    console.log("FILE SIZE:", file.size, "USE_GDRIVE:", USE_GDRIVE);
-
+    const USE_GDRIVE = file.size > 50 * 1024; // >50KB -> Google Drive
     const id = uuidv4();
     const safeName = file.originalname.replace(/\s+/g, "_");
     const filePath = `${program}/${semester}/${subject}/${Date.now()}-${safeName}`;
-
     let storage_type, storage_ref, publicUrl;
 
-    /* ===== GOOGLE DRIVE ===== */
     if (USE_GDRIVE) {
+      // Upload to Google Drive
       const bufferStream = new Readable();
       bufferStream.push(file.buffer);
       bufferStream.push(null);
@@ -285,19 +132,16 @@ console.log("DECODED TOKEN:", decoded);
           name: file.originalname,
           parents: [process.env.GOOGLE_DRIVE_FOLDER_ID],
         },
-        media: {
-          mimeType: file.mimetype,
-          body: bufferStream,
-        },
+        media: { mimeType: file.mimetype, body: bufferStream },
       });
 
       storage_type = "gdrive";
       storage_ref = driveRes.data.id;
-      publicUrl = `/api/drive/${storage_ref}`;
+      publicUrl = `/api/drive/${storage_ref}`; // local proxy endpoint
     } else {
-      /* ===== SUPABASE STORAGE ===== */
+      // Upload to Supabase Storage
       const { error } = await supabase.storage
-        .from(process.env.SUPABASE_BUCKET)
+        .from(process.env.SUPABASE_BUCKET || "files")
         .upload(filePath, file.buffer, { contentType: file.mimetype });
 
       if (error) throw error;
@@ -305,88 +149,83 @@ console.log("DECODED TOKEN:", decoded);
       storage_type = "supabase";
       storage_ref = filePath;
       publicUrl = supabase.storage
-        .from(process.env.SUPABASE_BUCKET)
+        .from(process.env.SUPABASE_BUCKET || "files")
         .getPublicUrl(filePath).data.publicUrl;
     }
 
-    /* ===== SAVE METADATA ===== */
-    const pathValue = USE_GDRIVE ? storage_ref : filePath;
-
-    const { error: dbError } = await supabase.from("files").insert([{
-  id,
-  program,
-  semester,
-  subject,
-  email: decoded.email || "anonymous",
-  filename: file.originalname,
-  filepath: pathValue,
-  url: publicUrl,
-  storage_type,
-  uploaded_at: new Date().toISOString(),
-}]);
+    // Save metadata in Supabase 'files' table
+    const { error: dbError } = await supabase.from("files").insert([
+      {
+        id,
+        program,
+        semester: String(semester),
+        subject,
+        email: req.user.email || req.user.uid,
+        filename: file.originalname,
+        filepath: storage_ref,
+        url: publicUrl,
+        storage_type,
+        uploaded_at: new Date().toISOString(),
+      },
+    ]);
 
     if (dbError) throw dbError;
 
-   /* ===== PUSH NOTIFICATIONS for requst ===== */
-/* ===== PUSH NOTIFICATIONS ===== */
-const { data: rows, error: tokenError } = await supabase
-  .from("fcm_tokens")
-  .select("token");
+    // Send push notification to all FCM tokens
+    const { data: tokens, error: tokenError } = await supabase
+      .from("fcm_tokens")
+      .select("token");
 
-if (tokenError) {
-  console.error("Token fetch error:", tokenError);
-} else if (rows.length > 0) {
-  const tokens = rows.map(r => r.token);
+    if (!tokenError && tokens && tokens.length > 0) {
+      const tokenList = tokens.map((t) => t.token);
+      const message = {
+        tokens: tokenList,
+        notification: {
+          title: `📚 New Notes: ${subject}`,
+          body: `${file.originalname} for ${program} Sem ${semester}`,
+        },
+        data: {
+          program,
+          semester: String(semester),
+          subject,
+          filename: file.originalname,
+          fileId: id,
+          url: `/program.html?program=${encodeURIComponent(
+            program
+          )}&semester=${encodeURIComponent(semester)}&subject=${encodeURIComponent(
+            subject
+          )}`,
+        },
+      };
 
-  const messagePayload = {
-    tokens,
-    notification: {
-      title: `📚 New Notes Uploaded: ${subject}`,
-      body: `A new file "${file.originalname}" for ${program}, Semester ${semester}, Subject: ${subject} is now available. Tap to view!`
-    },
-    data: {
-      program,
-      semester: String(semester),
-      subject,
-      filename: file.originalname,
-      fileId: id,
-      url: `/program.html?program=${encodeURIComponent(program)}&semester=${encodeURIComponent(semester)}&subject=${encodeURIComponent(subject)}`
-    }
-  };
+      const response = await admin.messaging().sendEachForMulticast(message);
 
-  const response = await admin.messaging().sendEachForMulticast(messagePayload);
-
-  /* 🔥 CLEAN UP DEAD TOKENS */
-  const invalidTokens = [];
-  response.responses.forEach((r, i) => {
-    if (!r.success) {
-      const code = r.error?.code || "";
-      if (
-        code.includes("registration-token-not-registered") ||
-        code.includes("invalid-registration-token")
-      ) {
-        invalidTokens.push(tokens[i]);
+      // Remove invalid tokens
+      const invalidTokens = [];
+      response.responses.forEach((r, i) => {
+        if (!r.success) {
+          const code = r.error?.code || "";
+          if (
+            code.includes("registration-token-not-registered") ||
+            code.includes("invalid-registration-token")
+          ) {
+            invalidTokens.push(tokenList[i]);
+          }
+        }
+      });
+      if (invalidTokens.length) {
+        await supabase.from("fcm_tokens").delete().in("token", invalidTokens);
       }
     }
-  });
-
-  if (invalidTokens.length) {
-    await supabase
-      .from("fcm_tokens")
-      .delete()
-      .in("token", invalidTokens);
-  }
-}
-
 
     res.json({ message: "Upload successful", url: publicUrl });
   } catch (err) {
-    console.error(err);
+    console.error("Upload error:", err);
     res.status(500).json({ message: "Upload failed", error: err.message });
   }
 });
 
-/* ===== GOOGLE DRIVE STREAM ===== */
+// Proxy for Google Drive files
 app.get("/api/drive/:fileId", async (req, res) => {
   try {
     const driveRes = await drive.files.get(
@@ -394,36 +233,189 @@ app.get("/api/drive/:fileId", async (req, res) => {
       { responseType: "stream" }
     );
     driveRes.data.pipe(res);
-  } catch {
+  } catch (err) {
+    console.error("Drive proxy error:", err);
     res.status(404).send("File not found");
   }
 });
 
-/* ===== METADATA ===== */
-// GET /api/files?uid=...&program=...
+// Get file metadata (public, with optional filters)
 app.get("/api/metadata", async (req, res) => {
-  const { uid, program } = req.query;
+  try {
+    const { uid, program } = req.query;
+    let query = supabase
+      .from("files")
+      .select("*")
+      .order("uploaded_at", { ascending: false });
 
-  let query = supabase
-    .from("files")
-    .select("*")
-    .order("uploaded_at", { ascending: false });
+    if (uid) query = query.eq("email", uid);
+    if (program) query = query.eq("program", program);
 
-  if (uid) query = query.eq("email", uid);
-  if (program) query = query.eq("program", program);
+    const { data, error } = await query;
+    if (error) throw error;
 
-  const { data, error } = await query;
-
-  if (error) {
-    return res.status(500).json({ message: "Fetch failed", error: error.message });
+    res.json(data);
+  } catch (err) {
+    console.error("Metadata fetch error:", err);
+    res.status(500).json({ message: "Fetch failed", error: err.message });
   }
-
-  res.json(data);
 });
 
+// Submit a request (public or protected? We'll keep public, but store in Supabase and send notification)
+app.post("/submit-request", async (req, res) => {
+  try {
+    const { topic, course, program, semester, notes, email } = req.body;
 
+    if (!topic || !course || !program || !semester) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-/* ===== GPT CHAT ENDPOINT ===== */
+    // Store request in Supabase 'requests' table (create if not exists)
+    const { data, error } = await supabase.from("requests").insert([
+      {
+        topic,
+        course,
+        program,
+        semester: String(semester),
+        notes: notes || "",
+        email: email || "",
+        created_at: new Date().toISOString(),
+      },
+    ]);
+
+    if (error) throw error;
+
+    // Send push notification to admins? For now, send to all tokens (or a specific topic)
+    // Option: send to a "requests" topic if admins subscribe.
+    // We'll just send to all tokens as a demo.
+    const { data: tokens, error: tokenError } = await supabase
+      .from("fcm_tokens")
+      .select("token");
+
+    if (!tokenError && tokens && tokens.length > 0) {
+      const tokenList = tokens.map((t) => t.token);
+      const message = {
+        tokens: tokenList,
+        notification: {
+          title: `📝 New Request: ${topic}`,
+          body: `${course} - ${program} Sem ${semester}`,
+        },
+        data: {
+          type: "request",
+          topic,
+          course,
+          program,
+          semester: String(semester),
+          url: `/requested-notes.html?program=${encodeURIComponent(
+            program
+          )}&course=${encodeURIComponent(course)}&semester=${semester}&topic=${encodeURIComponent(
+            topic
+          )}`,
+        },
+      };
+
+      const response = await admin.messaging().sendEachForMulticast(message);
+
+      // Clean invalid tokens
+      const invalidTokens = [];
+      response.responses.forEach((r, i) => {
+        if (!r.success) {
+          const code = r.error?.code || "";
+          if (
+            code.includes("registration-token-not-registered") ||
+            code.includes("invalid-registration-token")
+          ) {
+            invalidTokens.push(tokenList[i]);
+          }
+        }
+      });
+      if (invalidTokens.length) {
+        await supabase.from("fcm_tokens").delete().in("token", invalidTokens);
+      }
+    }
+
+    res.json({ message: "Request submitted and notification sent" });
+  } catch (err) {
+    console.error("Request submission error:", err);
+    res.status(500).json({ message: "Failed to submit request" });
+  }
+});
+
+// Get all requests (public? maybe later add auth for admin)
+app.get("/api/requests", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("requests")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    res.json({ requests: data });
+  } catch (err) {
+    console.error("Fetch requests error:", err);
+    res.status(500).json({ requests: [] });
+  }
+});
+
+// Delete a request (maybe add admin auth later)
+app.delete("/api/requests/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { error } = await supabase.from("requests").delete().eq("id", id);
+    if (error) throw error;
+    res.json({ message: "Request deleted" });
+  } catch (err) {
+    console.error("Delete request error:", err);
+    res.status(500).json({ message: "Failed to delete request" });
+  }
+});
+
+// SSE endpoint for real-time messages
+app.get("/events", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  sseClients.push(res);
+
+  req.on("close", () => {
+    sseClients = sseClients.filter((client) => client !== res);
+  });
+});
+
+// Post a chat message (public, but we store in Supabase maybe)
+app.post("/chat-message", async (req, res) => {
+  const { sender, program, text } = req.body;
+  if (!sender || !program || !text) {
+    return res.status(400).json({ message: "Missing fields" });
+  }
+
+  // Store message in Supabase 'messages' table (create if needed)
+  const newMessage = {
+    sender,
+    program,
+    text,
+    timestamp: new Date().toISOString(),
+  };
+
+  const { error } = await supabase.from("messages").insert([newMessage]);
+  if (error) {
+    console.error("Error saving message:", error);
+    return res.status(500).json({ message: "Failed to save message" });
+  }
+
+  // Broadcast to SSE clients
+  sseClients.forEach((client) => {
+    client.write(`data: ${JSON.stringify(newMessage)}\n\n`);
+  });
+
+  res.json({ message: "Message sent", newMessage });
+});
+
+// Optional: Serve static files from public/files (if you still use local storage)
+app.use("/files", express.static(path.join(__dirname, "public/files")));
+
+// GPT chat endpoint (public)
 app.post("/api/chat", async (req, res) => {
   const { message } = req.body;
   if (!message) {
@@ -452,20 +444,16 @@ app.post("/api/chat", async (req, res) => {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
-      console.error("OpenAI error response:", data);
+      console.error("OpenAI error:", data);
       return res.status(500).json({
         reply: "AI service error",
-        error: data.error?.message || "Unknown OpenAI error",
+        error: data.error?.message || "Unknown error",
       });
     }
 
     if (!data.choices || !data.choices.length) {
-      console.error("Unexpected OpenAI payload:", data);
-      return res.status(500).json({
-        reply: "AI returned no response",
-      });
+      return res.status(500).json({ reply: "AI returned no response" });
     }
 
     res.json({ reply: data.choices[0].message.content });
@@ -475,7 +463,8 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-
 /* ===== START SERVER ===== */
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
