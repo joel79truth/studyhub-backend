@@ -51,7 +51,7 @@
       color:#d1d1d1;
     }
 
-    input {
+    input, select {
       padding:0.8rem 0.9rem;
       border-radius:10px;
       border:1px solid #2a2a2a;
@@ -65,7 +65,7 @@
       color:#777;
     }
 
-    input:focus {
+    input:focus, select:focus {
       outline:none;
       border-color:#3b82f6;
       background:#0f0f0f;
@@ -169,17 +169,15 @@
       .container { padding:2rem 1.5rem; }
     }
   </style>
-   <!-- Google Analytics -->
- <script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-RP8NY538W2');
-</script> 
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RP8NY538W2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-RP8NY538W2');
+  </script>
 </head>
-
 <body>
 
 <div class="container">
@@ -192,10 +190,10 @@
     <label>Course / Subject</label>
     <input id="course" required placeholder="Enter course">
 
-   <label>Your Program</label>
-<select id="program" required>
-  <option value="">-- Select your program --</option>
-</select>
+    <label>Your Program</label>
+    <select id="program" required>
+      <option value="">-- Select your program --</option>
+    </select>
 
     <label>Semester</label>
     <input id="semester" required placeholder="Enter semester">
@@ -235,107 +233,100 @@
   firebase.initializeApp(firebaseConfig);
   const messaging = firebase.messaging();
 
-
-  // Load programs into dropdown
-async function loadPrograms() {
-  try {
-    const res = await fetch("https://studyhub-backend-opdd.onrender.com/api/programs");
-    if (!res.ok) throw new Error("Failed to load programs");
-    const data = await res.json();
-    const select = document.getElementById("program");
-    select.innerHTML = '<option value="">-- Select your program --</option>';
-    data.programs.forEach(prog => {
-      const option = document.createElement("option");
-      option.value = prog;
-      option.textContent = prog;
-      select.appendChild(option);
-    });
-  } catch (err) {
-    console.error("Error loading programs:", err);
-    // Fallback: keep text input? Or show error
-    const select = document.getElementById("program");
-    select.outerHTML = '<input id="program" required placeholder="Enter program">';
-  }
-}
-loadPrograms();
-</script>
-
-<script>
-  // Push notifications setup (with error handling)
-  async function setupPushNotifications() {
-  try {
-    if (!("serviceWorker" in navigator)) return;
-
-    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-
-    const permission = await Notification.requestPermission();
-    if (permission !== "granted") {
-      console.log("❌ Notifications denied");
-      return;
+  // --------------------------------------------------------------
+  // 1. Load programs into dropdown
+  // --------------------------------------------------------------
+  async function loadPrograms() {
+    try {
+      const res = await fetch("https://studyhub-backend-opdd.onrender.com/api/programs");
+      if (!res.ok) throw new Error("Failed to load programs");
+      const data = await res.json();
+      const select = document.getElementById("program");
+      select.innerHTML = '<option value="">-- Select your program --</option>';
+      data.programs.forEach(prog => {
+        const option = document.createElement("option");
+        option.value = prog;
+        option.textContent = prog;
+        select.appendChild(option);
+      });
+    } catch (err) {
+      console.error("Error loading programs:", err);
+      const select = document.getElementById("program");
+      select.outerHTML = '<input id="program" required placeholder="Enter program">';
     }
+  }
 
-    // Ask for program if not already stored
-    let userProgram = localStorage.getItem("userProgram");
-    if (!userProgram) {
-      // Temporarily use the program dropdown value or prompt
-      // If dropdown is already loaded, we can ask user
-      const programSelect = document.getElementById("program");
-      if (programSelect && programSelect.options.length > 1) {
-        userProgram = prompt("Please select your program from the list below. You'll receive notifications for notes requests in this program.\n\nAvailable programs:\n" +
-          Array.from(programSelect.options).slice(1).map(opt => opt.value).join("\n"));
-        if (userProgram && !Array.from(programSelect.options).some(opt => opt.value === userProgram)) {
-          alert("Invalid program. Please reload and select from the dropdown.");
-          return;
-        }
-        if (userProgram) localStorage.setItem("userProgram", userProgram);
-      } else {
-        console.warn("Program dropdown not ready yet. Try again later.");
+  // --------------------------------------------------------------
+  // 2. Push notification setup (saves token + program)
+  // --------------------------------------------------------------
+  async function setupPushNotifications() {
+    try {
+      if (!("serviceWorker" in navigator)) return;
+
+      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        console.log("❌ Notifications denied");
         return;
       }
+
+      // Ask for program if not already stored
+      let userProgram = localStorage.getItem("userProgram");
+      if (!userProgram) {
+        const programSelect = document.getElementById("program");
+        // At this point the dropdown is already populated because we called loadPrograms() first
+        if (programSelect && programSelect.options.length > 1) {
+          userProgram = prompt(
+            "Please select your program from the list below.\nYou'll receive notifications for notes requests in this program.\n\nAvailable programs:\n" +
+            Array.from(programSelect.options).slice(1).map(opt => opt.value).join("\n")
+          );
+          if (userProgram && !Array.from(programSelect.options).some(opt => opt.value === userProgram)) {
+            alert("Invalid program. Please reload and select from the dropdown.");
+            return;
+          }
+          if (userProgram) localStorage.setItem("userProgram", userProgram);
+        } else {
+          console.warn("Program dropdown not ready – aborting notification setup");
+          return;
+        }
+      }
+
+      const token = await messaging.getToken({
+        vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
+        serviceWorkerRegistration: registration
+      });
+
+      if (!token) return;
+
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+
+      const idToken = await user.getIdToken();
+
+      await fetch("https://studyhub-backend-opdd.onrender.com/save-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ token, program: userProgram })
+      });
+
+      console.log("✅ Push notifications ready for program:", userProgram);
+    } catch (err) {
+      console.error("Push notification setup failed:", err);
     }
-
-    const token = await messaging.getToken({
-      vapidKey: "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A",
-      serviceWorkerRegistration: registration
-    });
-
-    if (!token) return;
-
-    const user = firebase.auth().currentUser;
-    if (!user) return;
-
-    const idToken = await user.getIdToken();
-
-    await fetch("https://studyhub-backend-opdd.onrender.com/save-token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`
-      },
-      body: JSON.stringify({ token, program: userProgram })
-    });
-
-    console.log("✅ Push notifications ready for program:", userProgram);
-  } catch (err) {
-    console.error("Push notification setup failed:", err);
   }
-}
 
-  setupPushNotifications();
-</script>
-
-<script>
-  // Handle foreground messages
+  // --------------------------------------------------------------
+  // 3. Foreground message handler
+  // --------------------------------------------------------------
   messaging.onMessage((payload) => {
     console.log("📬 Foreground message:", payload);
-
     const title = payload.notification?.title || "StudyHub Update";
     const body = payload.notification?.body || "New update available";
-
-    const url =
-      payload.data?.url ||
-      payload.notification?.data?.url ||
-      "/";
+    const url = payload.data?.url || payload.notification?.data?.url || "/";
 
     if (Notification.permission === "granted") {
       const notification = new Notification(title, {
@@ -343,20 +334,19 @@ loadPrograms();
         icon: "/icon.png",
         data: { url }
       });
-
       notification.onclick = () => {
         window.focus();
         window.location.href = url;
       };
     }
   });
-</script>
 
-<script>
+  // --------------------------------------------------------------
+  // 4. Form submission handler
+  // --------------------------------------------------------------
   document.getElementById("requestForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Get form elements
     const topicInput = document.getElementById("topic");
     const courseInput = document.getElementById("course");
     const programInput = document.getElementById("program");
@@ -368,18 +358,13 @@ loadPrograms();
     const successMsg = document.getElementById("successMsg");
     const errorMsg = document.getElementById("errorMsg");
 
-    // Hide any previous messages
     successMsg.style.display = "none";
     errorMsg.style.display = "none";
-
-    // Show loading state
     btn.classList.add("loading");
     btn.disabled = true;
 
     try {
-      // Use absolute URL so it always goes to the correct backend
       const backendUrl = "https://studyhub-backend-opdd.onrender.com/submit-request";
-
       const res = await fetch(backendUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -395,17 +380,11 @@ loadPrograms();
 
       if (res.ok) {
         successMsg.style.display = "block";
-        e.target.reset(); // clear the form
+        e.target.reset();
       } else {
-        // Try to get more error info from the response
         let errorText = "";
-        try {
-          errorText = await res.text();
-        } catch (readError) {
-          // ignore
-        }
+        try { errorText = await res.text(); } catch (readError) {}
         console.error("Server responded with:", res.status, errorText);
-        // Show a user-friendly message, but you could include status if you want
         errorMsg.style.display = "block";
         errorMsg.textContent = `Request failed (${res.status}). Please try again later.`;
       }
@@ -414,11 +393,18 @@ loadPrograms();
       errorMsg.style.display = "block";
       errorMsg.textContent = "Unable to connect. Check your internet and try again.";
     } finally {
-      // Always remove loading state
       btn.classList.remove("loading");
       btn.disabled = false;
     }
   });
+
+  // --------------------------------------------------------------
+  // 5. Initialize everything in the correct order
+  // --------------------------------------------------------------
+  (async function init() {
+    await loadPrograms();            // 1st: populate dropdown
+    await setupPushNotifications(); // 2nd: setup notifications (needs dropdown)
+  })();
 </script>
 
 </body>
