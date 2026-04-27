@@ -83,17 +83,33 @@ let sseClients = [];
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
-
+// GET /api/programs – fetch all programs
+app.get("/api/programs", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("programs")
+      .select("name")
+      .order("name");
+    if (error) throw error;
+    res.json({ programs: data.map(p => p.name) });
+  } catch (err) {
+    console.error("Fetch programs error:", err);
+    res.status(500).json({ message: "Failed to load programs" });
+  }
+});
 // Save FCM token (protected)
 app.post("/save-token", requireAuth, async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, program } = req.body;  // program is optional
     if (!token) {
       return res.status(400).json({ message: "Missing token" });
     }
 
+    const upsertData = { uid: req.user.uid, token };
+    if (program) upsertData.program = program;
+
     const { error } = await supabase.from("fcm_tokens").upsert(
-      { uid: req.user.uid, token },
+      upsertData,
       { onConflict: "token" }
     );
 
@@ -104,7 +120,6 @@ app.post("/save-token", requireAuth, async (req, res) => {
     res.status(500).json({ message: "Failed to store token" });
   }
 });
-
 // Upload file (protected)
 app.post("/upload", requireAuth, upload.single("file"), async (req, res) => {
   try {
@@ -270,8 +285,8 @@ app.post("/submit-request", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Store request in Supabase 'requests' table (create if not exists)
-    const { data, error } = await supabase.from("requests").insert([
+    // Insert request into Supabase
+    const { error: insertError } = await supabase.from("requests").insert([
       {
         topic,
         course,
@@ -283,63 +298,64 @@ app.post("/submit-request", async (req, res) => {
       },
     ]);
 
-    if (error) throw error;
+    if (insertError) throw insertError;
 
-    // Send push notification to admins? For now, send to all tokens (or a specific topic)
-    // Option: send to a "requests" topic if admins subscribe.
-    // We'll just send to all tokens as a demo.
-    const { data: tokens, error: tokenError } = await supabase
-      .from("fcm_tokens")
-      .select("token");
+    // NOTIFY only users who have the same program
+    sendNotificationToProgram(program, { topic, course, semester })
+      .catch(err => console.error("Notification failed:", err));
 
-    if (!tokenError && tokens && tokens.length > 0) {
-      const tokenList = tokens.map((t) => t.token);
-      const message = {
-        tokens: tokenList,
-        notification: {
-          title: `📝 New Request: ${topic}`,
-          body: `${course} - ${program} Sem ${semester}`,
-        },
-        data: {
-          type: "request",
-          topic,
-          course,
-          program,
-          semester: String(semester),
-          url: `/requested-notes.html?program=${encodeURIComponent(
-            program
-          )}&course=${encodeURIComponent(course)}&semester=${semester}&topic=${encodeURIComponent(
-            topic
-          )}`,
-        },
-      };
-
-      const response = await admin.messaging().sendEachForMulticast(message);
-
-      // Clean invalid tokens
-      const invalidTokens = [];
-      response.responses.forEach((r, i) => {
-        if (!r.success) {
-          const code = r.error?.code || "";
-          if (
-            code.includes("registration-token-not-registered") ||
-            code.includes("invalid-registration-token")
-          ) {
-            invalidTokens.push(tokenList[i]);
-          }
-        }
-      });
-      if (invalidTokens.length) {
-        await supabase.from("fcm_tokens").delete().in("token", invalidTokens);
-      }
-    }
-
-    res.json({ message: "Request submitted and notification sent" });
+    res.json({ message: "Request submitted successfully" });
   } catch (err) {
     console.error("Request submission error:", err);
     res.status(500).json({ message: "Failed to submit request" });
   }
 });
+
+// Helper: send push to tokens that match a given program
+async function sendNotificationToProgram(program, { topic, course, semester }) {
+  const { data: tokens, error } = await supabase
+    .from("fcm_tokens")
+    .select("token")
+    .eq("program", program);
+
+  if (error || !tokens || tokens.length === 0) {
+    console.log(`No tokens found for program: ${program}`);
+    return;
+  }
+
+  const tokenList = tokens.map(t => t.token);
+  const message = {
+    tokens: tokenList,
+    notification: {
+      title: `📝 New Request: ${topic}`,
+      body: `${course} - ${program} Sem ${semester}`,
+    },
+    data: {
+      type: "request",
+      topic,
+      course,
+      program,
+      semester: String(semester),
+      url: `/requested-notes.html?program=${encodeURIComponent(program)}&course=${encodeURIComponent(course)}&semester=${semester}&topic=${encodeURIComponent(topic)}`,
+    },
+  };
+
+  const response = await admin.messaging().sendEachForMulticast(message);
+  // Clean invalid tokens (same as before)
+  const invalidTokens = [];
+  response.responses.forEach((r, i) => {
+    if (!r.success) {
+      const code = r.error?.code || "";
+      if (code.includes("registration-token-not-registered") ||
+          code.includes("invalid-registration-token")) {
+        invalidTokens.push(tokenList[i]);
+      }
+    }
+  });
+  if (invalidTokens.length) {
+    await supabase.from("fcm_tokens").delete().in("token", invalidTokens);
+  }
+}
 
 // Get all requests (public? maybe later add auth for admin)
 app.get("/api/requests", async (req, res) => {
@@ -468,3 +484,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
+
