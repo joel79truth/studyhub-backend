@@ -1,754 +1,853 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>StudyHub LUANAR – Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>StudyHub LUANAR — Unified Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <style>
-    /* ... [Maintain all your existing CSS styles here] ... */
-      * {
-      box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+        body {
+            background: linear-gradient(145deg, #0b1120 0%, #111827 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
 
-    body {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      color: #1e293b;
-      padding: 20px;
-      position: relative;
-      overflow-x: hidden;
-    }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
 
-    /* Subtle background pattern */
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 50px 50px;
-      pointer-events: none;
-    }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            z-index: 2;
+        }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 480px;
-    }
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: floatUp 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
 
-    .card {
-      background: rgba(255, 255, 255, 0.98);
-      border-radius: 16px;
-      padding: 48px 40px;
-      box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
-      text-align: center;
-      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      backdrop-filter: blur(10px);
-    }
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        .logo-badge {
+            background: linear-gradient(125deg, #2563eb, #1e40af);
+            width: 70px;
+            height: 70px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            margin: 0 auto 1.2rem;
+            box-shadow: 0 12px 24px -8px rgba(37, 99, 235, 0.4);
+        }
 
-    .logo-container {
-      margin-bottom: 32px;
-    }
+        h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+            text-align: center;
+        }
 
-    .logo {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 16px;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
-    }
+        .sub {
+            text-align: center;
+            color: #475569;
+            font-size: 0.9rem;
+            margin: 0.5rem 0 1.8rem 0;
+        }
 
-    h2 {
-      font-size: 28px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
-    }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
 
-    .subtitle {
-      font-size: 15px;
-      color: #64748b;
-      margin-bottom: 32px;
-      line-height: 1.6;
-    }
+        button {
+            border: none;
+            background: none;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 24px 0;
-      color: #94a3b8;
-      font-size: 13px;
-      font-weight: 500;
-    }
+        .btn-primary {
+            background: #0f172a;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem;
+            width: 100%;
+            border-radius: 1.2rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+        .btn-primary:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.2rem;
+            padding: 0.8rem;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-secondary:hover {
+            background: #e6edf5;
+        }
+        .google-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #1f2937;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            border-radius: 1.2rem;
+            padding: 0.85rem;
+            width: 100%;
+        }
+        .google-btn:hover {
+            background: #f9fafb;
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
 
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid #e2e8f0;
-    }
+        input,
+        select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            background: white;
+            transition: 0.2s;
+            font-family: 'Inter', monospace;
+        }
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+        label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+        .error-msg {
+            color: #e11d48;
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+        }
+        input.error,
+        select.error {
+            border-color: #e11d48;
+            background-color: #fff5f7;
+        }
+        .hidden {
+            display: none !important;
+        }
 
-    .divider span {
-      padding: 0 16px;
-    }
+        .phone-group {
+            display: flex;
+            gap: 0.6rem;
+        }
+        .country-code {
+            width: 85px;
+            text-align: center;
+            background: #f8fafc;
+        }
+        .info-note {
+            background: #eff6ff;
+            border-radius: 1rem;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            color: #1e40af;
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3b82f6;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.8rem;
+        }
+        .step-dot {
+            width: 32px;
+            height: 4px;
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .step-dot.active {
+            background: #3b82f6;
+        }
 
-    /* Buttons */
-    button {
-      background: #0f172a;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 14px 24px;
-      width: 100%;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
+        .footer-note {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #5b6e8c;
+            border-top: 1px solid #eef2ff;
+            padding-top: 1.2rem;
+        }
+        .loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .loading::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+            right: 1rem;
+            top: calc(50% - 9px);
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-    button:hover {
-      background: #1e293b;
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
-    }
+        /* Program dropdown loading state */
+        select.loading-options {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.2rem;
+            cursor: wait;
+            color: #94a3b8;
+        }
 
-    button:active {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .google-btn {
-      background: #fff;
-      color: #1e293b;
-      border: 1px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      font-weight: 600;
-    }
-
-    .google-btn:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-
-    .google-icon {
-      width: 20px;
-      height: 20px;
-    }
-
-    /* Form Elements */
-    .form-group {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #334155;
-      margin-bottom: 8px;
-    }
-
-    .form-label .required {
-      color: #ef4444;
-    }
-
-    select, input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      font-size: 15px;
-      color: #1e293b;
-      transition: all 0.2s ease;
-      background: #fff;
-    }
-
-    select:focus, input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-      padding-right: 40px;
-    }
-
-    input::placeholder {
-      color: #94a3b8;
-    }
-
-    .error-message {
-      color: #ef4444;
-      font-size: 13px;
-      margin-top: 6px;
-      display: none;
-    }
-
-    .error-message.show {
-      display: block;
-    }
-
-    input.error, select.error {
-      border-color: #ef4444;
-    }
-
-    /* Hidden class */
-    .hidden {
-      display: none;
-    }
-
-    /* Footer */
-    .footer {
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid #e2e8f0;
-      font-size: 13px;
-      color: #64748b;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 16px;
-    }
-
-    .footer-links a {
-      color: #64748b;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover {
-      color: #3b82f6;
-    }
-
-    /* Loading State */
-    .loading {
-      pointer-events: none;
-      position: relative;
-    }
-
-    .loading::after {
-      content: '';
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      top: 50%;
-      left: 50%;
-      margin-left: -8px;
-      margin-top: -8px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Info Badge */
-    .info-badge {
-      background: #eff6ff;
-      border: 1px solid #dbeafe;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: start;
-      gap: 12px;
-      text-align: left;
-    }
-
-    .info-badge-icon {
-      color: #3b82f6;
-      font-size: 18px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .info-badge-text {
-      font-size: 13px;
-      color: #1e40af;
-      line-height: 1.5;
-    }
-
-    /* Progress Steps */
-    .steps {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 32px;
-    }
-
-    .step {
-      width: 40px;
-      height: 4px;
-      background: #e2e8f0;
-      border-radius: 2px;
-      transition: all 0.3s ease;
-    }
-
-    .step.active {
-      background: #3b82f6;
-    }
-
-    /* Mobile Responsiveness */
-    @media (max-width: 600px) {
-      .card {
-        padding: 36px 24px;
-      }
-
-      h2 {
-        font-size: 24px;
-      }
-
-      .subtitle {
-        font-size: 14px;
-      }
-
-      .logo {
-        width: 56px;
-        height: 56px;
-        font-size: 28px;
-      }
-
-      .footer {
-        flex-direction: column;
-        gap: 12px;
-        text-align: center;
-      }
-
-      .footer-links {
-        flex-direction: column;
-        gap: 8px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      body {
-        padding: 15px;
-      }
-
-      .card {
-        padding: 28px 20px;
-      }
-
-      h2 {
-        font-size: 22px;
-      }
-
-      button {
-        padding: 12px 20px;
-        font-size: 14px;
-      }
-
-      select, input {
-        padding: 11px 14px;
-        font-size: 14px;
-      }
-    }
-    .google-btn.loading::after {
-  content: '';
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(0,0,0,0.2);
-  border-top-color: #000;
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-  right: 16px;
-}
-    /* Additional Styles for Multi-Auth */
-    .auth-toggle-container {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    
-    .secondary-btn {
-      background: #f1f5f9;
-      color: #475569;
-      border: 1px solid #e2e8f0;
-    }
-    
-    .secondary-btn:hover {
-      background: #e2e8f0;
-      color: #0f172a;
-    }
-
-    .auth-section { transition: all 0.3s ease; }
-    
-    .phone-input-group {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .country-code {
-      width: 80px !important;
-      text-align: center;
-    }
-
-    /* Existing Style Overrides */
-    * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-    body { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #1e293b; padding: 20px; }
-    .container { width: 100%; max-width: 480px; z-index: 1; }
-    .card { background: rgba(255, 255, 255, 0.98); border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); text-align: center; backdrop-filter: blur(10px); }
-    .logo { width: 64px; height: 64px; margin: 0 auto 16px; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
-    h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-    .subtitle { font-size: 14px; color: #64748b; margin-bottom: 24px; }
-    .divider { display: flex; align-items: center; margin: 20px 0; color: #94a3b8; font-size: 12px; }
-    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #e2e8f0; }
-    .divider span { padding: 0 10px; }
-    button { border-radius: 10px; padding: 12px; width: 100%; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-    .google-btn { background: white; color: #1e293b; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 5px; }
-    .hidden { display: none; }
-    .error-message { color: #ef4444; font-size: 12px; display: none; text-align: left; }
-    .show { display: block; }
-  </style>
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.5rem;
+            }
+            h2 {
+                font-size: 1.6rem;
+            }
+            .logo-badge {
+                width: 55px;
+                height: 55px;
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- LOGIN CARD -->
+        <div class="card" id="loginCard">
+            <div class="logo-badge">📘</div>
+            <h2>StudyHub LUANAR</h2>
+            <p class="sub">Smart access · lectures · materials</p>
 
-  <div class="container">
-    <div class="card" id="loginCard">
-      <div class="logo">📚</div>
-      <h2>StudyHub LUANAR</h2>
-      <p class="subtitle">Select your preferred sign-in method</p>
-
-      <button class="google-btn" id="googleSignInBtn">
-        <svg style="width:18px" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-        Continue with Google
-      </button>
-
-      <div class="divider"><span>OR</span></div>
-
-      <div id="emailSection" class="auth-section">
-        <input type="email" id="loginEmail" placeholder="Email Address">
-        <input type="password" id="loginPassword" placeholder="Password">
-        <button id="emailAuthBtn" style="background:#0f172a; color:white;">Sign in with Email</button>
-      </div>
-
-      <div id="phoneSection" class="auth-section hidden">
-        <div class="phone-input-group">
-          <input type="text" class="country-code" value="+265" readonly>
-          <input type="tel" id="phoneNumber" placeholder="Phone Number">
-        </div>
-        <div id="recaptcha-container"></div>
-        <button id="phoneAuthBtn" style="background:#0f172a; color:white;">Send OTP</button>
-      </div>
-
-      <button class="secondary-btn" id="toggleAuthMethod">Use Phone Number instead</button>
-
-      <div class="footer">
-        <span>© 2026 StudyHub LUANAR</span>
-      </div>
-    </div>
-
-    <div class="card hidden" id="detailsCard">
-        <h2>Complete Your Profile</h2>
-        <form id="detailsForm">
-            <input type="text" id="program" placeholder="Program (e.g. Bachelor of...)" required>
-            <input type="text" id="semester" placeholder="Semester" required>
-            <select id="year" required>
-                <option value="">Year of Study</option>
-                <option value="1">Year 1</option>
-                <option value="2">Year 2</option>
-            </select>
-            <select id="role" required>
-                <option value="">Role</option>
-                <option value="Student">Student</option>
-                <option value="Lecturer">Lecturer</option>
-            </select>
-            <div id="lecturerCodeGroup" class="hidden">
-                <input type="password" id="lectureCode" placeholder="Authorization Code">
+            <div class="info-note">
+                <span>🔐</span> <span>Use Google, email or phone to connect. Your academic hub awaits.</span>
             </div>
-            <button type="submit" id="continueBtn" style="background:#3b82f6; color:white;">Complete Setup</button>
-        </form>
+
+            <button class="google-btn" id="googleBtn">
+                <svg width="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
+                Continue with Google
+            </button>
+
+            <div class="divider"><span>or</span></div>
+
+            <!-- Email auth section -->
+            <div id="emailAuthBox">
+                <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email" id="emailInput" placeholder="student@luanar.ac.mw" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="passwordInput" placeholder="••••••••">
+                </div>
+                <button class="btn-primary" id="emailSignInBtn">Sign in with Email</button>
+                <p style="font-size: 0.7rem; margin-top: 0.7rem; color:#475569;">🔁 If account doesn't exist, we'll create it securely.</p>
+            </div>
+
+            <!-- Phone auth section (initially hidden) -->
+            <div id="phoneAuthBox" class="hidden">
+                <div class="form-group">
+                    <label>Phone number</label>
+                    <div class="phone-group">
+                        <input type="text" class="country-code" value="+265" readonly>
+                        <input type="tel" id="phoneNumber" placeholder="991234567">
+                    </div>
+                </div>
+                <div id="recaptcha-container"></div>
+                <button class="btn-primary" id="sendOtpBtn">Send OTP via SMS</button>
+            </div>
+
+            <button class="btn-secondary" id="toggleAuthMethodBtn">📱 Use Phone Number instead</button>
+            <div class="footer-note">© 2026 StudyHub — Lilongwe University of Agriculture and Natural Resources</div>
+        </div>
+
+        <!-- PROFILE COMPLETION CARD (Hidden initially) -->
+        <div class="card hidden" id="profileCard">
+            <div class="step-indicator"><div class="step-dot active"></div><div class="step-dot"></div></div>
+            <h2>✍️ Complete profile</h2>
+            <p class="sub">Just a few details to personalize your dashboard</p>
+
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Programme of study <span style="color:#e11d48">*</span></label>
+                    <select id="programField">
+                        <option value="">— Click to load programmes —</option>
+                    </select>
+                    <div class="error-msg" id="programError">Program is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Semester <span style="color:#e11d48">*</span></label>
+                    <select id="semesterSelect">
+                        <option value="">Select semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                    <div class="error-msg" id="semesterError">Select your semester</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Year of study</label>
+                    <select id="yearField">
+                        <option value="">Select year</option>
+                        <option value="1">Year 1</option>
+                        <option value="2">Year 2</option>
+                        <option value="3">Year 3</option>
+                        <option value="4">Year 4</option>
+                    </select>
+                    <div class="error-msg" id="yearError">Select year of study</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="roleField">
+                        <option value="">Choose role</option>
+                        <option value="Student">Student</option>
+                        <option value="Lecturer">Lecturer</option>
+                    </select>
+                    <div class="error-msg" id="roleError">Role is mandatory</div>
+                </div>
+
+                <div class="form-group hidden" id="lecturerCodeGroup">
+                    <label>Lecturer authorization code</label>
+                    <input type="password" id="lecturerCodeField" placeholder="Enter secure code">
+                    <div class="error-msg" id="codeError">Invalid lecturer code</div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="completeProfileBtn" style="background:#2563eb; margin-top: 0.5rem;">🚀 Access Dashboard</button>
+            </form>
+            <div class="footer-note">Your data helps us personalise study materials</div>
+        </div>
     </div>
-  </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { 
-        getAuth, 
-        GoogleAuthProvider, 
-        signInWithPopup, 
-        signInWithEmailAndPassword,
-        createUserWithEmailAndPassword,
-        RecaptchaVerifier,
-        signInWithPhoneNumber,
-        onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            RecaptchaVerifier,
+            signInWithPhoneNumber,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import {
+            getFirestore,
+            doc,
+            setDoc,
+            getDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+        import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
-    const firebaseConfig = { 
-     apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-  authDomain: "studyhub-backend.firebaseapp.com",
-  projectId: "studyhub-backend",
-  storageBucket: "studyhub-backend.firebasestorage.app",
-  messagingSenderId: "985257842533",
-  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c" };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+        // ---------- FIREBASE + SUPABASE INIT ----------
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
+            authDomain: "studyhub-backend.firebaseapp.com",
+            projectId: "studyhub-backend",
+            storageBucket: "studyhub-backend.firebasestorage.app",
+            messagingSenderId: "985257842533",
+            appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
 
-    // DOM Elements
-    const loginCard = document.getElementById("loginCard");
-    const detailsCard = document.getElementById("detailsCard");
-    const emailSection = document.getElementById("emailSection");
-    const phoneSection = document.getElementById("phoneSection");
-    const toggleBtn = document.getElementById("toggleAuthMethod");
-// Profile form elements
-const detailsForm = document.getElementById("detailsForm");
-const programInput = document.getElementById("program");
-const semesterInput = document.getElementById("semester");
-const yearSelect = document.getElementById("year");
-const roleSelect = document.getElementById("role");
-const lecturerCodeGroup = document.getElementById("lecturerCodeGroup");
-const lectureCodeInput = document.getElementById("lectureCode");
-const continueBtn = document.getElementById("continueBtn");
+        const supabase = createClient(
+            "https://qosudbigoxwzbdqkdecz.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ",
+ 
+     );
 
-    // 1. Toggle Logic
-    toggleBtn.addEventListener('click', () => {
-        const isEmail = !emailSection.classList.contains('hidden');
-        emailSection.classList.toggle('hidden', isEmail);
-        phoneSection.classList.toggle('hidden', !isEmail);
-        toggleBtn.textContent = isEmail ? "Use Email instead" : "Use Phone Number instead";
-    });
+        // DOM elements
+        const loginCard = document.getElementById("loginCard");
+        const profileCard = document.getElementById("profileCard");
+        const emailAuthBox = document.getElementById("emailAuthBox");
+        const phoneAuthBox = document.getElementById("phoneAuthBox");
+        const toggleBtn = document.getElementById("toggleAuthMethodBtn");
+        const googleBtn = document.getElementById("googleBtn");
+        const emailSignInBtn = document.getElementById("emailSignInBtn");
+        const sendOtpBtn = document.getElementById("sendOtpBtn");
+        const profileForm = document.getElementById("profileForm");
+        const programField = document.getElementById("programField");
+        const semesterSelect = document.getElementById("semesterSelect");
+        const yearField = document.getElementById("yearField");
+        const roleField = document.getElementById("roleField");
+        const lecturerCodeGroup = document.getElementById("lecturerCodeGroup");
+        const lecturerCodeField = document.getElementById("lecturerCodeField");
+        const completeBtn = document.getElementById("completeProfileBtn");
 
-    // 2. Auth Success Handler (Universal)
-    async function handleAuthSuccess(user) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        
-        if (userDoc.exists() && userDoc.data().profileCompleted) {
-            localStorage.setItem("userDetails", JSON.stringify(userDoc.data()));
-            window.location.href = "index.html";
-        } else {
-            loginCard.classList.add("hidden");
-            detailsCard.classList.remove("hidden");
+        let recaptchaVerifier = null;
+
+        // Track if programs have already been loaded
+        let programsLoaded = false;
+        let programsLoading = false;
+
+        /**
+         * Fetch programs from Supabase 'programs' table when user clicks the dropdown.
+         * Only fetches once — subsequent clicks reuse cached data.
+         */
+        async function loadPrograms() {
+            // If already loaded, don't fetch again
+            if (programsLoaded) return;
+
+            // Prevent concurrent requests
+            if (programsLoading) return;
+
+            programsLoading = true;
+
+            // Visual feedback: show loading state on the select
+            programField.classList.add("loading-options");
+            programField.disabled = true;
+            // Keep a placeholder option during load
+            programField.innerHTML = `<option value="">⏳ Loading programmes…</option>`;
+
+            try {
+                const { data, error } = await supabase
+                    .from("programs")
+                    .select("id, name, campus, level")
+                    .order("name", { ascending: true });
+
+                if (error) {
+                    console.error("Failed to load programs:", error);
+                    programField.innerHTML = `<option value="">⚠️ Failed to load — try again</option>`;
+                    programsLoaded = false; // Allow retry on next click
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    programField.innerHTML = `<option value="">No programmes found</option>`;
+                    programsLoaded = true; // Don't keep trying if table is empty
+                    return;
+                }
+
+                // Build options from fetched data
+                programField.innerHTML = `<option value="">Select programme</option>`;
+                data.forEach(p => {
+                 const opt = document.createElement("option");
+                 opt.value = p.name;
+                opt.textContent = `${p.name} (${p.campus})`;
+                programField.appendChild(opt);
+                });
+
+                programsLoaded = true;
+                console.log(`✅ Loaded ${data.length} programmes from Supabase`);
+            } catch (err) {
+                console.error("Unexpected error loading programs:", err);
+                programField.innerHTML = `<option value="">⚠️ Error — click to retry</option>`;
+                programsLoaded = false;
+            } finally {
+                programsLoading = false;
+                programField.classList.remove("loading-options");
+                programField.disabled = false;
+            }
         }
-    }
 
-    // 3. Google Sign In
-    document.getElementById("googleSignInBtn").onclick = async () => {
-        try {
-            const result = await signInWithPopup(auth, provider);
-            await handleAuthSuccess(result.user);
-        } catch (e) { alert(e.message); }
-    };
+        // Attach event listeners: load programs on click, focus, or when user tries to open the dropdown
+        programField.addEventListener("mousedown", (e) => {
+            // mousedown fires before the dropdown opens — perfect time to load
+            loadPrograms();
+        });
+        programField.addEventListener("focus", () => {
+            loadPrograms();
+        });
+        // Touch-friendly for mobile
+        programField.addEventListener("touchstart", (e) => {
+            loadPrograms();
+        }, { passive: true });
 
-    // 4. Email Auth (Simplified for demonstration - usually needs separate Login/Register)
-    document.getElementById("emailAuthBtn").onclick = async () => {
-    const email = document.getElementById("loginEmail").value;
-    const pass = document.getElementById("loginPassword").value;
-    
-    if(!email || !pass) return alert("Please fill in all fields");
+        // ========== HELPER: Save/Update user in Supabase (full record) ==========
+        async function saveUserToSupabase(user, additionalData = {}) {
+            const userData = {
+                id: user.uid,
+                email: user.email || null,
+                phone: user.phoneNumber || null,
+                name: user.displayName || null,
+                updated_at: new Date().toISOString(),
+                ...additionalData
+            };
+            if (userData.profile_complete === undefined) userData.profile_complete = false;
 
-    try {
-        // Try to sign in
-        const result = await signInWithEmailAndPassword(auth, email, pass);
-        await handleAuthSuccess(result.user);
-    } catch (e) {
-        // If sign in fails, try to create an account
-        // Note: In production, you'd usually have a separate "Sign Up" button
-        try {
-            const reg = await createUserWithEmailAndPassword(auth, email, pass);
-            await handleAuthSuccess(reg.user);
-        } catch (regError) {
-            alert("Auth Error: " + regError.message);
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .upsert(userData, { onConflict: 'id' });
+                if (error) {
+                    console.error("Supabase save error:", error);
+                    if (error.message.includes("column") && error.message.includes("does not exist")) {
+                        console.warn(
+                            "Missing column in Supabase 'users' table. Please run the SQL schema provided in the HTML comments.");
+                    }
+                    return false;
+                }
+                return true;
+            } catch (err) {
+                console.error("Supabase upsert exception:", err);
+                return false;
+            }
         }
-    }
-};
 
-    // 5. Phone Auth
-    document.getElementById("phoneAuthBtn").onclick = async () => {
-    const phone = "+265" + document.getElementById("phoneNumber").value;
-    
-    // Initialize verifier here to ensure the element exists
-    const appVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 
-        'size': 'invisible' 
-    });
+        // ========== Universal auth success handler ==========
+        async function handleAuthSuccess(firebaseUser, extraInfo = {}) {
+            if (!firebaseUser) return;
 
-    try {
-        const confirmationResult = await signInWithPhoneNumber(auth, phone, appVerifier);
-        const code = prompt("Enter the 6-digit OTP sent to " + phone);
-        if (code) {
-            const result = await confirmationResult.confirm(code);
-            await handleAuthSuccess(result.user);
+            await saveUserToSupabase(firebaseUser, extraInfo);
+
+            const userDocRef = doc(db, "users", firebaseUser.uid);
+            const userSnap = await getDoc(userDocRef);
+            const profileData = userSnap.exists() ? userSnap.data() : null;
+
+            if (profileData && profileData.profileCompleted === true) {
+                localStorage.setItem("userDetails", JSON.stringify(profileData));
+                window.location.href = "index.html";
+            } else {
+                loginCard.classList.add("hidden");
+                profileCard.classList.remove("hidden");
+            }
         }
-    } catch (e) { 
-        alert("Phone Auth Error: " + e.message); 
-        if (window.grecaptcha) { window.grecaptcha.reset(); }
-    }
-};
-    // 6. Profile Completion (Maintain your existing logic)
-// Remove this entire block, as the correct event handler is already present below.
-// The correct handler is the one starting with: detailsForm.addEventListener("submit", async (e) => { ... }
 
-    // Show lecturer code input if lecturer selected
-   roleSelect.addEventListener("change", () => {
-  if (roleSelect.value === "Lecturer") {
-    lecturerCodeGroup.classList.remove("hidden");
-    lectureCodeInput.required = true;
-  } else {
-    lecturerCodeGroup.classList.add("hidden");
-    lectureCodeInput.required = false;
-    lectureCodeInput.value = "";
-  }
-});
+        // ************** GOOGLE SIGN IN **************
+        googleBtn.onclick = async () => {
+            googleBtn.classList.add("loading");
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                await handleAuthSuccess(user, { name: user.displayName });
+            } catch (err) {
+                alert("Google sign-in error: " + err.message);
+            } finally {
+                googleBtn.classList.remove("loading");
+            }
+        };
 
+        // ************** EMAIL SIGN IN / AUTO REGISTER **************
+        emailSignInBtn.onclick = async () => {
+            const email = document.getElementById("emailInput").value.trim();
+            const password = document.getElementById("passwordInput").value;
+            if (!email || !password) {
+                alert("Please enter email and password");
+                return;
+            }
+            if (password.length < 6) {
+                alert("Password must be at least 6 characters");
+                return;
+            }
+            emailSignInBtn.classList.add("loading");
+            try {
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                await handleAuthSuccess(userCred.user);
+            } catch (error) {
+                if (error.code === 'auth/user-not-found') {
+                    const wantCreate = confirm(
+                        "No existing account found. Would you like to create a new account with this email?");
+                    if (wantCreate) {
+                        try {
+                            const newUser = await createUserWithEmailAndPassword(auth, email, password);
+                            await handleAuthSuccess(newUser.user);
+                        } catch (regErr) {
+                            alert("Registration error: " + regErr.message);
+                        }
+                    } else {
+                        alert("Sign in cancelled.");
+                    }
+                } else {
+                    alert("Authentication error: " + error.message);
+                }
+            } finally {
+                emailSignInBtn.classList.remove("loading");
+            }
+        };
 
-    // Clear errors on input
-    [programInput, semesterInput, yearSelect, roleSelect, lectureCodeInput].forEach(input => {
-      input.addEventListener('input', () => {
-        input.classList.remove('error');
-        const errorId = input.id + 'Error';
-        const errorElement = document.getElementById(errorId);
-        if (errorElement) {
-          errorElement.classList.remove('show');
+        // ************** PHONE AUTH (OTP) **************
+        async function setupRecaptcha() {
+            if (recaptchaVerifier) {
+                try { recaptchaVerifier.clear(); } catch (e) {}
+            }
+            recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                size: 'invisible',
+                'callback': () => {}
+            });
+            return recaptchaVerifier;
         }
-      });
-    });
 
-   function validateForm() {
-  if (!programInput.value.trim()) {
-    alert("Program is required");
-    programInput.focus();
-    return false;
-  }
+        sendOtpBtn.onclick = async () => {
+            let rawPhone = document.getElementById("phoneNumber").value.trim();
+            if (!rawPhone) return alert("Enter phone number (e.g., 991234567)");
+            const fullPhone = "+265" + rawPhone.replace(/^0+/, '');
+            if (!/^\+265[0-9]{9}$/.test(fullPhone)) {
+                alert("Use valid Malawi number: after +265, 9 digits (e.g., 991234567)");
+                return;
+            }
+            sendOtpBtn.classList.add("loading");
+            try {
+                await setupRecaptcha();
+                const confirmation = await signInWithPhoneNumber(auth, fullPhone, recaptchaVerifier);
+                const code = prompt("Enter 6-digit OTP sent to " + fullPhone);
+                if (code && code.length === 6) {
+                    const result = await confirmation.confirm(code);
+                    await handleAuthSuccess(result.user, { phone: fullPhone });
+                } else {
+                    alert("Invalid OTP or cancelled");
+                }
+            } catch (err) {
+                alert("Phone auth error: " + err.message);
+                if (recaptchaVerifier) recaptchaVerifier.clear();
+            } finally {
+                sendOtpBtn.classList.remove("loading");
+            }
+        };
 
-  if (!semesterInput.value.trim()) {
-    alert("Semester is required");
-    semesterInput.focus();
-    return false;
-  }
+        // Toggle between email & phone
+        toggleBtn.onclick = () => {
+            const isEmailVisible = !emailAuthBox.classList.contains("hidden");
+            emailAuthBox.classList.toggle("hidden", isEmailVisible);
+            phoneAuthBox.classList.toggle("hidden", !isEmailVisible);
+            toggleBtn.textContent = isEmailVisible ? "✉️ Use Email instead" : "📞 Use Phone Number instead";
+        };
 
-  if (!yearSelect.value) {
-    alert("Select year of study");
-    yearSelect.focus();
-    return false;
-  }
+        // Lecturer code validation
+        const LECTURER_SECRET = "LUANAR-FACULTY-2026";
+        roleField.addEventListener("change", () => {
+            if (roleField.value === "Lecturer") {
+                lecturerCodeGroup.classList.remove("hidden");
+                lecturerCodeField.required = true;
+            } else {
+                lecturerCodeGroup.classList.add("hidden");
+                lecturerCodeField.required = false;
+                lecturerCodeField.value = "";
+                document.getElementById("codeError")?.classList.remove("show");
+            }
+        });
 
-  if (!roleSelect.value) {
-    alert("Select role");
-    roleSelect.focus();
-    return false;
-  }
+        // Real-time clear errors
+        const fieldsWithErrors = [
+            { input: programField, errorId: 'programError' },
+            { input: semesterSelect, errorId: 'semesterError' },
+            { input: yearField, errorId: 'yearError' },
+            { input: roleField, errorId: 'roleError' },
+            { input: lecturerCodeField, errorId: 'codeError' }
+        ];
+        fieldsWithErrors.forEach(({ input, errorId }) => {
+            input?.addEventListener('input', () => {
+                input.classList.remove('error');
+                const errEl = document.getElementById(errorId);
+                if (errEl) errEl.classList.remove('show');
+            });
+        });
 
-  if (roleSelect.value === "Lecturer" && !lectureCodeInput.value.trim()) {
-    alert("Lecturer authorization code required");
-    lectureCodeInput.focus();
-    return false;
-  }
+        function validateProfile() {
+            let isValid = true;
+            if (!programField.value) { showFieldError(programField, "programError");
+                isValid = false; }
+            if (!semesterSelect.value) { showFieldError(semesterSelect, "semesterError");
+                isValid = false; }
+            if (!yearField.value) { showFieldError(yearField, "yearError");
+                isValid = false; }
+            if (!roleField.value) { showFieldError(roleField, "roleError");
+                isValid = false; }
 
-  return true;
-}
+            if (roleField.value === "Lecturer") {
+                const code = lecturerCodeField.value.trim();
+                if (code !== LECTURER_SECRET) {
+                    lecturerCodeField.classList.add("error");
+                    document.getElementById("codeError").classList.add("show");
+                    isValid = false;
+                }
+            }
+            return isValid;
+        }
 
+        function showFieldError(inputEl, errorId) {
+            inputEl.classList.add("error");
+            const errSpan = document.getElementById(errorId);
+            if (errSpan) errSpan.classList.add("show");
+        }
 
+        // ************** PROFILE SUBMIT: Update Supabase with full details **************
+        profileForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Session expired. Please login again.");
+                window.location.reload();
+                return;
+            }
 
-    // Continue Button
-    detailsForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (!validateForm()) return;
+            if (!validateProfile()) return;
 
-  const authUser = auth.currentUser;
-  if (!authUser) {
-    alert("User not authenticated");
-    return;
-  }
+            completeBtn.classList.add("loading");
+            const profilePayload = {
+                program: programField.value.trim(),
+                semester: semesterSelect.value,
+                year_of_study: yearField.value,
+                role: roleField.value,
+                profile_complete: true,
+                updated_at: new Date().toISOString()
+            };
 
-  continueBtn.disabled = true;
-  continueBtn.classList.add("loading");
+            try {
+                await setDoc(doc(db, "users", user.uid), {
+                    program: profilePayload.program,
+                    semester: profilePayload.semester,
+                    year: yearField.value,
+                    role: profilePayload.role,
+                    profileCompleted: true,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
 
-  try {
-    await setDoc(
-      doc(db, "users", authUser.uid),
-      {
-        program: programInput.value.trim(),
-        semester: semesterInput.value.trim(),
-        year: yearSelect.value,
-        role: roleSelect.value,
-        profileCompleted: true,
-        updatedAt: serverTimestamp()
-      },
-      { merge: true }
-    );
+                const { error: supabaseError } = await supabase
+                    .from('users')
+                    .update(profilePayload)
+                    .eq('id', user.uid);
 
-    localStorage.setItem("userDetails", JSON.stringify({
-      program: programInput.value.trim(),
-      semester: semesterInput.value.trim(),
-      year: yearSelect.value,
-      role: roleSelect.value
-    }));
+                if (supabaseError) {
+                    console.warn("Supabase profile update failed:", supabaseError.message);
+                    alert(
+                        "Your profile was saved locally, but there was an issue syncing with the server. Contact support if this persists.");
+                } else {
+                    console.log("✅ User profile saved to Supabase successfully");
+                }
 
-    window.location.href = "index.html";
+                localStorage.setItem("userDetails", JSON.stringify({
+                    program: profilePayload.program,
+                    semester: profilePayload.semester,
+                    year: yearField.value,
+                    role: profilePayload.role
+                }));
 
-  } catch (error) {
-    alert(error.code + " — " + error.message);
-    continueBtn.disabled = false;
-    continueBtn.classList.remove("loading");
-  }
-});
+                window.location.href = "index.html";
+            } catch (error) {
+                console.error("Profile completion error:", error);
+                alert("Failed to save profile: " + error.message);
+            } finally {
+                completeBtn.classList.remove("loading");
+            }
+        });
 
-       // ... [Your existing validation and Firestore setDoc code here] ...
-    ;
+        // ************** AUTH STATE PERSISTENCE **************
+        onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+                if (userDoc.exists() && userDoc.data().profileCompleted === true) {
+                    localStorage.setItem("userDetails", JSON.stringify(userDoc.data()));
+                    window.location.href = "index.html";
+                } else {
+                    if (!profileCard.classList.contains("hidden") && loginCard.classList.contains("hidden"))
+                return;
+                    loginCard.classList.add("hidden");
+                    profileCard.classList.remove("hidden");
+                }
+            } else {
+                loginCard.classList.remove("hidden");
+                profileCard.classList.add("hidden");
+                emailAuthBox.classList.remove("hidden");
+                phoneAuthBox.classList.add("hidden");
+                toggleBtn.textContent = "📱 Use Phone Number instead";
+            }
+        });
 
-  </script>
+        window.addEventListener("beforeunload", () => {
+            if (recaptchaVerifier) recaptchaVerifier.clear();
+        });
+    </script>
 </body>
 </html>
