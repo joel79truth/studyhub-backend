@@ -99,25 +99,44 @@ app.get("/api/programs", async (req, res) => {
 });
 // Save FCM token (protected)
 app.post("/save-token", requireAuth, async (req, res) => {
+  console.log("🔵 /save-token called, body:", req.body);  // debug
+  const { token, program } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: "Missing token" });
+  }
+
   try {
-    const { token, program } = req.body;  // program is optional
-    if (!token) {
-      return res.status(400).json({ message: "Missing token" });
+    // First, check if the table exists – if not, create it (optional but helpful)
+    const { error: tableCheck } = await supabase
+      .from("fcm_tokens")
+      .select("token")
+      .limit(1);
+
+    if (tableCheck && tableCheck.message.includes("does not exist")) {
+      console.log("Creating fcm_tokens table...");
+      const { error: createError } = await supabase.rpc('create_fcm_tokens_table'); // you'd need a SQL function, so skip – do manually
+      // Better: guide user to create table manually
+      return res.status(500).json({ message: "Table missing. Please run SQL: CREATE TABLE fcm_tokens (token TEXT PRIMARY KEY, uid TEXT NOT NULL, program TEXT, created_at TIMESTAMPTZ DEFAULT NOW());" });
     }
 
-    const upsertData = { uid: req.user.uid, token };
-    if (program) upsertData.program = program;
+    // Upsert – only token and uid are required
+    const { data, error } = await supabase
+      .from("fcm_tokens")
+      .upsert(
+        { token: token, uid: req.user.uid, program: program || null },
+        { onConflict: "token" }
+      );
 
-    const { error } = await supabase.from("fcm_tokens").upsert(
-      upsertData,
-      { onConflict: "token" }
-    );
+    if (error) {
+      console.error("Supabase upsert error:", error);
+      return res.status(500).json({ message: "Database error", details: error.message });
+    }
 
-    if (error) throw error;
     res.json({ message: "Token stored", uid: req.user.uid });
   } catch (err) {
-    console.error("Save token error:", err);
-    res.status(500).json({ message: "Failed to store token" });
+    console.error("Unexpected error in /save-token:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 // Upload file (protected)
@@ -484,4 +503,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
-
