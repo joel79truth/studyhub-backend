@@ -6,10 +6,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Past Papers - StudyHub LUANAR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>StudyHub LUANAR - Past Papers</title>
 
-<!-- Preconnect to Supabase for faster image loading -->
+<!-- Preconnect to Supabase -->
 <link rel="preconnect" href="https://qosudbigoxwzbdqkdecz.supabase.co">
 <link rel="dns-prefetch" href="https://qosudbigoxwzbdqkdecz.supabase.co">
 
@@ -18,7 +18,7 @@
 <style>
   :root {
     --primary: #0c325e;
-    --primary-hover: #4338ca;
+    --primary-hover: #1e4a7a;
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
     --text-main: #0f172a;
@@ -41,11 +41,10 @@
     padding-top: 80px;
   }
 
-  /* Header */
   header {
     position: fixed;
     top: 0; left: 0; right: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     z-index: 100;
@@ -77,13 +76,12 @@
     font-size: 18px;
     font-weight: 800;
     color: white;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 4px 12px rgba(12,50,94,0.3);
   }
 
   .header-title h1 {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--text-main);
   }
 
   .search-container {
@@ -97,16 +95,14 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     font-size: 14px;
-    background: var(--bg-main);
-    color: var(--text-main);
-    outline: none;
+    background: white;
     transition: all 0.2s ease;
   }
 
   .search-input:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    background: white;
+    box-shadow: 0 0 0 3px rgba(12,50,94,0.1);
+    outline: none;
   }
 
   .search-icon {
@@ -117,7 +113,6 @@
     opacity: 0.5;
   }
 
-  /* Floating Action Button */
   .fab-container {
     position: fixed;
     bottom: 24px;
@@ -141,35 +136,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(12, 50, 94, 0.4);
-    transition: all 0.2s ease;
-    padding: 0;
-    margin: 0;
+    box-shadow: 0 4px 12px rgba(12,50,94,0.4);
+    transition: transform 0.2s;
   }
 
-  .fab:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 16px rgba(12, 50, 94, 0.5);
-  }
-
-  .fab:active {
-    transform: scale(0.95);
-  }
-
+  .fab:active { transform: scale(0.95); }
   .fab-label {
-    color: var(--text-main);
     font-size: 11px;
     font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255,255,255,0.9);
     padding: 4px 8px;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 20px;
     backdrop-filter: blur(4px);
   }
 
-  /* Breadcrumb */
   .breadcrumb {
     padding: 0 20px;
     margin: 20px 0;
@@ -180,212 +160,120 @@
   .breadcrumb.active { display: flex; }
   .breadcrumb button {
     background: white;
-    color: var(--text-main);
     padding: 8px 14px;
     font-size: 13px;
     font-weight: 600;
     border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
   .breadcrumb-text {
     color: var(--text-muted);
     font-size: 14px;
-    font-weight: 500;
   }
 
-  /* Modal */
+  /* Modals */
   .modal {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
     backdrop-filter: blur(4px);
     justify-content: center;
     align-items: center;
     z-index: 1000;
     overflow-y: auto;
   }
-
-  .modal.active {
-    display: flex;
-  }
-
+  .modal.active { display: flex; }
   .modal-content {
     background: white;
-    padding: 32px;
-    border-radius: 20px;
+    padding: 24px;
+    border-radius: 24px;
     width: 90%;
-    max-width: 600px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    max-height: 90vh;
+    max-width: 550px;
+    max-height: 85vh;
     overflow-y: auto;
     margin: 20px;
   }
-
   .modal-content h3 {
-    font-size: 1.5rem;
-    margin-bottom: 24px;
-    color: var(--text-main);
+    font-size: 1.4rem;
+    margin-bottom: 20px;
     font-weight: 700;
   }
 
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-main);
-    font-weight: 600;
-    font-size: 14px;
-  }
-
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
   input, select {
     width: 100%;
-    padding: 12px 14px;
-    margin: 5px 0;
+    padding: 12px;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 14px;
-    transition: all 0.2s ease;
-    outline: none;
-    background: white;
-    color: var(--text-main);
-  }
-
-  input:focus, select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(12, 50, 94, 0.1);
   }
 
   .file-upload-zone {
-    padding: 32px 20px;
+    padding: 28px 20px;
     border: 2px dashed var(--border);
     background: var(--bg-main);
-    border-radius: 12px;
+    border-radius: 16px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
+    transition: all 0.2s;
   }
-
-  .file-upload-zone:hover {
-    border-color: var(--primary);
-    background: #f1f5f9;
-  }
-
-  .file-upload-zone.dragover {
-    border-color: var(--primary);
-    background: #e0e7ff;
-  }
-
-  #fileInput {
-    display: none;
-  }
-
-  .upload-icon {
-    font-size: 40px;
-    margin-bottom: 8px;
-  }
-
-  .upload-text {
-    font-size: 15px;
-    color: var(--text-main);
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .upload-subtext {
-    font-size: 13px;
-    color: var(--text-muted);
-  }
+  .file-upload-zone.dragover { border-color: var(--primary); background: #e0e7ff; }
+  #fileInput { display: none; }
+  .upload-icon { font-size: 36px; margin-bottom: 8px; }
+  .upload-text { font-weight: 600; }
+  .upload-subtext { font-size: 12px; color: var(--text-muted); }
 
   .file-preview-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 12px;
-    margin-top: 20px;
+    margin-top: 16px;
   }
-
   .file-preview {
     position: relative;
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 10px;
+    padding: 8px;
     background: var(--bg-main);
-    transition: all 0.2s ease;
   }
-
-  .file-preview-image {
+  .file-preview-thumb {
     width: 100%;
-    height: 100px;
+    height: 90px;
     object-fit: cover;
     border-radius: 8px;
-    margin-bottom: 8px;
+    background: #e2e8f0;
   }
-
-  .file-preview-icon {
-    width: 100%;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    background: var(--primary);
-    border-radius: 8px;
-    margin-bottom: 8px;
-    color: white;
-  }
-
   .file-preview-name {
-    font-size: 12px;
-    color: var(--text-main);
+    font-size: 11px;
+    margin-top: 6px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 4px;
   }
-
-  .file-preview-size {
-    font-size: 11px;
-    color: var(--text-muted);
-  }
-
   .file-preview-remove {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 4px;
+    right: 4px;
     background: #ef4444;
     color: white;
     border: none;
     border-radius: 50%;
-    width: 26px;
-    height: 26px;
-    font-size: 16px;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    padding: 0;
-    margin: 0;
   }
-
-  .file-preview-status {
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    margin-top: 5px;
-    text-align: center;
-    font-weight: 600;
+  .status-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-top: 4px;
   }
-
   .status-verified { background: #d1fae5; color: #065f46; }
   .status-invalid { background: #fee2e2; color: #991b1b; }
   .status-checking { background: #fef3c7; color: #92400e; }
@@ -393,224 +281,159 @@
   .modal-actions {
     display: flex;
     gap: 12px;
-    margin-top: 24px;
+    margin-top: 20px;
   }
-
-  .modal-actions button {
-    flex: 1;
-    padding: 12px;
-  }
-
   .btn-primary {
     background: var(--primary);
     color: white;
     border: none;
-    border-radius: 10px;
+    padding: 12px;
+    border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
   }
-
   .btn-secondary {
     background: var(--bg-main);
-    color: var(--text-muted);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    padding: 12px;
+    border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
   }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  /* Cards Container */
+  /* Cards grid */
   .cards {
     padding: 0 20px 80px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 24px;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
   }
-
   .card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 4px 6px -2px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.1); }
 
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-
-  /* Image Preview */
   .card-preview {
     width: 100%;
-    height: 200px;
+    height: 180px;
     background: #e2e8f0;
     position: relative;
     cursor: pointer;
     overflow: hidden;
-    background-image: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
-    background-size: 200% 100%;
-    animation: 1.5s shine linear infinite;
   }
-  @keyframes shine {
-    to { background-position-x: -200%; }
-  }
-
   .card-preview img {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    opacity: 0;
+    transition: transform 0.3s;
   }
-  .card-preview img.loaded {
-    opacity: 1;
-  }
-  .card:hover .card-preview img {
-    transform: scale(1.05);
-  }
-
+  .card:hover .card-preview img { transform: scale(1.03); }
   .card-badge {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    background: rgba(255, 255, 255, 0.9);
+    top: 12px; left: 12px;
+    background: rgba(255,255,255,0.9);
     backdrop-filter: blur(4px);
-    color: var(--primary);
     padding: 4px 10px;
-    border-radius: 6px;
+    border-radius: 20px;
     font-size: 11px;
     font-weight: 800;
-    text-transform: uppercase;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: var(--primary);
     z-index: 2;
   }
 
-  /* Thumbnails */
   .thumbnails {
     display: flex;
     gap: 8px;
     padding: 12px 16px 0;
     overflow-x: auto;
-    scrollbar-width: none;
+    scrollbar-width: thin;
   }
-  .thumbnails::-webkit-scrollbar { display: none; }
-  
   .thumb {
-    width: 52px;
-    height: 52px;
+    width: 50px;
+    height: 50px;
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
     border: 2px solid transparent;
     flex-shrink: 0;
-    position: relative;
-    transition: transform 0.2s;
     background: #e2e8f0;
+    position: relative;
   }
   .thumb.active { border-color: var(--primary); }
-  .thumb:hover { transform: scale(1.05); }
-  .thumb img {
-    width: 100%; height: 100%; object-fit: cover;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .thumb img.loaded {
-    opacity: 1;
-  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
   .thumb-label {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: rgba(0,0,0,0.6); color: white;
-    font-size: 9px; text-align: center; padding: 3px 0;
-    font-weight: 700;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 8px;
+    text-align: center;
+    padding: 2px;
   }
 
-  /* Card Content */
-  .card-content {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  .card-title {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--text-main);
-    margin-bottom: 6px;
-    line-height: 1.3;
-  }
-
-  .card-meta {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
+  .card-content { padding: 16px; }
+  .card-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 6px; }
+  .card-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; display: flex; gap: 12px; font-weight: 600; }
   .card-actions {
-    margin-top: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid var(--border);
-    padding-top: 14px;
+    margin-top: 12px;
   }
-
+  .stats { display: flex; gap: 12px; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+  .like-button {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .like-button.liked { color: #ef4444; }
   .btn-download {
     background: #eef2ff;
     color: var(--primary);
     border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
+    padding: 8px 14px;
+    border-radius: 40px;
     font-weight: 700;
     font-size: 13px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
     transition: all 0.2s;
   }
   .btn-download:hover { background: var(--primary); color: white; }
-  .btn-download:active { transform: scale(0.95); }
 
-  .stats {
-    display: flex; gap: 12px; color: var(--text-muted); font-size: 13px; font-weight: 600;
-  }
-  .stat { display: flex; align-items: center; gap: 4px; }
-
-  .like-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
+  .grid-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 600;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
   }
-  .like-button.liked { color: #ef4444; }
+  .grid-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+  .grid-icon {
+    width: 52px; height: 52px;
+    background: #e0e7ff;
+    color: var(--primary);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
 
-  /* Toast */
   .toast {
     position: fixed;
     bottom: 24px;
@@ -619,55 +442,61 @@
     background: #10b981;
     color: white;
     padding: 12px 24px;
-    border-radius: 30px;
+    border-radius: 40px;
+    font-weight: 600;
+    z-index: 2000;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .toast.active { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.error { background: #ef4444; }
+
+  /* Batch selection modal */
+  .batch-list {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 16px 0;
+  }
+  .batch-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .batch-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #e2e8f0;
+  }
+  .batch-item-info {
+    flex: 1;
+  }
+  .batch-item-title {
     font-weight: 600;
     font-size: 14px;
-    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-    z-index: 2000;
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  .batch-item-type {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .select-all {
+    margin-bottom: 12px;
+    padding: 8px;
+    background: #f1f5f9;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-weight: 600;
   }
-  .toast.active {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-  .toast.error { background: #ef4444; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4); }
-
-  /* Generic styles for programs/semesters */
-  .grid-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    transition: all 0.2s;
-  }
-  .grid-card:hover {
-    border-color: var(--primary);
-    box-shadow: 0 4px 12px rgba(12,50,94,0.1);
-    transform: translateY(-2px);
-  }
-  .grid-icon {
-    width: 56px; height: 56px;
-    background: #e0e7ff;
-    color: var(--primary);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 10px rgba(12,50,94,0.15);
-  }
-  .grid-info h3 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 4px; font-weight: 700; }
-  .grid-info p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
   @media (min-width: 768px) {
-    header { flex-direction: row; padding: 16px 40px; }
-    .search-container { width: 320px; }
+    header { flex-direction: row; align-items: center; justify-content: space-between; padding: 16px 40px; }
+    .search-container { width: 300px; }
     body { padding-top: 90px; }
   }
 </style>
@@ -676,96 +505,53 @@
 
 <header>
   <div class="header-top">
-    <div class="header-title">
-      <div class="logo">PP</div>
-      <h1>Past Papers</h1>
-    </div>
+    <div class="header-title"><div class="logo">📚</div><h1>Past Papers</h1></div>
   </div>
-  <div class="search-container">
-    <span class="search-icon">🔍</span>
-    <input type="text" class="search-input" id="searchInput" placeholder="Search courses, exams...">
-  </div>
+  <div class="search-container"><span class="search-icon">🔍</span><input type="text" class="search-input" id="searchInput" placeholder="Search courses, exams..."></div>
 </header>
 
-<!-- Floating Action Button -->
-<div class="fab-container">
-  <button class="fab" id="addPaperBtn" title="Add Past Paper">+</button>
-  <span class="fab-label">Add Paper</span>
-</div>
-
-<div class="breadcrumb" id="breadcrumb">
-  <button id="backBtn">← Back</button>
-  <span class="breadcrumb-text" id="breadcrumbText"></span>
-</div>
-
-<div class="cards" id="container">
-  <div style="text-align:center; padding:40px; color:#64748b; font-weight:500; grid-column:1/-1;">
-    <div style="font-size:32px; margin-bottom:12px;">📚</div>
-    Loading papers...
-  </div>
-</div>
+<div class="fab-container"><button class="fab" id="addPaperBtn">+</button><span class="fab-label">Add Paper</span></div>
+<div class="breadcrumb" id="breadcrumb"><button id="backBtn">← Back</button><span class="breadcrumb-text" id="breadcrumbText"></span></div>
+<div class="cards" id="container"><div style="text-align:center; padding:40px;">📄 Loading papers...</div></div>
 
 <!-- Upload Modal -->
-<div class="modal" id="uploadModal">
-  <div class="modal-content">
-    <h3>Upload Past Papers</h3>
-    
-    <div class="form-group">
-      <label>Program:</label>
-      <input type="text" id="programInput" placeholder="e.g., BSc Agriculture" required>
-    </div>
-
-    <div class="form-group">
-      <label>Course:</label>
-      <input type="text" id="courseInput" placeholder="e.g., Crop Production" required>
-    </div>
-
-    <div class="form-group">
-      <label>Exam Type:</label>
-      <input type="text" id="midInput" placeholder="e.g., Mid Sem, End Sem" required>
-    </div>
-
-    <div class="form-group">
-      <label>Semester:</label>
-      <select id="semesterInput" required>
-        <option value="">Select Semester</option>
-        <option value="Semester 1">Semester 1</option>
-        <option value="Semester 2">Semester 2</option>
-        <option value="Semester 3">Semester 3</option>    
-        <option value="Semester 4">Semester 4</option>
-        <option value="Semester 5">Semester 5</option>
-        <option value="Semester 6">Semester 6</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Files (Max 7, images verified):</label>
-      <div class="file-upload-zone" id="fileUploadZone">
-        <div class="upload-icon">📁</div>
-        <div class="upload-text">Click to browse or drag & drop files</div>
-        <div class="upload-subtext">PDF, DOCX, PPTX, Images (Max 10MB each, up to 7 files)</div>
-      </div>
-      <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" multiple>
-    </div>
-
-    <div id="filePreviewContainer" class="file-preview-container"></div>
-
-    <div class="modal-actions">
-      <button class="btn-primary" id="uploadBtn" onclick="uploadPapers()">Upload</button>
-      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-    </div>
+<div class="modal" id="uploadModal"><div class="modal-content">
+  <h3>📤 Upload Past Paper</h3>
+  <div class="form-group">
+    <label>Program *</label>
+    <select id="programSelect" required>
+      <option value="">-- Select Program --</option>
+    </select>
   </div>
-</div>
+  <div class="form-group"><label>Course *</label><input type="text" id="courseInput" placeholder="e.g., Crop Production"></div>
+  <div class="form-group"><label>Exam Type *</label><input type="text" id="midInput" placeholder="e.g., Mid Sem, Final"></div>
+  <div class="form-group"><label>Semester *</label><select id="semesterInput"><option value="">Select</option><option>Semester 1</option><option>Semester 2</option><option>Semester 3</option><option>Semester 4</option><option>Semester 5</option><option>Semester 6</option></select></div>
+  <div class="form-group"><label>Files (Max 7, up to 10MB each)</label><div class="file-upload-zone" id="fileUploadZone"><div class="upload-icon">📁</div><div class="upload-text">Tap or drag files</div><div class="upload-subtext">PDF, DOCX, PPTX, Images</div></div><input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" multiple></div>
+  <div id="filePreviewContainer" class="file-preview-container"></div>
+  <div class="modal-actions">
+    <!-- ✅ FIX: added onclick handler to the upload button -->
+    <button class="btn-primary" id="uploadBtn" onclick="window.uploadPapers()">Upload</button>
+    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+  </div>
+</div></div>
 
-<div class="toast" id="toast">✓ Download Complete</div>
+<!-- Batch Download Modal -->
+<div class="modal" id="batchModal"><div class="modal-content">
+  <h3>📥 Select files to save</h3>
+  <div class="select-all"><input type="checkbox" id="selectAllCheckbox"> <label for="selectAllCheckbox"><strong>Select All</strong></label></div>
+  <div id="batchListContainer" class="batch-list"></div>
+  <div class="modal-actions"><button class="btn-primary" id="downloadSelectedBtn">Download Selected</button><button class="btn-secondary" onclick="closeBatchModal()">Cancel</button></div>
+</div></div>
+
+<div class="toast" id="toast">✓ Done</div>
 
 <script>
-  (function() {
-    // Setup Supabase
+  (function(){
     const supabaseUrl = 'https://qosudbigoxwzbdqkdecz.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ';
     const client = supabase.createClient(supabaseUrl, supabaseKey);
-
+    
+    // DOM elements
     const container = document.getElementById('container');
     const breadcrumb = document.getElementById('breadcrumb');
     const breadcrumbText = document.getElementById('breadcrumbText');
@@ -777,443 +563,357 @@
     const fileUploadZone = document.getElementById('fileUploadZone');
     const fileInput = document.getElementById('fileInput');
     const filePreviewContainer = document.getElementById('filePreviewContainer');
-
+    const programSelect = document.getElementById('programSelect');
+    
     let currentView = 'programs';
-    let currentProgram = null;
-    let currentSemester = null;
+    let currentProgram = null, currentSemester = null;
     let allData = [];
     let searchQuery = '';
     let selectedFiles = [];
     let likedPapers = JSON.parse(localStorage.getItem('likedPapers') || '{}');
-
-    // For managing group state (which thumb is active)
     const activeThumbs = {};
-    let cardRenderCount = 0;
-
-    // Helper functions for images
-    function handleImageLoad(img) { img.classList.add('loaded'); }
     
-    function createOptimizedImage(src, alt, width, height, className = '', isPriority = false) {
+    // Helper: Optimized Supabase image URL with transformations (fast loading)
+    function getOptimizedImageUrl(url, width, height, quality=80) {
+      if (!url) return '';
+      const separator = url.includes('?') ? '&' : '?';
+      return `${url}${separator}width=${width}&height=${height}&resize=cover&quality=${quality}`;
+    }
+    
+    function createFastImage(src, alt, width, height, className = '', isPriority = false) {
       const img = new Image();
-      img.src = src;
+      const optimized = getOptimizedImageUrl(src, width, height);
+      img.src = optimized;
       img.alt = alt || '';
-      if (width) img.width = width;
-      if (height) img.height = height;
       img.loading = isPriority ? 'eager' : 'lazy';
       img.fetchPriority = isPriority ? 'high' : 'auto';
-      img.decoding = 'async';
       if (className) img.className = className;
-      img.onload = () => handleImageLoad(img);
-      img.onerror = function() {
-        this.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${width || 400}' height='${height || 200}'%3E%3Crect width='100%25' height='100%25' fill='%23e2e8f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%2364748b'%3ENo Preview%3C/text%3E%3C/svg%3E`;
-        this.classList.add('loaded');
-      };
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
       return img;
     }
-
-    // Upload modal handling
-    addPaperBtn.onclick = () => uploadModal.classList.add('active');
     
-    uploadModal.onclick = (e) => { if (e.target === uploadModal) closeModal(); };
-    
-    fileUploadZone.onclick = () => fileInput.click();
-    fileUploadZone.addEventListener('dragover', (e) => { e.preventDefault(); fileUploadZone.classList.add('dragover'); });
-    fileUploadZone.addEventListener('dragleave', () => { fileUploadZone.classList.remove('dragover'); });
-    fileUploadZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      fileUploadZone.classList.remove('dragover');
-      handleFiles(e.dataTransfer.files);
-    });
-    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-
-    function handleFiles(files) {
-      const maxFiles = 7;
-      const maxSize = 10 * 1024 * 1024;
-      
-      if (selectedFiles.length + files.length > maxFiles) {
-        showToast(`Maximum ${maxFiles} files allowed`, true);
-        return;
-      }
-      
-      Array.from(files).forEach(async (file) => {
-        if (file.size > maxSize) { showToast(`${file.name} exceeds 10MB limit`, true); return; }
-        if (selectedFiles.length >= maxFiles) return;
-        
-        const fileData = {
-          file: file,
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          preview: null,
-          verified: 'checking',
-          id: Date.now() + Math.random()
-        };
-        
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            fileData.preview = e.target.result;
-            verifyImage(fileData);
-          };
-          reader.readAsDataURL(file);
+    // ======================== FETCH PROGRAMS FOR DROPDOWN ========================
+    async function fetchProgramsDropdown() {
+      try {
+        const { data, error } = await client.from('programs').select('name').order('name');
+        if (error) throw error;
+        if (data && data.length > 0) {
+          programSelect.innerHTML = '<option value="">-- Select Program --</option>';
+          data.forEach(prog => {
+            const option = document.createElement('option');
+            option.value = prog.name;
+            option.textContent = prog.name;
+            programSelect.appendChild(option);
+          });
         } else {
-          fileData.verified = 'verified';
+          // Fallback: fetch distinct programs from past_papers
+          const { data: papersData } = await client.from('past_papers').select('program');
+          const unique = [...new Set(papersData?.map(p => p.program).filter(Boolean))];
+          if(unique.length) {
+            unique.forEach(p => { const opt = document.createElement('option'); opt.value = p; opt.textContent = p; programSelect.appendChild(opt); });
+          } else {
+            programSelect.innerHTML = '<option value="">No programs available</option>';
+          }
         }
-        
+      } catch (err) {
+        console.error("Failed to load programs:", err);
+        programSelect.innerHTML = '<option value="">Error loading programs</option>';
+      }
+    }
+    
+    // MEMORY-FIXED FILE HANDLERS (blob URLs + thumbnails)
+    function handleFiles(files) {
+      const maxFiles = 7, maxSize = 10*1024*1024;
+      if(selectedFiles.length + files.length > maxFiles) { showToast(`Max ${maxFiles} files`, true); return; }
+      Array.from(files).forEach(file => {
+        if(file.size > maxSize) { showToast(`${file.name} >10MB`, true); return; }
+        if(selectedFiles.length >= maxFiles) return;
+        const fileData = { file, name: file.name, size: file.size, type: file.type, previewUrl: null, thumbnail: null, verified: 'checking', id: Date.now()+Math.random() };
+        if(file.type.startsWith('image/')){
+          fileData.previewUrl = URL.createObjectURL(file);
+          verifyImageWithThumb(fileData);
+        } else { fileData.verified = 'verified'; }
         selectedFiles.push(fileData);
         renderFilePreviews();
       });
     }
-
-    async function verifyImage(fileData) {
+    
+    async function verifyImageWithThumb(fileData) {
       const img = new Image();
       img.onload = () => {
-        const aspectRatio = img.width / img.height;
-        const isLikelyDocument = (aspectRatio > 0.6 && aspectRatio < 1.5) || img.width > 800;
-        setTimeout(() => {
-          fileData.verified = isLikelyDocument ? 'verified' : 'invalid';
-          renderFilePreviews();
-        }, 800);
+        const aspect = img.width/img.height;
+        const isValid = (aspect > 0.6 && aspect < 1.5) || img.width > 800;
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        const maxDim = 200;
+        if(w > maxDim) { h = (h * maxDim)/w; w = maxDim; }
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        fileData.thumbnail = canvas.toDataURL('image/jpeg', 0.6);
+        fileData.verified = isValid ? 'verified' : 'invalid';
+        URL.revokeObjectURL(fileData.previewUrl);
+        fileData.previewUrl = null;
+        renderFilePreviews();
       };
-      img.src = fileData.preview;
+      img.onerror = () => { fileData.verified = 'invalid'; renderFilePreviews(); };
+      img.src = fileData.previewUrl;
     }
-
+    
     function renderFilePreviews() {
       filePreviewContainer.innerHTML = '';
-      selectedFiles.forEach((fileData, index) => {
-        const preview = document.createElement('div');
-        preview.className = 'file-preview';
-        let previewContent = '';
-        if (fileData.preview) {
-          previewContent = `<img src="${fileData.preview}" class="file-preview-image" alt="${fileData.name}">`;
-        } else {
-          const icon = getFileIcon(fileData.name.split('.').pop());
-          previewContent = `<div class="file-preview-icon">${icon}</div>`;
+      selectedFiles.forEach((f, idx) => {
+        const div = document.createElement('div'); div.className = 'file-preview';
+        let thumbHtml = f.thumbnail ? `<img src="${f.thumbnail}" class="file-preview-thumb">` : (f.type?.startsWith('image/') ? `<div class="file-preview-thumb" style="background:#cbd5e1; display:flex;align-items:center;justify-content:center;">⏳</div>` : `<div class="file-preview-thumb" style="background:#e0e7ff; display:flex;align-items:center;justify-content:center;">📄</div>`);
+        let statusClass = '', statusText = '';
+        if(f.type?.startsWith('image/')){
+          if(f.verified==='checking'){ statusClass='status-checking'; statusText='Verifying...'; }
+          else if(f.verified==='verified'){ statusClass='status-verified'; statusText='✓ Verified'; }
+          else { statusClass='status-invalid'; statusText='✗ Invalid'; }
         }
-        let statusHTML = '';
-        if (fileData.type.startsWith('image/')) {
-          if (fileData.verified === 'checking') statusHTML = '<div class="file-preview-status status-checking">⏳ Verifying...</div>';
-          else if (fileData.verified === 'verified') statusHTML = '<div class="file-preview-status status-verified">✓ Verified</div>';
-          else statusHTML = '<div class="file-preview-status status-invalid">✗ Invalid</div>';
-        }
-        preview.innerHTML = `
-          ${previewContent}
-          <div class="file-preview-name" title="${fileData.name}">${fileData.name}</div>
-          <div class="file-preview-size">${formatFileSize(fileData.size)}</div>
-          ${statusHTML}
-          <button class="file-preview-remove" onclick="removeFile(${index})">×</button>
-        `;
-        filePreviewContainer.appendChild(preview);
+        div.innerHTML = `${thumbHtml}<div class="file-preview-name">${f.name.length>20?f.name.slice(0,18)+'..':f.name}</div><div class="status-badge ${statusClass}">${statusText}</div><button class="file-preview-remove" onclick="window.removeFile(${idx})">×</button>`;
+        filePreviewContainer.appendChild(div);
       });
-      
       const uploadBtn = document.getElementById('uploadBtn');
-      const hasInvalid = selectedFiles.some(f => f.verified === 'invalid');
-      const isChecking = selectedFiles.some(f => f.verified === 'checking');
-      uploadBtn.disabled = hasInvalid || isChecking;
-      uploadBtn.textContent = hasInvalid ? 'Remove Invalid Images' : (isChecking ? 'Verifying...' : `Upload ${selectedFiles.length} File${selectedFiles.length !== 1 ? 's' : ''}`);
+      const hasInvalid = selectedFiles.some(f=>f.verified==='invalid');
+      const checking = selectedFiles.some(f=>f.verified==='checking');
+      uploadBtn.disabled = hasInvalid || checking;
+      uploadBtn.textContent = hasInvalid ? 'Remove invalid images' : (checking ? 'Verifying...' : `Upload ${selectedFiles.length} file(s)`);
     }
-
-    window.removeFile = function(index) {
-      selectedFiles.splice(index, 1);
-      renderFilePreviews();
-    };
-
-    function formatFileSize(bytes) {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
-
-    function getFileIcon(ext) {
-      const icons = { 'pdf':'📕', 'docx':'📘', 'doc':'📘', 'pptx':'📙', 'ppt':'📙', 'jpg':'🖼️', 'jpeg':'🖼️', 'png':'🖼️' };
-      return icons[ext?.toLowerCase()] || '📄';
-    }
-
-    function closeModal() {
-      uploadModal.classList.remove('active');
-      document.getElementById('programInput').value = '';
-      document.getElementById('courseInput').value = '';
-      document.getElementById('midInput').value = '';
-      document.getElementById('semesterInput').value = '';
-      fileInput.value = '';
+    window.removeFile = (idx) => { if(selectedFiles[idx]?.previewUrl) URL.revokeObjectURL(selectedFiles[idx].previewUrl); selectedFiles.splice(idx,1); renderFilePreviews(); };
+    
+    function closeModal(){ 
+      selectedFiles.forEach(f=>{ if(f.previewUrl) URL.revokeObjectURL(f.previewUrl); });
       selectedFiles = [];
+      uploadModal.classList.remove('active');
+      document.getElementById('courseInput').value=''; document.getElementById('midInput').value=''; document.getElementById('semesterInput').value='';
+      programSelect.value = '';
+      fileInput.value='';
       renderFilePreviews();
     }
-
-    window.uploadPapers = async function() {
-      const program = document.getElementById('programInput').value.trim();
+    
+    window.uploadPapers = async function(){
+      const program = programSelect.value.trim();
       const course = document.getElementById('courseInput').value.trim();
-      const mid = document.getElementById("midInput").value.trim();
+      const mid = document.getElementById('midInput').value.trim();
       const semester = document.getElementById('semesterInput').value;
-
-      if(!program || !course || !mid || !semester || selectedFiles.length === 0) {
-        showToast("All fields are required", true); return;
-      }
-      
-      const hasInvalid = selectedFiles.some(f => f.verified === 'invalid');
-      if (hasInvalid) { showToast("Please remove invalid images", true); return; }
-
+      if(!program || !course || !mid || !semester || selectedFiles.length===0) { showToast("All fields required",true); return; }
+      if(selectedFiles.some(f=>f.verified==='invalid')){ showToast("Remove invalid images",true); return; }
       const uploadBtn = document.getElementById('uploadBtn');
-      uploadBtn.textContent = `Uploading 0/${selectedFiles.length}...`;
-      uploadBtn.disabled = true;
-
-      try {
-        let successCount = 0;
-        for (let i = 0; i < selectedFiles.length; i++) {
-          const fileData = selectedFiles[i];
-          const file = fileData.file;
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}_${i}_${file.name}`;
+      uploadBtn.disabled=true; uploadBtn.textContent=`Uploading 0/${selectedFiles.length}...`;
+      let success=0;
+      try{
+        for(let i=0;i<selectedFiles.length;i++){
+          const fd = selectedFiles[i];
+          const ext = fd.name.split('.').pop();
+          const fileName = `${Date.now()}_${i}_${fd.name}`;
           const filePath = `${program}/${course}/${semester}/${fileName}`;
-
-          const { error: uploadError } = await client.storage.from('past-paper').upload(filePath, file);
-          if(uploadError) throw uploadError;
-
+          const { error: upErr } = await client.storage.from('past-paper').upload(filePath, fd.file);
+          if(upErr) throw upErr;
           const file_url = client.storage.from('past-paper').getPublicUrl(filePath).data.publicUrl;
-
-          const { error: insertError } = await client.from('past_papers').insert([
-            { program, course, semester, Mid: mid, file_name: fileName, file_url, file_type: fileExt, views: 0, likes: 0 }
-          ]);
-          if(insertError) throw insertError;
-          successCount++;
-          uploadBtn.textContent = `Uploading ${successCount}/${selectedFiles.length}...`;
+          const { error: insErr } = await client.from('past_papers').insert([{ program, course, semester, Mid: mid, file_name: fileName, file_url, file_type: ext, views:0, likes:0 }]);
+          if(insErr) throw insErr;
+          success++;
+          uploadBtn.textContent = `Uploading ${success}/${selectedFiles.length}...`;
         }
-
-        showToast(`✅ ${successCount} file${successCount>1?'s':''} uploaded!`);
+        showToast(`✅ ${success} file(s) uploaded!`);
         closeModal();
         loadData();
-      } catch(error) {
-        showToast("❌ Upload failed: " + error.message, true);
-      } finally {
-        uploadBtn.textContent = 'Upload';
-        uploadBtn.disabled = false;
-      }
+      } catch(e){ showToast("Upload failed: "+e.message, true); }
+      finally{ uploadBtn.disabled=false; uploadBtn.textContent='Upload'; }
     };
-
-    // Main data loading
-    async function loadData() {
-      try {
-        const { data, error } = await client.from('past_papers').select('*').order('uploaded_at', { ascending: false });
-        if (error) throw error;
+    
+    // Data loading & rendering
+    async function loadData(){
+      try{
+        const { data, error } = await client.from('past_papers').select('*').order('uploaded_at',{ascending:false});
+        if(error) throw error;
         allData = data || [];
         renderPrograms();
-      } catch(err) {
-        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#ef4444;font-weight:600;padding:40px;">Error: ${err.message}</div>`;
-      }
+      } catch(err){ container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:red;">Error: ${err.message}</div>`; }
     }
-
-    function renderPrograms() {
-      currentView = 'programs';
-      breadcrumb.classList.remove('active');
-      container.innerHTML = '';
-      
-      let filtered = allData;
-      if(searchQuery) filtered = allData.filter(d => d.program?.toLowerCase().includes(searchQuery));
-      
-      const programs = [...new Set(filtered.map(d => d.program))];
-      if(programs.length === 0) {
-        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#64748b;font-weight:500;">No programs found.</div>`;
-        return;
-      }
-
-      programs.forEach(prog => {
-        const count = allData.filter(d => d.program === prog).length;
-        const el = document.createElement('div');
-        el.className = 'grid-card';
+    
+    function renderPrograms(){
+      currentView='programs'; breadcrumb.classList.remove('active'); container.innerHTML='';
+      let filtered = searchQuery ? allData.filter(d=>d.program?.toLowerCase().includes(searchQuery)) : allData;
+      const progs = [...new Set(filtered.map(d=>d.program))];
+      if(progs.length===0){ container.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;">No programs</div>`; return; }
+      progs.forEach(prog=>{
+        const count = allData.filter(d=>d.program===prog).length;
+        const el = document.createElement('div'); el.className='grid-card';
         el.innerHTML = `<div class="grid-icon">🎓</div><div class="grid-info"><h3>${prog}</h3><p>${count} papers</p></div>`;
         el.onclick = () => renderSemesters(prog);
         container.appendChild(el);
       });
     }
-
-    function renderSemesters(program) {
-      currentView = 'semesters';
-      currentProgram = program;
-      breadcrumb.classList.add('active');
-      breadcrumbText.textContent = program;
-      container.innerHTML = '';
-
-      const sems = [...new Set(allData.filter(d => d.program === program).map(d => d.semester))];
-      if(sems.length === 0) {
-        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;">No semesters.</div>`;
-        return;
-      }
-
-      sems.forEach(sem => {
-        const count = allData.filter(d => d.program === program && d.semester === sem).length;
-        const el = document.createElement('div');
-        el.className = 'grid-card';
-        el.innerHTML = `<div class="grid-icon">📅</div><div class="grid-info"><h3>${sem}</h3><p>${count} documents</p></div>`;
+    
+    function renderSemesters(program){
+      currentProgram=program; currentView='semesters'; breadcrumb.classList.add('active'); breadcrumbText.textContent=program; container.innerHTML='';
+      const sems = [...new Set(allData.filter(d=>d.program===program).map(d=>d.semester))];
+      sems.forEach(sem=>{
+        const count = allData.filter(d=>d.program===program && d.semester===sem).length;
+        const el = document.createElement('div'); el.className='grid-card';
+        el.innerHTML = `<div class="grid-icon">📅</div><div class="grid-info"><h3>${sem}</h3><p>${count} docs</p></div>`;
         el.onclick = () => renderPapers(program, sem);
         container.appendChild(el);
       });
     }
-
-    function renderPapers(program, semester) {
-      currentView = 'papers';
-      currentSemester = semester;
-      breadcrumb.classList.add('active');
-      breadcrumbText.textContent = `${program} / ${semester}`;
-      container.innerHTML = '';
-      cardRenderCount = 0;
-
-      let papers = allData.filter(d => d.program === program && d.semester === semester);
-      if(searchQuery) papers = papers.filter(p => p.course?.toLowerCase().includes(searchQuery) || p.Mid?.toLowerCase().includes(searchQuery));
-
+    
+    function renderPapers(program, semester){
+      currentSemester=semester; currentView='papers'; breadcrumbText.textContent=`${program} / ${semester}`; container.innerHTML='';
+      let papers = allData.filter(d=>d.program===program && d.semester===semester);
+      if(searchQuery) papers = papers.filter(p=>p.course?.toLowerCase().includes(searchQuery) || p.Mid?.toLowerCase().includes(searchQuery));
       const groups = {};
-      papers.forEach(p => { if(!groups[p.course]) groups[p.course] = []; groups[p.course].push(p); });
+      papers.forEach(p=>{ if(!groups[p.course]) groups[p.course]=[]; groups[p.course].push(p); });
       const courses = Object.keys(groups);
-      if(courses.length === 0) {
-        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;">No papers found.</div>`;
-        return;
-      }
-
-      courses.forEach((course, index) => {
+      if(courses.length===0){ container.innerHTML=`<div style="text-align:center;padding:40px;">No papers</div>`; return; }
+      courses.forEach((course, idx)=>{
         const group = groups[course];
-        activeThumbs[course] = activeThumbs[course] || 0;
-        const el = document.createElement('div');
-        el.className = 'card';
-        el.id = `card-${course.replace(/[^a-zA-Z0-9]/g, '')}`;
-        const isPriority = index < 3;
-        updateCardHTML(el, course, group, isPriority);
-        container.appendChild(el);
-        cardRenderCount++;
+        if(!activeThumbs[course]) activeThumbs[course]=0;
+        const card = document.createElement('div'); card.className='card'; card.id=`card-${course.replace(/\s/g,'')}`;
+        updateCardElement(card, course, group, idx<2);
+        container.appendChild(card);
       });
     }
-
-    function updateCardHTML(el, course, group, isPriority = false) {
+    
+    function updateCardElement(cardEl, course, group, isPriority){
       const activeIdx = activeThumbs[course];
       const activePaper = group[activeIdx];
-      const paperId = activePaper.id;
-      const isLiked = likedPapers[paperId] || false;
-      
-      const previewImg = createOptimizedImage(activePaper.file_url, course, 400, 200, '', isPriority);
-      
-      let thumbsHTML = '';
-      if(group.length > 1) {
-        thumbsHTML = `<div class="thumbnails">`;
-        group.forEach((p, idx) => {
-          const thumbImg = createOptimizedImage(p.file_url, p.Mid || 'thumb', 52, 52);
-          thumbImg.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-          thumbsHTML += `<div class="thumb ${idx === activeIdx ? 'active' : ''}" onclick="event.stopPropagation(); window.setActiveThumb('${course}', ${idx})">${thumbImg.outerHTML}<div class="thumb-label">${(p.Mid || 'Exam').split(' ')[0]}</div></div>`;
+      const isLiked = likedPapers[activePaper.id] || false;
+      const previewImg = createFastImage(activePaper.file_url, course, 400, 200, 'card-img', isPriority);
+      let thumbsHtml = '';
+      if(group.length>1){
+        thumbsHtml = `<div class="thumbnails">`;
+        group.forEach((p,idx)=>{
+          const thumbImg = createFastImage(p.file_url, p.Mid, 52, 52, '', false);
+          const imgOuter = thumbImg.outerHTML;
+          thumbsHtml += `<div class="thumb ${idx===activeIdx?'active':''}" onclick="event.stopPropagation(); window.setActiveThumb('${course}', ${idx})">${imgOuter}<div class="thumb-label">${(p.Mid||'Exam').slice(0,8)}</div></div>`;
         });
-        thumbsHTML += `</div>`;
+        thumbsHtml += `</div>`;
       }
-
-      el.innerHTML = `
-        <div class="card-preview" onclick="event.stopPropagation(); window.open('${activePaper.file_url}', '_blank')">
-          <div class="card-badge">${activePaper.Mid || 'Exam'}</div>
-          ${previewImg.outerHTML}
-        </div>
-        ${thumbsHTML}
+      cardEl.innerHTML = `
+        <div class="card-preview" onclick="window.open('${activePaper.file_url}','_blank')"><div class="card-badge">${activePaper.Mid||'Exam'}</div>${previewImg.outerHTML}</div>
+        ${thumbsHtml}
         <div class="card-content">
           <h3 class="card-title">${course}</h3>
-          <div class="card-meta">
-            <span>${activePaper.file_type?.toUpperCase() || 'FILE'}</span>
-            <span style="color:#cbd5e1">•</span>
-            <span>${group.length} Document${group.length !== 1 ? 's' : ''}</span>
-          </div>
+          <div class="card-meta"><span>${(activePaper.file_type||'file').toUpperCase()}</span><span>•</span><span>${group.length} doc(s)</span></div>
           <div class="card-actions">
-            <div class="stats">
-              <div class="stat">👁️ <span id="views-${paperId}">${activePaper.views || 0}</span></div>
-              <button class="like-button ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); window.toggleLike('${paperId}', this)">
-                <span id="like-icon-${paperId}">${isLiked ? '❤️' : '🤍'}</span>
-                <span id="likes-${paperId}">${activePaper.likes || 0}</span>
-              </button>
+            <div class="stats"><span>👁️ ${activePaper.views||0}</span>
+              <button class="like-button ${isLiked?'liked':''}" onclick="event.stopPropagation(); window.toggleLike('${activePaper.id}', this)"><span>${isLiked?'❤️':'🤍'}</span> <span id="likes-${activePaper.id}">${activePaper.likes||0}</span></button>
             </div>
-            <button class="btn-download" onclick="event.stopPropagation(); window.downloadFile('${activePaper.file_url}', '${activePaper.file_name || course}')">📥 Save</button>
+            <button class="btn-download" onclick="event.stopPropagation(); window.openBatchDownload('${course}', '${currentProgram}', '${currentSemester}')">📥 Save</button>
           </div>
         </div>
       `;
     }
-
-    window.setActiveThumb = function(course, idx) {
-      activeThumbs[course] = idx;
-      const papers = allData.filter(d => d.program === currentProgram && d.semester === currentSemester && d.course === course);
-      const el = document.getElementById(`card-${course.replace(/[^a-zA-Z0-9]/g, '')}`);
-      if(el) updateCardHTML(el, course, papers, false);
+    
+    window.setActiveThumb = function(course, idx){
+      activeThumbs[course]=idx;
+      const group = allData.filter(d=>d.program===currentProgram && d.semester===currentSemester && d.course===course);
+      const card = document.getElementById(`card-${course.replace(/\s/g,'')}`);
+      if(card) updateCardElement(card, course, group, false);
     };
-
-    window.downloadFile = async function(url, filename) {
-      showToast('Downloading...', false, true);
-      try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = objectUrl;
-        a.download = filename || 'download';
-        document.body.appendChild(a);
-        a.click();
-        URL.revokeObjectURL(objectUrl);
-        document.body.removeChild(a);
-        showToast('✓ Saved to phone!');
-      } catch(err) {
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        showToast('✓ Download started!');
-      }
+    
+    // BATCH DOWNLOAD MODAL
+    window.openBatchDownload = function(course, program, semester) {
+      const papers = allData.filter(d=>d.program===program && d.semester===semester && d.course===course);
+      if(papers.length===0) return;
+      const modal = document.getElementById('batchModal');
+      const listContainer = document.getElementById('batchListContainer');
+      listContainer.innerHTML = '';
+      papers.forEach((paper) => {
+        const item = document.createElement('div'); item.className='batch-item';
+        const thumbUrl = getOptimizedImageUrl(paper.file_url, 80, 80);
+        item.innerHTML = `
+          <input type="checkbox" class="batch-checkbox" data-url="${paper.file_url}" data-name="${paper.file_name || paper.Mid || 'document'}" checked>
+          <img src="${thumbUrl}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2748%27 height=%2748%27%3E%3Crect width=%2748%27 height=%2748%27 fill=%27%23cbd5e1%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 text-anchor=%27middle%27 dy=%27.3em%27%3E📄%3C/text%3E%3C/svg%3E'">
+          <div class="batch-item-info"><div class="batch-item-title">${paper.Mid || 'Exam Paper'}</div><div class="batch-item-type">${paper.file_type?.toUpperCase()}</div></div>
+        `;
+        listContainer.appendChild(item);
+      });
+      const selectAllChk = document.getElementById('selectAllCheckbox');
+      selectAllChk.checked = true;
+      selectAllChk.onchange = (e) => { document.querySelectorAll('.batch-checkbox').forEach(cb => cb.checked = e.target.checked); };
+      const downloadBtn = document.getElementById('downloadSelectedBtn');
+      const newDownloadBtn = downloadBtn.cloneNode(true);
+      downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
+      newDownloadBtn.onclick = async () => {
+        const selected = Array.from(document.querySelectorAll('.batch-checkbox:checked')).map(cb => ({ url: cb.dataset.url, name: cb.dataset.name }));
+        if(selected.length===0){ showToast("No file selected", true); return; }
+        showToast(`Downloading ${selected.length} file(s)...`);
+        for(let item of selected){
+          try{
+            const response = await fetch(item.url);
+            const blob = await response.blob();
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = item.name || 'pastpaper';
+            link.click();
+            URL.revokeObjectURL(link.href);
+            await new Promise(r => setTimeout(r, 300));
+          } catch(e){ window.open(item.url, '_blank'); }
+        }
+        showToast(`✅ ${selected.length} file(s) saved`);
+        closeBatchModal();
+      };
+      modal.classList.add('active');
     };
-
-    window.toggleLike = async function(paperId, btn) {
-      const isCurrentlyLiked = likedPapers[paperId] || false;
-      const newLikeState = !isCurrentlyLiked;
-      const icon = document.getElementById(`like-icon-${paperId}`);
-      const countSpan = document.getElementById(`likes-${paperId}`);
-      
-      const paper = allData.find(p => p.id == paperId);
-      if (!paper) return;
-      
-      const currentCount = paper.likes || 0;
-      const newCount = newLikeState ? currentCount + 1 : Math.max(0, currentCount - 1);
-      
-      btn.classList.toggle('liked', newLikeState);
-      icon.textContent = newLikeState ? '❤️' : '🤍';
-      countSpan.textContent = newCount;
-      
-      likedPapers[paperId] = newLikeState;
+    function closeBatchModal(){ document.getElementById('batchModal').classList.remove('active'); }
+    window.closeBatchModal = closeBatchModal;
+    
+    window.toggleLike = async function(paperId, btn){
+      const liked = likedPapers[paperId] || false;
+      const newLike = !liked;
+      const paper = allData.find(p=>p.id==paperId);
+      if(!paper) return;
+      const newCount = newLike ? (paper.likes||0)+1 : Math.max(0, (paper.likes||0)-1);
+      btn.classList.toggle('liked', newLike);
+      btn.querySelector('span:first-child').textContent = newLike ? '❤️' : '🤍';
+      document.getElementById(`likes-${paperId}`).textContent = newCount;
+      likedPapers[paperId] = newLike;
       localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
-      
-      try {
-        const { error } = await client.from('past_papers').update({ likes: newCount }).eq('id', paperId);
-        if (error) throw error;
+      try{
+        await client.from('past_papers').update({ likes: newCount }).eq('id', paperId);
         paper.likes = newCount;
-      } catch (error) {
-        likedPapers[paperId] = isCurrentlyLiked;
+      } catch(e){
+        likedPapers[paperId] = liked;
         localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
-        btn.classList.toggle('liked', isCurrentlyLiked);
-        icon.textContent = isCurrentlyLiked ? '❤️' : '🤍';
-        countSpan.textContent = currentCount;
-        showToast('Failed to update like', true);
+        btn.classList.toggle('liked', liked);
+        btn.querySelector('span:first-child').textContent = liked ? '❤️' : '🤍';
+        document.getElementById(`likes-${paperId}`).textContent = paper.likes||0;
+        showToast("Failed to update like", true);
       }
     };
-
-    function showToast(msg, isError=false, persist=false) {
+    
+    function showToast(msg, isError=false, persist=false){
       toast.textContent = msg;
-      toast.className = 'toast active ' + (isError ? 'error' : '');
+      toast.className = `toast active ${isError?'error':''}`;
       if(window.toastTimeout) clearTimeout(window.toastTimeout);
-      if(!persist) window.toastTimeout = setTimeout(() => toast.classList.remove('active'), 3500);
+      if(!persist) window.toastTimeout = setTimeout(()=>toast.classList.remove('active'),3000);
     }
-
+    
     backBtn.onclick = () => {
       if(currentView === 'papers') renderSemesters(currentProgram);
       else if(currentView === 'semesters') renderPrograms();
     };
-
-    searchInput.addEventListener('input', (e) => {
+    searchInput.addEventListener('input', (e)=>{
       searchQuery = e.target.value.toLowerCase();
-      if(currentView === 'programs') renderPrograms();
-      else if(currentView === 'semesters') renderSemesters(currentProgram);
-      else if(currentView === 'papers') renderPapers(currentProgram, currentSemester);
+      if(currentView==='programs') renderPrograms();
+      else if(currentView==='semesters') renderSemesters(currentProgram);
+      else if(currentView==='papers') renderPapers(currentProgram, currentSemester);
     });
-
+    addPaperBtn.onclick = () => uploadModal.classList.add('active');
+    uploadModal.onclick = (e) => { if(e.target === uploadModal) closeModal(); };
+    fileUploadZone.onclick = () => fileInput.click();
+    fileUploadZone.addEventListener('dragover', e=>{ e.preventDefault(); fileUploadZone.classList.add('dragover'); });
+    fileUploadZone.addEventListener('dragleave', ()=>fileUploadZone.classList.remove('dragover'));
+    fileUploadZone.addEventListener('drop', e=>{ e.preventDefault(); fileUploadZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', e=>handleFiles(e.target.files));
+    
+    // Initialize: load programs dropdown + data
+    fetchProgramsDropdown();
     window.onload = loadData;
   })();
 </script>
