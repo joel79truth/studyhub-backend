@@ -2,6 +2,7 @@
 <br>
 <br>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -267,6 +268,7 @@
     font-size: 14px;
     cursor: pointer;
   }
+  /* Status badges kept for potential non-image errors only */
   .status-badge {
     font-size: 10px;
     padding: 2px 6px;
@@ -274,9 +276,8 @@
     display: inline-block;
     margin-top: 4px;
   }
-  .status-verified { background: #d1fae5; color: #065f46; }
-  .status-invalid { background: #fee2e2; color: #991b1b; }
-  .status-checking { background: #fef3c7; color: #92400e; }
+  .status-valid { background: #d1fae5; color: #065f46; }
+  .status-error { background: #fee2e2; color: #991b1b; }
 
   .modal-actions {
     display: flex;
@@ -529,7 +530,6 @@
   <div class="form-group"><label>Files (Max 7, up to 10MB each)</label><div class="file-upload-zone" id="fileUploadZone"><div class="upload-icon">📁</div><div class="upload-text">Tap or drag files</div><div class="upload-subtext">PDF, DOCX, PPTX, Images</div></div><input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" multiple></div>
   <div id="filePreviewContainer" class="file-preview-container"></div>
   <div class="modal-actions">
-    <!-- ✅ FIX: added onclick handler to the upload button -->
     <button class="btn-primary" id="uploadBtn" onclick="window.uploadPapers()">Upload</button>
     <button class="btn-secondary" onclick="closeModal()">Cancel</button>
   </div>
@@ -623,123 +623,184 @@
       }
     }
     
-    // MEMORY-FIXED FILE HANDLERS (blob URLs + thumbnails)
+    // ======================== MEMORY‑SAFE FILE HANDLING ========================
+    // We never decode full‑size images. Thumbnails are created using createImageBitmap
+    // with built‑in resize – extremely memory efficient.
+    async function createSafeThumbnail(fileData) {
+      if (!fileData.type.startsWith('image/')) return;
+      
+      try {
+        // createImageBitmap with resize avoids decoding the whole image
+        const bitmap = await createImageBitmap(fileData.file, {
+          resizeWidth: 200,
+          resizeHeight: 200,
+          resizeQuality: 'low',
+        });
+        const canvas = document.createElement('canvas');
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        canvas.getContext('2d').drawImage(bitmap, 0, 0);
+        fileData.thumbnail = canvas.toDataURL('image/jpeg', 0.5);
+        bitmap.close(); // free GPU memory
+      } catch (e) {
+        // Fallback: if resize not supported, just show an icon – still safe
+        fileData.thumbnail = '';
+      }
+      renderFilePreviews(); // update UI once thumbnail is ready
+    }
+    
     function handleFiles(files) {
       const maxFiles = 7, maxSize = 10*1024*1024;
       if(selectedFiles.length + files.length > maxFiles) { showToast(`Max ${maxFiles} files`, true); return; }
+      
       Array.from(files).forEach(file => {
         if(file.size > maxSize) { showToast(`${file.name} >10MB`, true); return; }
         if(selectedFiles.length >= maxFiles) return;
-        const fileData = { file, name: file.name, size: file.size, type: file.type, previewUrl: null, thumbnail: null, verified: 'checking', id: Date.now()+Math.random() };
-        if(file.type.startsWith('image/')){
-          fileData.previewUrl = URL.createObjectURL(file);
-          verifyImageWithThumb(fileData);
-        } else { fileData.verified = 'verified'; }
+        
+        const fileData = {
+          file,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          // No previewUrl – we never create full‑size object URLs
+          thumbnail: null,
+          // All files are considered valid immediately
+          id: Date.now() + Math.random()
+        };
+        
         selectedFiles.push(fileData);
-        renderFilePreviews();
+        
+        // For images, try to generate a tiny thumbnail (non‑blocking)
+        if (file.type.startsWith('image/')) {
+          createSafeThumbnail(fileData);
+        }
       });
-    }
-    
-    async function verifyImageWithThumb(fileData) {
-      const img = new Image();
-      img.onload = () => {
-        const aspect = img.width/img.height;
-        const isValid = (aspect > 0.6 && aspect < 1.5) || img.width > 800;
-        const canvas = document.createElement('canvas');
-        let w = img.width, h = img.height;
-        const maxDim = 200;
-        if(w > maxDim) { h = (h * maxDim)/w; w = maxDim; }
-        canvas.width = w; canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        fileData.thumbnail = canvas.toDataURL('image/jpeg', 0.6);
-        fileData.verified = isValid ? 'verified' : 'invalid';
-        URL.revokeObjectURL(fileData.previewUrl);
-        fileData.previewUrl = null;
-        renderFilePreviews();
-      };
-      img.onerror = () => { fileData.verified = 'invalid'; renderFilePreviews(); };
-      img.src = fileData.previewUrl;
+      
+      renderFilePreviews();
     }
     
     function renderFilePreviews() {
       filePreviewContainer.innerHTML = '';
+      
       selectedFiles.forEach((f, idx) => {
-        const div = document.createElement('div'); div.className = 'file-preview';
-        let thumbHtml = f.thumbnail ? `<img src="${f.thumbnail}" class="file-preview-thumb">` : (f.type?.startsWith('image/') ? `<div class="file-preview-thumb" style="background:#cbd5e1; display:flex;align-items:center;justify-content:center;">⏳</div>` : `<div class="file-preview-thumb" style="background:#e0e7ff; display:flex;align-items:center;justify-content:center;">📄</div>`);
-        let statusClass = '', statusText = '';
-        if(f.type?.startsWith('image/')){
-          if(f.verified==='checking'){ statusClass='status-checking'; statusText='Verifying...'; }
-          else if(f.verified==='verified'){ statusClass='status-verified'; statusText='✓ Verified'; }
-          else { statusClass='status-invalid'; statusText='✗ Invalid'; }
+        const div = document.createElement('div');
+        div.className = 'file-preview';
+        
+        // Thumbnail or icon
+        let thumbHtml;
+        if (f.thumbnail) {
+          thumbHtml = `<img src="${f.thumbnail}" class="file-preview-thumb">`;
+        } else if (f.type.startsWith('image/')) {
+          // Still generating thumbnail
+          thumbHtml = `<div class="file-preview-thumb" style="background:#cbd5e1; display:flex;align-items:center;justify-content:center;">⏳</div>`;
+        } else {
+          // Non‑image file icon
+          thumbHtml = `<div class="file-preview-thumb" style="background:#e0e7ff; display:flex;align-items:center;justify-content:center; font-size:24px;">📄</div>`;
         }
-        div.innerHTML = `${thumbHtml}<div class="file-preview-name">${f.name.length>20?f.name.slice(0,18)+'..':f.name}</div><div class="status-badge ${statusClass}">${statusText}</div><button class="file-preview-remove" onclick="window.removeFile(${idx})">×</button>`;
+        
+        // No verification status – everything is fine
+        const statusBadge = ''; 
+        
+        div.innerHTML = `
+          ${thumbHtml}
+          <div class="file-preview-name">${f.name.length>20 ? f.name.slice(0,18)+'..' : f.name}</div>
+          ${statusBadge}
+          <button class="file-preview-remove" onclick="window.removeFile(${idx})">×</button>
+        `;
         filePreviewContainer.appendChild(div);
       });
+      
+      // Update upload button state: enabled if any files are selected
       const uploadBtn = document.getElementById('uploadBtn');
-      const hasInvalid = selectedFiles.some(f=>f.verified==='invalid');
-      const checking = selectedFiles.some(f=>f.verified==='checking');
-      uploadBtn.disabled = hasInvalid || checking;
-      uploadBtn.textContent = hasInvalid ? 'Remove invalid images' : (checking ? 'Verifying...' : `Upload ${selectedFiles.length} file(s)`);
+      uploadBtn.disabled = selectedFiles.length === 0;
+      uploadBtn.textContent = selectedFiles.length ? `Upload ${selectedFiles.length} file(s)` : 'Upload';
     }
-    window.removeFile = (idx) => { if(selectedFiles[idx]?.previewUrl) URL.revokeObjectURL(selectedFiles[idx].previewUrl); selectedFiles.splice(idx,1); renderFilePreviews(); };
     
-    function closeModal(){ 
-      selectedFiles.forEach(f=>{ if(f.previewUrl) URL.revokeObjectURL(f.previewUrl); });
+    window.removeFile = (idx) => {
+      // No object URLs to revoke
+      selectedFiles.splice(idx, 1);
+      renderFilePreviews();
+    };
+    
+    function closeModal() {
+      // Clean up any remaining object URLs (none now, but safe)
       selectedFiles = [];
       uploadModal.classList.remove('active');
-      document.getElementById('courseInput').value=''; document.getElementById('midInput').value=''; document.getElementById('semesterInput').value='';
+      document.getElementById('courseInput').value = '';
+      document.getElementById('midInput').value = '';
+      document.getElementById('semesterInput').value = '';
       programSelect.value = '';
-      fileInput.value='';
+      fileInput.value = '';
       renderFilePreviews();
     }
     
-    window.uploadPapers = async function(){
+    window.uploadPapers = async function() {
       const program = programSelect.value.trim();
       const course = document.getElementById('courseInput').value.trim();
       const mid = document.getElementById('midInput').value.trim();
       const semester = document.getElementById('semesterInput').value;
-      if(!program || !course || !mid || !semester || selectedFiles.length===0) { showToast("All fields required",true); return; }
-      if(selectedFiles.some(f=>f.verified==='invalid')){ showToast("Remove invalid images",true); return; }
+      
+      if (!program || !course || !mid || !semester || selectedFiles.length === 0) {
+        showToast("All fields required", true);
+        return;
+      }
+      
       const uploadBtn = document.getElementById('uploadBtn');
-      uploadBtn.disabled=true; uploadBtn.textContent=`Uploading 0/${selectedFiles.length}...`;
-      let success=0;
-      try{
-        for(let i=0;i<selectedFiles.length;i++){
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = `Uploading 0/${selectedFiles.length}...`;
+      let success = 0;
+      
+      try {
+        for (let i = 0; i < selectedFiles.length; i++) {
           const fd = selectedFiles[i];
           const ext = fd.name.split('.').pop();
           const fileName = `${Date.now()}_${i}_${fd.name}`;
           const filePath = `${program}/${course}/${semester}/${fileName}`;
+          
+          // Upload directly – File object is memory efficient
           const { error: upErr } = await client.storage.from('past-paper').upload(filePath, fd.file);
-          if(upErr) throw upErr;
+          if (upErr) throw upErr;
+          
           const file_url = client.storage.from('past-paper').getPublicUrl(filePath).data.publicUrl;
-          const { error: insErr } = await client.from('past_papers').insert([{ program, course, semester, Mid: mid, file_name: fileName, file_url, file_type: ext, views:0, likes:0 }]);
-          if(insErr) throw insErr;
+          const { error: insErr } = await client.from('past_papers').insert([{
+            program, course, semester, Mid: mid,
+            file_name: fileName, file_url, file_type: ext,
+            views: 0, likes: 0
+          }]);
+          if (insErr) throw insErr;
+          
           success++;
           uploadBtn.textContent = `Uploading ${success}/${selectedFiles.length}...`;
         }
+        
         showToast(`✅ ${success} file(s) uploaded!`);
         closeModal();
-        loadData();
-      } catch(e){ showToast("Upload failed: "+e.message, true); }
-      finally{ uploadBtn.disabled=false; uploadBtn.textContent='Upload'; }
+        loadData(); // refresh list
+      } catch(e) {
+        showToast("Upload failed: " + e.message, true);
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = 'Upload';
+      }
     };
     
     // Data loading & rendering
-    async function loadData(){
-      try{
+    async function loadData() {
+      try {
         const { data, error } = await client.from('past_papers').select('*').order('uploaded_at',{ascending:false});
-        if(error) throw error;
+        if (error) throw error;
         allData = data || [];
         renderPrograms();
-      } catch(err){ container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:red;">Error: ${err.message}</div>`; }
+      } catch(err) {
+        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:red;">Error: ${err.message}</div>`;
+      }
     }
     
-    function renderPrograms(){
+    function renderPrograms() {
       currentView='programs'; breadcrumb.classList.remove('active'); container.innerHTML='';
       let filtered = searchQuery ? allData.filter(d=>d.program?.toLowerCase().includes(searchQuery)) : allData;
       const progs = [...new Set(filtered.map(d=>d.program))];
-      if(progs.length===0){ container.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;">No programs</div>`; return; }
+      if (progs.length===0) { container.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;">No programs</div>`; return; }
       progs.forEach(prog=>{
         const count = allData.filter(d=>d.program===prog).length;
         const el = document.createElement('div'); el.className='grid-card';
@@ -749,7 +810,7 @@
       });
     }
     
-    function renderSemesters(program){
+    function renderSemesters(program) {
       currentProgram=program; currentView='semesters'; breadcrumb.classList.add('active'); breadcrumbText.textContent=program; container.innerHTML='';
       const sems = [...new Set(allData.filter(d=>d.program===program).map(d=>d.semester))];
       sems.forEach(sem=>{
@@ -761,30 +822,30 @@
       });
     }
     
-    function renderPapers(program, semester){
+    function renderPapers(program, semester) {
       currentSemester=semester; currentView='papers'; breadcrumbText.textContent=`${program} / ${semester}`; container.innerHTML='';
       let papers = allData.filter(d=>d.program===program && d.semester===semester);
       if(searchQuery) papers = papers.filter(p=>p.course?.toLowerCase().includes(searchQuery) || p.Mid?.toLowerCase().includes(searchQuery));
       const groups = {};
       papers.forEach(p=>{ if(!groups[p.course]) groups[p.course]=[]; groups[p.course].push(p); });
       const courses = Object.keys(groups);
-      if(courses.length===0){ container.innerHTML=`<div style="text-align:center;padding:40px;">No papers</div>`; return; }
+      if (courses.length===0) { container.innerHTML=`<div style="text-align:center;padding:40px;">No papers</div>`; return; }
       courses.forEach((course, idx)=>{
         const group = groups[course];
-        if(!activeThumbs[course]) activeThumbs[course]=0;
+        if (!activeThumbs[course]) activeThumbs[course]=0;
         const card = document.createElement('div'); card.className='card'; card.id=`card-${course.replace(/\s/g,'')}`;
         updateCardElement(card, course, group, idx<2);
         container.appendChild(card);
       });
     }
     
-    function updateCardElement(cardEl, course, group, isPriority){
+    function updateCardElement(cardEl, course, group, isPriority) {
       const activeIdx = activeThumbs[course];
       const activePaper = group[activeIdx];
       const isLiked = likedPapers[activePaper.id] || false;
       const previewImg = createFastImage(activePaper.file_url, course, 400, 200, 'card-img', isPriority);
       let thumbsHtml = '';
-      if(group.length>1){
+      if (group.length>1) {
         thumbsHtml = `<div class="thumbnails">`;
         group.forEach((p,idx)=>{
           const thumbImg = createFastImage(p.file_url, p.Mid, 52, 52, '', false);
@@ -809,17 +870,17 @@
       `;
     }
     
-    window.setActiveThumb = function(course, idx){
+    window.setActiveThumb = function(course, idx) {
       activeThumbs[course]=idx;
       const group = allData.filter(d=>d.program===currentProgram && d.semester===currentSemester && d.course===course);
       const card = document.getElementById(`card-${course.replace(/\s/g,'')}`);
-      if(card) updateCardElement(card, course, group, false);
+      if (card) updateCardElement(card, course, group, false);
     };
     
     // BATCH DOWNLOAD MODAL
     window.openBatchDownload = function(course, program, semester) {
       const papers = allData.filter(d=>d.program===program && d.semester===semester && d.course===course);
-      if(papers.length===0) return;
+      if (papers.length===0) return;
       const modal = document.getElementById('batchModal');
       const listContainer = document.getElementById('batchListContainer');
       listContainer.innerHTML = '';
@@ -841,10 +902,10 @@
       downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
       newDownloadBtn.onclick = async () => {
         const selected = Array.from(document.querySelectorAll('.batch-checkbox:checked')).map(cb => ({ url: cb.dataset.url, name: cb.dataset.name }));
-        if(selected.length===0){ showToast("No file selected", true); return; }
+        if (selected.length===0) { showToast("No file selected", true); return; }
         showToast(`Downloading ${selected.length} file(s)...`);
-        for(let item of selected){
-          try{
+        for (let item of selected) {
+          try {
             const response = await fetch(item.url);
             const blob = await response.blob();
             const link = document.createElement('a');
@@ -853,31 +914,31 @@
             link.click();
             URL.revokeObjectURL(link.href);
             await new Promise(r => setTimeout(r, 300));
-          } catch(e){ window.open(item.url, '_blank'); }
+          } catch(e) { window.open(item.url, '_blank'); }
         }
         showToast(`✅ ${selected.length} file(s) saved`);
         closeBatchModal();
       };
       modal.classList.add('active');
     };
-    function closeBatchModal(){ document.getElementById('batchModal').classList.remove('active'); }
+    function closeBatchModal() { document.getElementById('batchModal').classList.remove('active'); }
     window.closeBatchModal = closeBatchModal;
     
-    window.toggleLike = async function(paperId, btn){
+    window.toggleLike = async function(paperId, btn) {
       const liked = likedPapers[paperId] || false;
       const newLike = !liked;
       const paper = allData.find(p=>p.id==paperId);
-      if(!paper) return;
+      if (!paper) return;
       const newCount = newLike ? (paper.likes||0)+1 : Math.max(0, (paper.likes||0)-1);
       btn.classList.toggle('liked', newLike);
       btn.querySelector('span:first-child').textContent = newLike ? '❤️' : '🤍';
       document.getElementById(`likes-${paperId}`).textContent = newCount;
       likedPapers[paperId] = newLike;
       localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
-      try{
+      try {
         await client.from('past_papers').update({ likes: newCount }).eq('id', paperId);
         paper.likes = newCount;
-      } catch(e){
+      } catch(e) {
         likedPapers[paperId] = liked;
         localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
         btn.classList.toggle('liked', liked);
@@ -887,25 +948,25 @@
       }
     };
     
-    function showToast(msg, isError=false, persist=false){
+    function showToast(msg, isError=false, persist=false) {
       toast.textContent = msg;
       toast.className = `toast active ${isError?'error':''}`;
-      if(window.toastTimeout) clearTimeout(window.toastTimeout);
-      if(!persist) window.toastTimeout = setTimeout(()=>toast.classList.remove('active'),3000);
+      if (window.toastTimeout) clearTimeout(window.toastTimeout);
+      if (!persist) window.toastTimeout = setTimeout(()=>toast.classList.remove('active'),3000);
     }
     
     backBtn.onclick = () => {
-      if(currentView === 'papers') renderSemesters(currentProgram);
-      else if(currentView === 'semesters') renderPrograms();
+      if (currentView === 'papers') renderSemesters(currentProgram);
+      else if (currentView === 'semesters') renderPrograms();
     };
     searchInput.addEventListener('input', (e)=>{
       searchQuery = e.target.value.toLowerCase();
-      if(currentView==='programs') renderPrograms();
-      else if(currentView==='semesters') renderSemesters(currentProgram);
-      else if(currentView==='papers') renderPapers(currentProgram, currentSemester);
+      if (currentView==='programs') renderPrograms();
+      else if (currentView==='semesters') renderSemesters(currentProgram);
+      else if (currentView==='papers') renderPapers(currentProgram, currentSemester);
     });
     addPaperBtn.onclick = () => uploadModal.classList.add('active');
-    uploadModal.onclick = (e) => { if(e.target === uploadModal) closeModal(); };
+    uploadModal.onclick = (e) => { if (e.target === uploadModal) closeModal(); };
     fileUploadZone.onclick = () => fileInput.click();
     fileUploadZone.addEventListener('dragover', e=>{ e.preventDefault(); fileUploadZone.classList.add('dragover'); });
     fileUploadZone.addEventListener('dragleave', ()=>fileUploadZone.classList.remove('dragover'));
