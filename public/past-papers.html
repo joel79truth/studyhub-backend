@@ -1,16 +1,13 @@
 <br>
 <br>
 <br>
-
-
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
 <title>StudyHub LUANAR - Past Papers</title>
 
-<!-- Preconnect to Supabase -->
 <link rel="preconnect" href="https://qosudbigoxwzbdqkdecz.supabase.co">
 <link rel="dns-prefetch" href="https://qosudbigoxwzbdqkdecz.supabase.co">
 
@@ -27,478 +24,173 @@
     --border: #e2e8f0;
   }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  body {
-    background: var(--bg-main);
-    color: var(--text-main);
-    min-height: 100vh;
-    padding-top: 80px;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg-main); color:var(--text-main); min-height:100vh; padding-top:80px; }
 
   header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    z-index: 100;
-    padding: 12px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    position:fixed; top:0; left:0; right:0;
+    background:rgba(255,255,255,0.95); backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border); z-index:100;
+    padding:12px 20px; display:flex; flex-direction:column; gap:12px;
   }
-
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .header-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
+  .header-top { display:flex; justify-content:space-between; align-items:center; }
+  .header-title { display:flex; align-items:center; gap:12px; }
   .logo {
-    width: 40px; height: 40px;
-    background: var(--primary);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 800;
-    color: white;
-    box-shadow: 0 4px 12px rgba(12,50,94,0.3);
+    width:40px; height:40px; background:var(--primary); border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:800; color:white; box-shadow:0 4px 12px rgba(12,50,94,0.3);
   }
-
-  .header-title h1 {
-    font-size: 1.2rem;
-    font-weight: 700;
-  }
-
-  .search-container {
-    position: relative;
-    width: 100%;
-  }
-
+  .header-title h1 { font-size:1.2rem; font-weight:700; }
+  .search-container { position:relative; width:100%; }
   .search-input {
-    width: 100%;
-    padding: 12px 16px 12px 40px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    font-size: 14px;
-    background: white;
-    transition: all 0.2s ease;
+    width:100%; padding:12px 16px 12px 40px; border:1px solid var(--border);
+    border-radius:12px; font-size:14px; background:white; transition:all 0.2s;
   }
-
-  .search-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(12,50,94,0.1);
-    outline: none;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.5;
-  }
+  .search-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(12,50,94,0.1); outline:none; }
+  .search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5; }
 
   .fab-container {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    position:fixed; bottom:24px; right:24px; z-index:200;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
   }
-
   .fab {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(12,50,94,0.4);
-    transition: transform 0.2s;
+    width:56px; height:56px; border-radius:50%; background:var(--primary);
+    color:white; border:none; font-size:24px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 12px rgba(12,50,94,0.4); transition:transform 0.2s;
   }
+  .fab:active { transform:scale(0.95); }
+  .fab-label { font-size:11px; font-weight:600; background:rgba(255,255,255,0.9); padding:4px 8px; border-radius:20px; backdrop-filter:blur(4px); }
 
-  .fab:active { transform: scale(0.95); }
-  .fab-label {
-    font-size: 11px;
-    font-weight: 600;
-    background: rgba(255,255,255,0.9);
-    padding: 4px 8px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
-  }
+  .breadcrumb { padding:0 20px; margin:20px 0; display:none; align-items:center; gap:12px; }
+  .breadcrumb.active { display:flex; }
+  .breadcrumb button { background:white; padding:8px 14px; font-size:13px; font-weight:600; border:1px solid var(--border); border-radius:8px; cursor:pointer; }
+  .breadcrumb-text { color:var(--text-muted); font-size:14px; }
 
-  .breadcrumb {
-    padding: 0 20px;
-    margin: 20px 0;
-    display: none;
-    align-items: center;
-    gap: 12px;
-  }
-  .breadcrumb.active { display: flex; }
-  .breadcrumb button {
-    background: white;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  .breadcrumb-text {
-    color: var(--text-muted);
-    font-size: 14px;
-  }
-
-  /* Modals */
   .modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    overflow-y: auto;
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
+    justify-content:center; align-items:center; z-index:1000; overflow-y:auto;
   }
-  .modal.active { display: flex; }
+  .modal.active { display:flex; }
   .modal-content {
-    background: white;
-    padding: 24px;
-    border-radius: 24px;
-    width: 90%;
-    max-width: 550px;
-    max-height: 85vh;
-    overflow-y: auto;
-    margin: 20px;
+    background:white; padding:24px; border-radius:24px;
+    width:90%; max-width:550px; max-height:85vh; overflow-y:auto; margin:20px;
   }
-  .modal-content h3 {
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-    font-weight: 700;
-  }
+  .modal-content h3 { font-size:1.4rem; margin-bottom:20px; font-weight:700; }
 
-  .form-group { margin-bottom: 20px; }
-  .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
-  input, select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    font-size: 14px;
-  }
+  .form-group { margin-bottom:20px; }
+  .form-group label { display:block; margin-bottom:6px; font-weight:600; font-size:14px; }
+  input, select { width:100%; padding:12px; border:1px solid var(--border); border-radius:12px; font-size:14px; }
 
   .file-upload-zone {
-    padding: 28px 20px;
-    border: 2px dashed var(--border);
-    background: var(--bg-main);
-    border-radius: 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
+    padding:28px 20px; border:2px dashed var(--border); background:var(--bg-main);
+    border-radius:16px; text-align:center; cursor:pointer; transition:all 0.2s;
   }
-  .file-upload-zone.dragover { border-color: var(--primary); background: #e0e7ff; }
-  #fileInput { display: none; }
-  .upload-icon { font-size: 36px; margin-bottom: 8px; }
-  .upload-text { font-weight: 600; }
-  .upload-subtext { font-size: 12px; color: var(--text-muted); }
+  .file-upload-zone.dragover { border-color:var(--primary); background:#e0e7ff; }
+  #fileInput { display:none; }
+  .upload-icon { font-size:36px; margin-bottom:8px; }
+  .upload-text { font-weight:600; }
+  .upload-subtext { font-size:12px; color:var(--text-muted); }
 
   .file-preview-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
-    margin-top: 16px;
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:12px; margin-top:16px;
   }
   .file-preview {
-    position: relative;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 8px;
-    background: var(--bg-main);
+    position:relative; border:1px solid var(--border); border-radius:12px;
+    padding:8px; background:var(--bg-main);
   }
-  .file-preview-thumb {
-    width: 100%;
-    height: 90px;
-    object-fit: cover;
-    border-radius: 8px;
-    background: #e2e8f0;
+  .file-preview-icon {
+    width:100%; height:90px; display:flex; align-items:center; justify-content:center;
+    background:#e0e7ff; border-radius:8px; font-size:32px;
   }
-  .file-preview-name {
-    font-size: 11px;
-    margin-top: 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .file-preview-name { font-size:11px; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .file-preview-remove {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    font-size: 14px;
-    cursor: pointer;
+    position:absolute; top:4px; right:4px; background:#ef4444; color:white;
+    border:none; border-radius:50%; width:24px; height:24px; font-size:14px; cursor:pointer;
   }
-  /* Status badges kept for potential non-image errors only */
-  .status-badge {
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 12px;
-    display: inline-block;
-    margin-top: 4px;
-  }
-  .status-valid { background: #d1fae5; color: #065f46; }
-  .status-error { background: #fee2e2; color: #991b1b; }
 
-  .modal-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-  }
-  .btn-primary {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .btn-secondary {
-    background: var(--bg-main);
-    border: 1px solid var(--border);
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .modal-actions { display:flex; gap:12px; margin-top:20px; }
+  .btn-primary { background:var(--primary); color:white; border:none; padding:12px; border-radius:12px; font-weight:600; cursor:pointer; }
+  .btn-secondary { background:var(--bg-main); border:1px solid var(--border); padding:12px; border-radius:12px; font-weight:600; cursor:pointer; }
+  .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
 
   /* Cards grid */
-  .cards {
-    padding: 0 20px 80px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
+  .cards { padding:0 20px 80px; display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:24px; max-width:1400px; margin:0 auto; }
   .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -2px rgba(0,0,0,0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
+    background:var(--bg-card); border:1px solid var(--border); border-radius:20px;
+    overflow:hidden; box-shadow:0 4px 6px -2px rgba(0,0,0,0.05);
+    transition:transform 0.2s, box-shadow 0.2s;
   }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.1); }
+  .card:hover { transform:translateY(-4px); box-shadow:0 12px 20px -8px rgba(0,0,0,0.1); }
 
   .card-preview {
-    width: 100%;
-    height: 180px;
-    background: #e2e8f0;
-    position: relative;
-    cursor: pointer;
-    overflow: hidden;
+    width:100%; height:180px; background:#e2e8f0; position:relative; cursor:pointer; overflow:hidden;
   }
-  .card-preview img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s;
-  }
-  .card:hover .card-preview img { transform: scale(1.03); }
+  .card-preview img { width:100%; height:100%; object-fit:cover; transition:transform 0.3s; }
+  .card:hover .card-preview img { transform:scale(1.03); }
   .card-badge {
-    position: absolute;
-    top: 12px; left: 12px;
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(4px);
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--primary);
-    z-index: 2;
+    position:absolute; top:12px; left:12px; background:rgba(255,255,255,0.9);
+    backdrop-filter:blur(4px); padding:4px 10px; border-radius:20px;
+    font-size:11px; font-weight:800; color:var(--primary); z-index:2;
   }
 
-  .thumbnails {
-    display: flex;
-    gap: 8px;
-    padding: 12px 16px 0;
-    overflow-x: auto;
-    scrollbar-width: thin;
-  }
+  .thumbnails { display:flex; gap:8px; padding:12px 16px 0; overflow-x:auto; scrollbar-width:thin; }
   .thumb {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid transparent;
-    flex-shrink: 0;
-    background: #e2e8f0;
-    position: relative;
+    width:50px; height:50px; border-radius:10px; overflow:hidden; cursor:pointer;
+    border:2px solid transparent; flex-shrink:0; background:#e2e8f0; position:relative;
   }
-  .thumb.active { border-color: var(--primary); }
-  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb.active { border-color:var(--primary); }
+  .thumb img { width:100%; height:100%; object-fit:cover; }
   .thumb-label {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    font-size: 8px;
-    text-align: center;
-    padding: 2px;
+    position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6);
+    color:white; font-size:8px; text-align:center; padding:2px;
   }
 
-  .card-content { padding: 16px; }
-  .card-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 6px; }
-  .card-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; display: flex; gap: 12px; font-weight: 600; }
-  .card-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-  }
-  .stats { display: flex; gap: 12px; font-size: 13px; font-weight: 600; color: var(--text-muted); }
-  .like-button {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    font-weight: 600;
-  }
-  .like-button.liked { color: #ef4444; }
+  .card-content { padding:16px; }
+  .card-title { font-size:1.1rem; font-weight:800; margin-bottom:6px; }
+  .card-meta { font-size:11px; color:var(--text-muted); margin-bottom:12px; display:flex; gap:12px; font-weight:600; }
+  .card-actions { display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+  .stats { display:flex; gap:12px; font-size:13px; font-weight:600; color:var(--text-muted); }
+  .like-button { background:none; border:none; display:flex; align-items:center; gap:4px; cursor:pointer; font-weight:600; }
+  .like-button.liked { color:#ef4444; }
   .btn-download {
-    background: #eef2ff;
-    color: var(--primary);
-    border: none;
-    padding: 8px 14px;
-    border-radius: 40px;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
+    background:#eef2ff; color:var(--primary); border:none; padding:8px 14px; border-radius:40px;
+    font-weight:700; font-size:13px; cursor:pointer; transition:all 0.2s;
   }
-  .btn-download:hover { background: var(--primary); color: white; }
+  .btn-download:hover { background:var(--primary); color:white; }
 
   .grid-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
+    background:white; border:1px solid var(--border); border-radius:20px;
+    padding:20px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:all 0.2s;
   }
-  .grid-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+  .grid-card:hover { border-color:var(--primary); transform:translateY(-2px); }
   .grid-icon {
-    width: 52px; height: 52px;
-    background: #e0e7ff;
-    color: var(--primary);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+    width:52px; height:52px; background:#e0e7ff; color:var(--primary);
+    border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:24px;
   }
 
   .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: #10b981;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 40px;
-    font-weight: 600;
-    z-index: 2000;
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    opacity: 0;
-    pointer-events: none;
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
+    background:#10b981; color:white; padding:12px 24px; border-radius:40px;
+    font-weight:600; z-index:2000; transition:all 0.3s cubic-bezier(0.68,-0.55,0.265,1.55);
+    opacity:0; pointer-events:none;
   }
-  .toast.active { transform: translateX(-50%) translateY(0); opacity: 1; }
-  .toast.error { background: #ef4444; }
+  .toast.active { transform:translateX(-50%) translateY(0); opacity:1; }
+  .toast.error { background:#ef4444; }
 
-  /* Batch selection modal */
-  .batch-list {
-    max-height: 400px;
-    overflow-y: auto;
-    margin: 16px 0;
-  }
-  .batch-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .batch-item img {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    border-radius: 8px;
-    background: #e2e8f0;
-  }
-  .batch-item-info {
-    flex: 1;
-  }
-  .batch-item-title {
-    font-weight: 600;
-    font-size: 14px;
-  }
-  .batch-item-type {
-    font-size: 11px;
-    color: var(--text-muted);
-  }
-  .select-all {
-    margin-bottom: 12px;
-    padding: 8px;
-    background: #f1f5f9;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-  }
+  .batch-list { max-height:400px; overflow-y:auto; margin:16px 0; }
+  .batch-item { display:flex; align-items:center; gap:12px; padding:12px; border-bottom:1px solid var(--border); }
+  .batch-item img { width:48px; height:48px; object-fit:cover; border-radius:8px; background:#e2e8f0; }
+  .batch-item-info { flex:1; }
+  .batch-item-title { font-weight:600; font-size:14px; }
+  .batch-item-type { font-size:11px; color:var(--text-muted); }
+  .select-all { margin-bottom:12px; padding:8px; background:#f1f5f9; border-radius:12px; display:flex; align-items:center; gap:8px; font-weight:600; }
 
-  @media (min-width: 768px) {
-    header { flex-direction: row; align-items: center; justify-content: space-between; padding: 16px 40px; }
-    .search-container { width: 300px; }
-    body { padding-top: 90px; }
+  @media (min-width:768px) {
+    header { flex-direction:row; align-items:center; justify-content:space-between; padding:16px 40px; }
+    .search-container { width:300px; }
+    body { padding-top:90px; }
   }
 </style>
 </head>
@@ -520,14 +212,24 @@
   <h3>📤 Upload Past Paper</h3>
   <div class="form-group">
     <label>Program *</label>
-    <select id="programSelect" required>
-      <option value="">-- Select Program --</option>
-    </select>
+    <select id="programSelect" required><option value="">-- Select Program --</option></select>
   </div>
   <div class="form-group"><label>Course *</label><input type="text" id="courseInput" placeholder="e.g., Crop Production"></div>
   <div class="form-group"><label>Exam Type *</label><input type="text" id="midInput" placeholder="e.g., Mid Sem, Final"></div>
-  <div class="form-group"><label>Semester *</label><select id="semesterInput"><option value="">Select</option><option>Semester 1</option><option>Semester 2</option><option>Semester 3</option><option>Semester 4</option><option>Semester 5</option><option>Semester 6</option></select></div>
-  <div class="form-group"><label>Files (Max 7, up to 10MB each)</label><div class="file-upload-zone" id="fileUploadZone"><div class="upload-icon">📁</div><div class="upload-text">Tap or drag files</div><div class="upload-subtext">PDF, DOCX, PPTX, Images</div></div><input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" multiple></div>
+  <div class="form-group"><label>Semester *</label><select id="semesterInput">
+    <option value="">Select</option>
+    <option>Semester 1</option><option>Semester 2</option><option>Semester 3</option>
+    <option>Semester 4</option><option>Semester 5</option><option>Semester 6</option>
+  </select></div>
+  <div class="form-group">
+    <label>Files (Max 7, up to 10MB each)</label>
+    <div class="file-upload-zone" id="fileUploadZone">
+      <div class="upload-icon">📁</div>
+      <div class="upload-text">Tap or drag files</div>
+      <div class="upload-subtext">PDF, DOCX, PPTX, Images</div>
+    </div>
+    <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" multiple>
+  </div>
   <div id="filePreviewContainer" class="file-preview-container"></div>
   <div class="modal-actions">
     <button class="btn-primary" id="uploadBtn" onclick="window.uploadPapers()">Upload</button>
@@ -550,8 +252,7 @@
     const supabaseUrl = 'https://qosudbigoxwzbdqkdecz.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ';
     const client = supabase.createClient(supabaseUrl, supabaseKey);
-    
-    // DOM elements
+
     const container = document.getElementById('container');
     const breadcrumb = document.getElementById('breadcrumb');
     const breadcrumbText = document.getElementById('breadcrumbText');
@@ -564,7 +265,7 @@
     const fileInput = document.getElementById('fileInput');
     const filePreviewContainer = document.getElementById('filePreviewContainer');
     const programSelect = document.getElementById('programSelect');
-    
+
     let currentView = 'programs';
     let currentProgram = null, currentSemester = null;
     let allData = [];
@@ -572,158 +273,96 @@
     let selectedFiles = [];
     let likedPapers = JSON.parse(localStorage.getItem('likedPapers') || '{}');
     const activeThumbs = {};
-    
-    // Helper: Optimized Supabase image URL with transformations (fast loading)
+
+    // Optimized Supabase image URL
     function getOptimizedImageUrl(url, width, height, quality=80) {
       if (!url) return '';
-      const separator = url.includes('?') ? '&' : '?';
-      return `${url}${separator}width=${width}&height=${height}&resize=cover&quality=${quality}`;
+      const sep = url.includes('?') ? '&' : '?';
+      return `${url}${sep}width=${width}&height=${height}&resize=cover&quality=${quality}`;
     }
-    
-    function createFastImage(src, alt, width, height, className = '', isPriority = false) {
+
+    function createFastImage(src, alt, w, h, className='', isPriority=false) {
       const img = new Image();
-      const optimized = getOptimizedImageUrl(src, width, height);
-      img.src = optimized;
+      img.src = getOptimizedImageUrl(src, w, h);
       img.alt = alt || '';
       img.loading = isPriority ? 'eager' : 'lazy';
       img.fetchPriority = isPriority ? 'high' : 'auto';
       if (className) img.className = className;
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'cover';
+      img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
       return img;
     }
-    
-    // ======================== FETCH PROGRAMS FOR DROPDOWN ========================
+
+    // Fetch programs for dropdown
     async function fetchProgramsDropdown() {
       try {
         const { data, error } = await client.from('programs').select('name').order('name');
         if (error) throw error;
-        if (data && data.length > 0) {
+        if (data && data.length) {
           programSelect.innerHTML = '<option value="">-- Select Program --</option>';
-          data.forEach(prog => {
-            const option = document.createElement('option');
-            option.value = prog.name;
-            option.textContent = prog.name;
-            programSelect.appendChild(option);
+          data.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.name; opt.textContent = p.name;
+            programSelect.appendChild(opt);
           });
         } else {
-          // Fallback: fetch distinct programs from past_papers
           const { data: papersData } = await client.from('past_papers').select('program');
-          const unique = [...new Set(papersData?.map(p => p.program).filter(Boolean))];
-          if(unique.length) {
-            unique.forEach(p => { const opt = document.createElement('option'); opt.value = p; opt.textContent = p; programSelect.appendChild(opt); });
+          const unique = [...new Set(papersData?.map(p=>p.program).filter(Boolean))];
+          if (unique.length) {
+            unique.forEach(p => programSelect.appendChild(new Option(p, p)));
           } else {
             programSelect.innerHTML = '<option value="">No programs available</option>';
           }
         }
       } catch (err) {
-        console.error("Failed to load programs:", err);
+        console.error("Programs load error:", err);
         programSelect.innerHTML = '<option value="">Error loading programs</option>';
       }
     }
-    
-    // ======================== MEMORY‑SAFE FILE HANDLING ========================
-    // We never decode full‑size images. Thumbnails are created using createImageBitmap
-    // with built‑in resize – extremely memory efficient.
-    async function createSafeThumbnail(fileData) {
-      if (!fileData.type.startsWith('image/')) return;
-      
-      try {
-        // createImageBitmap with resize avoids decoding the whole image
-        const bitmap = await createImageBitmap(fileData.file, {
-          resizeWidth: 200,
-          resizeHeight: 200,
-          resizeQuality: 'low',
-        });
-        const canvas = document.createElement('canvas');
-        canvas.width = bitmap.width;
-        canvas.height = bitmap.height;
-        canvas.getContext('2d').drawImage(bitmap, 0, 0);
-        fileData.thumbnail = canvas.toDataURL('image/jpeg', 0.5);
-        bitmap.close(); // free GPU memory
-      } catch (e) {
-        // Fallback: if resize not supported, just show an icon – still safe
-        fileData.thumbnail = '';
-      }
-      renderFilePreviews(); // update UI once thumbnail is ready
-    }
-    
+
+    // -------- FILE HANDLING (NO IMAGE DECODING) ---------
     function handleFiles(files) {
       const maxFiles = 7, maxSize = 10*1024*1024;
-      if(selectedFiles.length + files.length > maxFiles) { showToast(`Max ${maxFiles} files`, true); return; }
-      
+      if (selectedFiles.length + files.length > maxFiles) {
+        showToast(`Max ${maxFiles} files`, true);
+        return;
+      }
       Array.from(files).forEach(file => {
-        if(file.size > maxSize) { showToast(`${file.name} >10MB`, true); return; }
-        if(selectedFiles.length >= maxFiles) return;
-        
-        const fileData = {
+        if (file.size > maxSize) { showToast(`${file.name} >10MB`, true); return; }
+        if (selectedFiles.length >= maxFiles) return;
+        selectedFiles.push({
           file,
           name: file.name,
           size: file.size,
           type: file.type,
-          // No previewUrl – we never create full‑size object URLs
-          thumbnail: null,
-          // All files are considered valid immediately
           id: Date.now() + Math.random()
-        };
-        
-        selectedFiles.push(fileData);
-        
-        // For images, try to generate a tiny thumbnail (non‑blocking)
-        if (file.type.startsWith('image/')) {
-          createSafeThumbnail(fileData);
-        }
+        });
       });
-      
       renderFilePreviews();
     }
-    
+
     function renderFilePreviews() {
       filePreviewContainer.innerHTML = '';
-      
       selectedFiles.forEach((f, idx) => {
-        const div = document.createElement('div');
-        div.className = 'file-preview';
-        
-        // Thumbnail or icon
-        let thumbHtml;
-        if (f.thumbnail) {
-          thumbHtml = `<img src="${f.thumbnail}" class="file-preview-thumb">`;
-        } else if (f.type.startsWith('image/')) {
-          // Still generating thumbnail
-          thumbHtml = `<div class="file-preview-thumb" style="background:#cbd5e1; display:flex;align-items:center;justify-content:center;">⏳</div>`;
-        } else {
-          // Non‑image file icon
-          thumbHtml = `<div class="file-preview-thumb" style="background:#e0e7ff; display:flex;align-items:center;justify-content:center; font-size:24px;">📄</div>`;
-        }
-        
-        // No verification status – everything is fine
-        const statusBadge = ''; 
-        
+        const div = document.createElement('div'); div.className = 'file-preview';
+        const icon = f.type.startsWith('image/') ? '🖼️' : '📄';
         div.innerHTML = `
-          ${thumbHtml}
+          <div class="file-preview-icon">${icon}</div>
           <div class="file-preview-name">${f.name.length>20 ? f.name.slice(0,18)+'..' : f.name}</div>
-          ${statusBadge}
           <button class="file-preview-remove" onclick="window.removeFile(${idx})">×</button>
         `;
         filePreviewContainer.appendChild(div);
       });
-      
-      // Update upload button state: enabled if any files are selected
       const uploadBtn = document.getElementById('uploadBtn');
       uploadBtn.disabled = selectedFiles.length === 0;
       uploadBtn.textContent = selectedFiles.length ? `Upload ${selectedFiles.length} file(s)` : 'Upload';
     }
-    
+
     window.removeFile = (idx) => {
-      // No object URLs to revoke
       selectedFiles.splice(idx, 1);
       renderFilePreviews();
     };
-    
+
     function closeModal() {
-      // Clean up any remaining object URLs (none now, but safe)
       selectedFiles = [];
       uploadModal.classList.remove('active');
       document.getElementById('courseInput').value = '';
@@ -733,34 +372,34 @@
       fileInput.value = '';
       renderFilePreviews();
     }
-    
+
+    // -------- SMART UPLOAD: stays on same view after success --------
     window.uploadPapers = async function() {
       const program = programSelect.value.trim();
       const course = document.getElementById('courseInput').value.trim();
       const mid = document.getElementById('midInput').value.trim();
       const semester = document.getElementById('semesterInput').value;
-      
-      if (!program || !course || !mid || !semester || selectedFiles.length === 0) {
+
+      if (!program || !course || !mid || !semester || selectedFiles.length===0) {
         showToast("All fields required", true);
         return;
       }
-      
+
       const uploadBtn = document.getElementById('uploadBtn');
       uploadBtn.disabled = true;
       uploadBtn.textContent = `Uploading 0/${selectedFiles.length}...`;
       let success = 0;
-      
+
       try {
         for (let i = 0; i < selectedFiles.length; i++) {
-          const fd = selectedFiles[i];
-          const ext = fd.name.split('.').pop();
-          const fileName = `${Date.now()}_${i}_${fd.name}`;
+          const f = selectedFiles[i];
+          const ext = f.name.split('.').pop();
+          const fileName = `${Date.now()}_${i}_${f.name}`;
           const filePath = `${program}/${course}/${semester}/${fileName}`;
-          
-          // Upload directly – File object is memory efficient
-          const { error: upErr } = await client.storage.from('past-paper').upload(filePath, fd.file);
+
+          const { error: upErr } = await client.storage.from('past-paper').upload(filePath, f.file);
           if (upErr) throw upErr;
-          
+
           const file_url = client.storage.from('past-paper').getPublicUrl(filePath).data.publicUrl;
           const { error: insErr } = await client.from('past_papers').insert([{
             program, course, semester, Mid: mid,
@@ -768,14 +407,17 @@
             views: 0, likes: 0
           }]);
           if (insErr) throw insErr;
-          
           success++;
           uploadBtn.textContent = `Uploading ${success}/${selectedFiles.length}...`;
         }
-        
+
         showToast(`✅ ${success} file(s) uploaded!`);
         closeModal();
-        loadData(); // refresh list
+
+        // Refresh data, then return to the current view (not programs)
+        await loadData();
+        stayOnCurrentView();
+
       } catch(e) {
         showToast("Upload failed: " + e.message, true);
       } finally {
@@ -783,200 +425,9 @@
         uploadBtn.textContent = 'Upload';
       }
     };
-    
-    // Data loading & rendering
-    async function loadData() {
-      try {
-        const { data, error } = await client.from('past_papers').select('*').order('uploaded_at',{ascending:false});
-        if (error) throw error;
-        allData = data || [];
-        renderPrograms();
-      } catch(err) {
-        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:red;">Error: ${err.message}</div>`;
-      }
-    }
-    
-    function renderPrograms() {
-      currentView='programs'; breadcrumb.classList.remove('active'); container.innerHTML='';
-      let filtered = searchQuery ? allData.filter(d=>d.program?.toLowerCase().includes(searchQuery)) : allData;
-      const progs = [...new Set(filtered.map(d=>d.program))];
-      if (progs.length===0) { container.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;">No programs</div>`; return; }
-      progs.forEach(prog=>{
-        const count = allData.filter(d=>d.program===prog).length;
-        const el = document.createElement('div'); el.className='grid-card';
-        el.innerHTML = `<div class="grid-icon">🎓</div><div class="grid-info"><h3>${prog}</h3><p>${count} papers</p></div>`;
-        el.onclick = () => renderSemesters(prog);
-        container.appendChild(el);
-      });
-    }
-    
-    function renderSemesters(program) {
-      currentProgram=program; currentView='semesters'; breadcrumb.classList.add('active'); breadcrumbText.textContent=program; container.innerHTML='';
-      const sems = [...new Set(allData.filter(d=>d.program===program).map(d=>d.semester))];
-      sems.forEach(sem=>{
-        const count = allData.filter(d=>d.program===program && d.semester===sem).length;
-        const el = document.createElement('div'); el.className='grid-card';
-        el.innerHTML = `<div class="grid-icon">📅</div><div class="grid-info"><h3>${sem}</h3><p>${count} docs</p></div>`;
-        el.onclick = () => renderPapers(program, sem);
-        container.appendChild(el);
-      });
-    }
-    
-    function renderPapers(program, semester) {
-      currentSemester=semester; currentView='papers'; breadcrumbText.textContent=`${program} / ${semester}`; container.innerHTML='';
-      let papers = allData.filter(d=>d.program===program && d.semester===semester);
-      if(searchQuery) papers = papers.filter(p=>p.course?.toLowerCase().includes(searchQuery) || p.Mid?.toLowerCase().includes(searchQuery));
-      const groups = {};
-      papers.forEach(p=>{ if(!groups[p.course]) groups[p.course]=[]; groups[p.course].push(p); });
-      const courses = Object.keys(groups);
-      if (courses.length===0) { container.innerHTML=`<div style="text-align:center;padding:40px;">No papers</div>`; return; }
-      courses.forEach((course, idx)=>{
-        const group = groups[course];
-        if (!activeThumbs[course]) activeThumbs[course]=0;
-        const card = document.createElement('div'); card.className='card'; card.id=`card-${course.replace(/\s/g,'')}`;
-        updateCardElement(card, course, group, idx<2);
-        container.appendChild(card);
-      });
-    }
-    
-    function updateCardElement(cardEl, course, group, isPriority) {
-      const activeIdx = activeThumbs[course];
-      const activePaper = group[activeIdx];
-      const isLiked = likedPapers[activePaper.id] || false;
-      const previewImg = createFastImage(activePaper.file_url, course, 400, 200, 'card-img', isPriority);
-      let thumbsHtml = '';
-      if (group.length>1) {
-        thumbsHtml = `<div class="thumbnails">`;
-        group.forEach((p,idx)=>{
-          const thumbImg = createFastImage(p.file_url, p.Mid, 52, 52, '', false);
-          const imgOuter = thumbImg.outerHTML;
-          thumbsHtml += `<div class="thumb ${idx===activeIdx?'active':''}" onclick="event.stopPropagation(); window.setActiveThumb('${course}', ${idx})">${imgOuter}<div class="thumb-label">${(p.Mid||'Exam').slice(0,8)}</div></div>`;
-        });
-        thumbsHtml += `</div>`;
-      }
-      cardEl.innerHTML = `
-        <div class="card-preview" onclick="window.open('${activePaper.file_url}','_blank')"><div class="card-badge">${activePaper.Mid||'Exam'}</div>${previewImg.outerHTML}</div>
-        ${thumbsHtml}
-        <div class="card-content">
-          <h3 class="card-title">${course}</h3>
-          <div class="card-meta"><span>${(activePaper.file_type||'file').toUpperCase()}</span><span>•</span><span>${group.length} doc(s)</span></div>
-          <div class="card-actions">
-            <div class="stats"><span>👁️ ${activePaper.views||0}</span>
-              <button class="like-button ${isLiked?'liked':''}" onclick="event.stopPropagation(); window.toggleLike('${activePaper.id}', this)"><span>${isLiked?'❤️':'🤍'}</span> <span id="likes-${activePaper.id}">${activePaper.likes||0}</span></button>
-            </div>
-            <button class="btn-download" onclick="event.stopPropagation(); window.openBatchDownload('${course}', '${currentProgram}', '${currentSemester}')">📥 Save</button>
-          </div>
-        </div>
-      `;
-    }
-    
-    window.setActiveThumb = function(course, idx) {
-      activeThumbs[course]=idx;
-      const group = allData.filter(d=>d.program===currentProgram && d.semester===currentSemester && d.course===course);
-      const card = document.getElementById(`card-${course.replace(/\s/g,'')}`);
-      if (card) updateCardElement(card, course, group, false);
-    };
-    
-    // BATCH DOWNLOAD MODAL
-    window.openBatchDownload = function(course, program, semester) {
-      const papers = allData.filter(d=>d.program===program && d.semester===semester && d.course===course);
-      if (papers.length===0) return;
-      const modal = document.getElementById('batchModal');
-      const listContainer = document.getElementById('batchListContainer');
-      listContainer.innerHTML = '';
-      papers.forEach((paper) => {
-        const item = document.createElement('div'); item.className='batch-item';
-        const thumbUrl = getOptimizedImageUrl(paper.file_url, 80, 80);
-        item.innerHTML = `
-          <input type="checkbox" class="batch-checkbox" data-url="${paper.file_url}" data-name="${paper.file_name || paper.Mid || 'document'}" checked>
-          <img src="${thumbUrl}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2748%27 height=%2748%27%3E%3Crect width=%2748%27 height=%2748%27 fill=%27%23cbd5e1%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 text-anchor=%27middle%27 dy=%27.3em%27%3E📄%3C/text%3E%3C/svg%3E'">
-          <div class="batch-item-info"><div class="batch-item-title">${paper.Mid || 'Exam Paper'}</div><div class="batch-item-type">${paper.file_type?.toUpperCase()}</div></div>
-        `;
-        listContainer.appendChild(item);
-      });
-      const selectAllChk = document.getElementById('selectAllCheckbox');
-      selectAllChk.checked = true;
-      selectAllChk.onchange = (e) => { document.querySelectorAll('.batch-checkbox').forEach(cb => cb.checked = e.target.checked); };
-      const downloadBtn = document.getElementById('downloadSelectedBtn');
-      const newDownloadBtn = downloadBtn.cloneNode(true);
-      downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
-      newDownloadBtn.onclick = async () => {
-        const selected = Array.from(document.querySelectorAll('.batch-checkbox:checked')).map(cb => ({ url: cb.dataset.url, name: cb.dataset.name }));
-        if (selected.length===0) { showToast("No file selected", true); return; }
-        showToast(`Downloading ${selected.length} file(s)...`);
-        for (let item of selected) {
-          try {
-            const response = await fetch(item.url);
-            const blob = await response.blob();
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = item.name || 'pastpaper';
-            link.click();
-            URL.revokeObjectURL(link.href);
-            await new Promise(r => setTimeout(r, 300));
-          } catch(e) { window.open(item.url, '_blank'); }
-        }
-        showToast(`✅ ${selected.length} file(s) saved`);
-        closeBatchModal();
-      };
-      modal.classList.add('active');
-    };
-    function closeBatchModal() { document.getElementById('batchModal').classList.remove('active'); }
-    window.closeBatchModal = closeBatchModal;
-    
-    window.toggleLike = async function(paperId, btn) {
-      const liked = likedPapers[paperId] || false;
-      const newLike = !liked;
-      const paper = allData.find(p=>p.id==paperId);
-      if (!paper) return;
-      const newCount = newLike ? (paper.likes||0)+1 : Math.max(0, (paper.likes||0)-1);
-      btn.classList.toggle('liked', newLike);
-      btn.querySelector('span:first-child').textContent = newLike ? '❤️' : '🤍';
-      document.getElementById(`likes-${paperId}`).textContent = newCount;
-      likedPapers[paperId] = newLike;
-      localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
-      try {
-        await client.from('past_papers').update({ likes: newCount }).eq('id', paperId);
-        paper.likes = newCount;
-      } catch(e) {
-        likedPapers[paperId] = liked;
-        localStorage.setItem('likedPapers', JSON.stringify(likedPapers));
-        btn.classList.toggle('liked', liked);
-        btn.querySelector('span:first-child').textContent = liked ? '❤️' : '🤍';
-        document.getElementById(`likes-${paperId}`).textContent = paper.likes||0;
-        showToast("Failed to update like", true);
-      }
-    };
-    
-    function showToast(msg, isError=false, persist=false) {
-      toast.textContent = msg;
-      toast.className = `toast active ${isError?'error':''}`;
-      if (window.toastTimeout) clearTimeout(window.toastTimeout);
-      if (!persist) window.toastTimeout = setTimeout(()=>toast.classList.remove('active'),3000);
-    }
-    
-    backBtn.onclick = () => {
-      if (currentView === 'papers') renderSemesters(currentProgram);
-      else if (currentView === 'semesters') renderPrograms();
-    };
-    searchInput.addEventListener('input', (e)=>{
-      searchQuery = e.target.value.toLowerCase();
-      if (currentView==='programs') renderPrograms();
-      else if (currentView==='semesters') renderSemesters(currentProgram);
-      else if (currentView==='papers') renderPapers(currentProgram, currentSemester);
-    });
-    addPaperBtn.onclick = () => uploadModal.classList.add('active');
-    uploadModal.onclick = (e) => { if (e.target === uploadModal) closeModal(); };
-    fileUploadZone.onclick = () => fileInput.click();
-    fileUploadZone.addEventListener('dragover', e=>{ e.preventDefault(); fileUploadZone.classList.add('dragover'); });
-    fileUploadZone.addEventListener('dragleave', ()=>fileUploadZone.classList.remove('dragover'));
-    fileUploadZone.addEventListener('drop', e=>{ e.preventDefault(); fileUploadZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
-    fileInput.addEventListener('change', e=>handleFiles(e.target.files));
-    
-    // Initialize: load programs dropdown + data
-    fetchProgramsDropdown();
-    window.onload = loadData;
-  })();
-</script>
-</body>
-</html>
+
+    // Returns to the last visited view after data refresh
+    function stayOnCurrentView() {
+      if (currentView === 'papers' && currentProgram && currentSemester) {
+        renderPapers(currentProgram, currentSemester);
+      } else if (currentView === '
