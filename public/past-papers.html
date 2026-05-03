@@ -138,7 +138,7 @@
     const supabaseUrl = 'https://qosudbigoxwzbdqkdecz.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3VkYmlnb3h3emJkcWtkZWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU3NDMsImV4cCI6MjA3MzMyMTc0M30.B4ITihJkyALUSahDgGNgta6tivR7siBy7wM8KKb6JVQ';
     const client = supabase.createClient(supabaseUrl, supabaseKey);
-    
+
     // DOM elements
     const container = document.getElementById('container');
     const breadcrumb = document.getElementById('breadcrumb');
@@ -152,7 +152,7 @@
     const fileInput = document.getElementById('fileInput');
     const filePreviewContainer = document.getElementById('filePreviewContainer');
     const programSelect = document.getElementById('programSelect');
-    
+
     let currentView = 'programs';
     let currentProgram = null, currentSemester = null;
     let allData = [];
@@ -160,18 +160,18 @@
     let selectedFiles = [];
     let likedPapers = JSON.parse(localStorage.getItem('likedPapers') || '{}');
     const activeThumbs = {};
-    
-    // Image processing queue - process ONE image at a time
+
+    // Image processing queue
     let processingQueue = false;
     let pendingImages = [];
-    
+
     // Helper: Optimized image URL
     function getOptimizedImageUrl(url, width, height) {
       if (!url) return '';
       const separator = url.includes('?') ? '&' : '?';
       return `${url}${separator}width=${width}&height=${height}&resize=cover&quality=75`;
     }
-    
+
     function createFastImage(src, alt, width, height, className) {
       const img = new Image();
       img.src = getOptimizedImageUrl(src, width, height);
@@ -183,7 +183,7 @@
       img.style.objectFit = 'cover';
       return img;
     }
-    
+
     // Fetch programs for dropdown
     async function fetchProgramsDropdown() {
       try {
@@ -211,23 +211,32 @@
         programSelect.innerHTML = '<option value="">Error loading programs</option>';
       }
     }
-    
-    // ========== MEMORY-SAFE IMAGE PROCESSING (NO FILE READER) ==========
+
+    // ========== EXTREMELY STRICT MEMORY SAFETY ==========
+    const MAX_IMAGE_SIZE_MB = 3;        // 3 MB max – reject anything larger
+    const MAX_CANVAS_DIM = 1024;        // Resize to max 1024px (smaller than before)
+    const JPEG_QUALITY = 0.7;
+
     function handleFiles(files) {
-      const maxFiles = 5; // reduced to 5 for safety
-      const maxSize = 10 * 1024 * 1024;
+      const maxFiles = 4;  // even fewer files to be safe
       const newFiles = Array.from(files).filter(f => {
         if (selectedFiles.length >= maxFiles) {
           showToast(`Max ${maxFiles} files`, true);
           return false;
         }
-        if (f.size > maxSize) {
+        // REJECT images larger than 3MB
+        if (f.type.startsWith('image/') && f.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+          showToast(`❌ ${f.name} is too large (>${MAX_IMAGE_SIZE_MB}MB). Please use a smaller image.`, true);
+          return false;
+        }
+        // For non‑images: 10MB limit
+        if (!f.type.startsWith('image/') && f.size > 10 * 1024 * 1024) {
           showToast(`${f.name} >10MB`, true);
           return false;
         }
         return true;
       });
-      
+
       for (const file of newFiles) {
         const fileData = {
           file: file,
@@ -246,14 +255,15 @@
       renderFilePreviews();
       processNextImage();
     }
-    
+
     async function processNextImage() {
       if (processingQueue) return;
       if (pendingImages.length === 0) return;
       processingQueue = true;
       const fileData = pendingImages.shift();
+
       try {
-        // Create blob URL and load image
+        // === Load the image only once, then discard ===
         const blobUrl = URL.createObjectURL(fileData.file);
         const img = new Image();
         await new Promise((resolve, reject) => {
@@ -261,62 +271,70 @@
           img.onerror = reject;
           img.src = blobUrl;
         });
-        
-        // Verify aspect ratio (simple check)
+
+        // Basic validation (aspect ratio)
         const aspect = img.width / img.height;
         const isValid = (aspect > 0.6 && aspect < 1.5) || img.width > 800;
         fileData.verified = isValid ? 'verified' : 'invalid';
-        
-        // Generate small thumbnail (max 150px)
-        const canvas = document.createElement('canvas');
-        let tw = img.width, th = img.height;
-        const maxDim = 150;
-        if (tw > maxDim) {
-          th = (th * maxDim) / tw;
-          tw = maxDim;
+        if (!isValid) {
+          URL.revokeObjectURL(blobUrl);
+          img.src = '';
+          processingQueue = false;
+          renderFilePreviews();
+          processNextImage();
+          return;
         }
-        canvas.width = tw;
-        canvas.height = th;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, tw, th);
-        fileData.thumbnail = canvas.toDataURL('image/jpeg', 0.6);
-        
-        // Resize original image to max 1200px using canvas (no FileReader)
+
+        // === Create a small thumbnail (120px max) ===
+        const thumbCanvas = document.createElement('canvas');
+        let tw = img.width, th = img.height;
+        const maxThumb = 120;
+        if (tw > maxThumb) {
+          th = (th * maxThumb) / tw;
+          tw = maxThumb;
+        }
+        thumbCanvas.width = tw;
+        thumbCanvas.height = th;
+        thumbCanvas.getContext('2d').drawImage(img, 0, 0, tw, th);
+        fileData.thumbnail = thumbCanvas.toDataURL('image/jpeg', 0.6);
+
+        // === Resize the original image to max 1024px (much smaller) ===
         let width = img.width, height = img.height;
-        const maxWidth = 1200, maxHeight = 1200;
-        if (width > height && width > maxWidth) {
-          height *= maxWidth / width;
-          width = maxWidth;
-        } else if (height > maxHeight) {
-          width *= maxHeight / height;
-          height = maxHeight;
+        if (width > MAX_CANVAS_DIM || height > MAX_CANVAS_DIM) {
+          if (width > height) {
+            height = (height * MAX_CANVAS_DIM) / width;
+            width = MAX_CANVAS_DIM;
+          } else {
+            width = (width * MAX_CANVAS_DIM) / height;
+            height = MAX_CANVAS_DIM;
+          }
         }
         const resizeCanvas = document.createElement('canvas');
         resizeCanvas.width = width;
         resizeCanvas.height = height;
-        const resizeCtx = resizeCanvas.getContext('2d');
-        resizeCtx.drawImage(img, 0, 0, width, height);
+        resizeCanvas.getContext('2d').drawImage(img, 0, 0, width, height);
         const resizedBlob = await new Promise(resolve => {
-          resizeCanvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.8);
+          resizeCanvas.toBlob(blob => resolve(blob), 'image/jpeg', JPEG_QUALITY);
         });
         if (resizedBlob) {
           fileData.file = resizedBlob;
           fileData.size = resizedBlob.size;
         }
-        
-        // Cleanup
+
+        // Clean up
         URL.revokeObjectURL(blobUrl);
         img.src = '';
       } catch (err) {
         console.error('Image processing failed', err);
         fileData.verified = 'invalid';
+        showToast(`Failed to process ${fileData.name}`, true);
       } finally {
         processingQueue = false;
         renderFilePreviews();
-        processNextImage(); // process next in queue
+        processNextImage();
       }
     }
-    
+
     function renderFilePreviews() {
       filePreviewContainer.innerHTML = '';
       selectedFiles.forEach((f, idx) => {
@@ -338,12 +356,10 @@
         div.innerHTML = `${thumbHtml}<div class="file-preview-name">${f.name.length > 20 ? f.name.slice(0, 18) + '..' : f.name}</div><div class="status-badge ${statusClass}">${statusText}</div><button class="file-preview-remove" data-idx="${idx}">×</button>`;
         filePreviewContainer.appendChild(div);
       });
-      // Attach remove handlers
       document.querySelectorAll('.file-preview-remove').forEach(btn => {
         btn.onclick = (e) => {
           const idx = parseInt(btn.dataset.idx);
           if (!isNaN(idx) && selectedFiles[idx]) {
-            // Remove from pending queue if still there
             const removed = selectedFiles[idx];
             const pendingIndex = pendingImages.findIndex(p => p.id === removed.id);
             if (pendingIndex !== -1) pendingImages.splice(pendingIndex, 1);
@@ -358,12 +374,10 @@
       uploadBtn.disabled = hasInvalid || checking || selectedFiles.length === 0;
       uploadBtn.textContent = hasInvalid ? 'Remove invalid images' : (checking ? 'Processing images...' : `Upload ${selectedFiles.length} file(s)`);
     }
-    
+
     function closeModal() {
-      // Cancel any pending processing
       processingQueue = false;
       pendingImages = [];
-      // Revoke any blob URLs (none left, but clear references)
       selectedFiles = [];
       uploadModal.classList.remove('active');
       document.getElementById('courseInput').value = '';
@@ -373,7 +387,7 @@
       fileInput.value = '';
       renderFilePreviews();
     }
-    
+
     async function uploadPapers() {
       const program = programSelect.value.trim();
       const course = document.getElementById('courseInput').value.trim();
@@ -415,12 +429,17 @@
         uploadBtn.textContent = 'Upload';
       }
     }
-    
-    // Camera capture with BACK camera
+
+    // ========== CAMERA CAPTURE WITH LOW RESOLUTION ==========
     async function takePhoto() {
       try {
+        // Request a smaller video resolution to keep memory low
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: "environment" } }  // back camera
+          video: {
+            facingMode: { exact: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
         });
         const video = document.createElement('video');
         video.srcObject = stream;
@@ -428,17 +447,29 @@
         await video.play();
         setTimeout(() => {
           const canvas = document.createElement('canvas');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          canvas.getContext('2d').drawImage(video, 0, 0);
+          // Cap capture size to 1280x720 (or less)
+          let captureWidth = video.videoWidth;
+          let captureHeight = video.videoHeight;
+          if (captureWidth > 1280) {
+            captureHeight = (captureHeight * 1280) / captureWidth;
+            captureWidth = 1280;
+          }
+          canvas.width = captureWidth;
+          canvas.height = captureHeight;
+          canvas.getContext('2d').drawImage(video, 0, 0, captureWidth, captureHeight);
           canvas.toBlob(blob => {
+            if (blob.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+              showToast(`Photo is too large (${(blob.size/1024/1024).toFixed(1)}MB). Please use a different image.`, true);
+              stream.getTracks().forEach(track => track.stop());
+              return;
+            }
             const file = new File([blob], `camera_${Date.now()}.jpg`, { type: 'image/jpeg' });
             handleFiles([file]);
             stream.getTracks().forEach(track => track.stop());
-          }, 'image/jpeg', 0.8);
-        }, 500);
+          }, 'image/jpeg', JPEG_QUALITY);
+        }, 300);
       } catch (err) {
-        // fallback to default camera if back camera not available
+        // Fallback to default camera if back camera fails
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ video: true });
           const video = document.createElement('video');
@@ -447,22 +478,29 @@
           await video.play();
           setTimeout(() => {
             const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
+            let captureWidth = Math.min(video.videoWidth, 1280);
+            let captureHeight = (video.videoHeight * captureWidth) / video.videoWidth;
+            canvas.width = captureWidth;
+            canvas.height = captureHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, captureWidth, captureHeight);
             canvas.toBlob(blob => {
+              if (blob.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+                showToast(`Photo too large (${(blob.size/1024/1024).toFixed(1)}MB).`, true);
+                stream.getTracks().forEach(track => track.stop());
+                return;
+              }
               const file = new File([blob], `camera_${Date.now()}.jpg`, { type: 'image/jpeg' });
               handleFiles([file]);
               stream.getTracks().forEach(track => track.stop());
-            }, 'image/jpeg', 0.8);
-          }, 500);
+            }, 'image/jpeg', JPEG_QUALITY);
+          }, 300);
         } catch(e) {
           showToast('Camera access denied', true);
         }
       }
     }
-    
-    // ========== REST OF YOUR EXISTING FUNCTIONS (loadData, renderPrograms, etc.) ==========
+
+    // ========== REST OF THE FUNCTIONS (unchanged) ==========
     async function loadData(){
       try {
         const { data, error } = await client.from('past_papers').select('*').order('uploaded_at',{ascending:false});
@@ -473,7 +511,7 @@
         container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:red;">Error: ${err.message}</div>`;
       }
     }
-    
+
     function renderPrograms(){
       currentView='programs'; breadcrumb.classList.remove('active'); container.innerHTML='';
       let filtered = searchQuery ? allData.filter(d=>d.program?.toLowerCase().includes(searchQuery)) : allData;
@@ -487,7 +525,7 @@
         container.appendChild(el);
       });
     }
-    
+
     function renderSemesters(program){
       currentProgram=program; currentView='semesters'; breadcrumb.classList.add('active'); breadcrumbText.textContent=program; container.innerHTML='';
       const sems = [...new Set(allData.filter(d=>d.program===program).map(d=>d.semester))];
@@ -499,7 +537,7 @@
         container.appendChild(el);
       });
     }
-    
+
     function renderPapers(program, semester){
       currentSemester=semester; currentView='papers'; breadcrumbText.textContent=`${program} / ${semester}`; container.innerHTML='';
       let papers = allData.filter(d=>d.program===program && d.semester===semester);
@@ -516,7 +554,7 @@
         container.appendChild(card);
       });
     }
-    
+
     function updateCardElement(cardEl, course, group, isPriority){
       const activeIdx = activeThumbs[course];
       const activePaper = group[activeIdx];
@@ -546,14 +584,14 @@
         </div>
       `;
     }
-    
+
     window.setActiveThumb = function(course, idx){
       activeThumbs[course]=idx;
       const group = allData.filter(d=>d.program===currentProgram && d.semester===currentSemester && d.course===course);
       const card = document.getElementById(`card-${course.replace(/\s/g,'')}`);
       if(card) updateCardElement(card, course, group, false);
     };
-    
+
     window.openBatchDownload = function(course, program, semester) {
       const papers = allData.filter(d=>d.program===program && d.semester===semester && d.course===course);
       if(papers.length===0) return;
@@ -599,7 +637,7 @@
     };
     function closeBatchModal(){ document.getElementById('batchModal').classList.remove('active'); }
     window.closeBatchModal = closeBatchModal;
-    
+
     window.toggleLike = async function(paperId, btn){
       const liked = likedPapers[paperId] || false;
       const newLike = !liked;
@@ -623,14 +661,14 @@
         showToast("Failed to update like", true);
       }
     };
-    
+
     function showToast(msg, isError=false, persist=false){
       toast.textContent = msg;
       toast.className = `toast active ${isError?'error':''}`;
       if(window.toastTimeout) clearTimeout(window.toastTimeout);
       if(!persist) window.toastTimeout = setTimeout(()=>toast.classList.remove('active'),3000);
     }
-    
+
     // Event listeners
     backBtn.onclick = () => {
       if(currentView === 'papers') renderSemesters(currentProgram);
@@ -653,10 +691,10 @@
     document.getElementById('uploadBtn').onclick = uploadPapers;
     document.getElementById('cameraBtn').onclick = takePhoto;
     document.getElementById('closeBatchModalBtn').onclick = closeBatchModal;
-    
+
     // Prevent accidental form submission
     document.addEventListener('submit', (e) => { if(e.target.closest('#uploadModal')) e.preventDefault(); });
-    
+
     // Initialize
     fetchProgramsDropdown();
     window.onload = loadData;
