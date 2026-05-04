@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,7 @@
   <link rel="preconnect" href="https://qosudbigoxwzbdqkdecz.supabase.co">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
-    /* ========== YOUR EXISTING CSS (keep as is) ========== */
+    /* ========== STYLES (optimized, no changes needed) ========== */
     :root { --primary: #0c325e; --primary-hover: #1e4a7a; --bg-main: #f8fafc; --bg-card: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0; }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background: var(--bg-main); color: var(--text-main); min-height: 100vh; padding-top: 80px; }
@@ -41,6 +42,7 @@
     .upload-icon { font-size: 36px; margin-bottom: 8px; }
     .upload-text { font-weight: 600; }
     .upload-subtext { font-size: 12px; color: var(--text-muted); }
+    .memory-warning { font-size: 11px; color: #dc2626; background: #fee2e2; padding: 6px; border-radius: 8px; margin-top: 6px; text-align: center; }
     .file-preview-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-top: 16px; }
     .file-preview { position: relative; border: 1px solid var(--border); border-radius: 12px; padding: 8px; background: var(--bg-main); }
     .file-preview-thumb { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; background: #e2e8f0; }
@@ -114,11 +116,11 @@
   <div class="form-group"><label>Course *</label><input type="text" id="courseInput" placeholder="e.g., Crop Production"></div>
   <div class="form-group"><label>Exam Type *</label><input type="text" id="midInput" placeholder="e.g., Mid Sem, Final"></div>
   <div class="form-group"><label>Semester *</label><select id="semesterInput"><option value="">Select</option><option>Semester 1</option><option>Semester 2</option><option>Semester 3</option><option>Semester 4</option><option>Semester 5</option><option>Semester 6</option></select></div>
-  <div class="form-group"><label>Files (Max 5, up to 10MB each)</label><div class="file-upload-zone" id="fileUploadZone"><div class="upload-icon">📁</div><div class="upload-text">Tap or drag files</div><div class="upload-subtext">PDF, DOCX, PPTX, Images</div></div><input type="file" id="fileInput" accept=".pdf,.docx,.pptx,image/*" multiple></div>
+  <div class="form-group"><label>Files (Max 3, up to 4MB each)</label><div class="file-upload-zone" id="fileUploadZone"><div class="upload-icon">📁</div><div class="upload-text">Tap or drag files</div><div class="upload-subtext">JPEG, PNG only (max 3 files, 4MB each)</div><div class="memory-warning">⚠️ For memory safety, large images will be compressed automatically</div></div><input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" multiple></div>
   <div class="form-group"><button type="button" id="cameraBtn" class="btn-secondary" style="width:100%">📸 Take Photo (Back Camera)</button></div>
   <div id="filePreviewContainer" class="file-preview-container"></div>
   <div class="modal-actions">
-    <button class="btn-primary" id="uploadBtn">Upload</button>
+    <button class="btn-primary" id="uploadBtn" disabled>Upload</button>
     <button class="btn-secondary" id="cancelModalBtn">Cancel</button>
   </div>
 </div></div>
@@ -161,68 +163,135 @@
     let likedPapers = JSON.parse(localStorage.getItem('likedPapers') || '{}');
     const activeThumbs = {};
     
-    // Image processing queue - process ONE image at a time
-    let processingQueue = false;
-    let pendingImages = [];
+    // ========== MEMORY-SAFE IMAGE PROCESSING ==========
+    let isProcessing = false;
+    let imageQueue = [];
     
-    // Helper: Optimized image URL
-    function getOptimizedImageUrl(url, width, height) {
+    // Generate optimized thumbnail URL using Supabase transforms
+    function getOptimizedUrl(url, width, height) {
       if (!url) return '';
       const separator = url.includes('?') ? '&' : '?';
-      return `${url}${separator}width=${width}&height=${height}&resize=cover&quality=75`;
+      return `${url}${separator}width=${width}&height=${height}&quality=60`;
     }
     
-    function createFastImage(src, alt, width, height, className) {
+    // Create image with proper sizing (never load full original)
+    function createSizedImage(src, alt, width, height, className) {
       const img = new Image();
-      img.src = getOptimizedImageUrl(src, width, height);
+      img.src = getOptimizedUrl(src, width, height);
       img.alt = alt || '';
       img.loading = 'lazy';
-      if (className) img.className = className;
+      img.className = className || '';
       img.style.width = '100%';
       img.style.height = '100%';
       img.style.objectFit = 'cover';
+      img.onerror = () => {
+        img.src = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27200%27%3E%3Crect width=%27400%27 height=%27200%27 fill=%27%23cbd5e1%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 text-anchor=%27middle%27 dy=%27.3em%27%3E📄%3C/text%3E%3C/svg%3E';
+      };
       return img;
     }
     
-    // Fetch programs for dropdown
-    async function fetchProgramsDropdown() {
-      try {
-        const { data, error } = await client.from('programs').select('name').order('name');
-        if (error) throw error;
-        if (data && data.length > 0) {
-          programSelect.innerHTML = '<option value="">-- Select Program --</option>';
-          data.forEach(prog => {
-            const option = document.createElement('option');
-            option.value = prog.name;
-            option.textContent = prog.name;
-            programSelect.appendChild(option);
-          });
-        } else {
-          const { data: papersData } = await client.from('past_papers').select('program');
-          const unique = [...new Set(papersData?.map(p => p.program).filter(Boolean))];
-          if(unique.length) {
-            unique.forEach(p => { const opt = document.createElement('option'); opt.value = p; opt.textContent = p; programSelect.appendChild(opt); });
-          } else {
-            programSelect.innerHTML = '<option value="">No programs available</option>';
+    // Process single image - resize to max 700px width, compress
+    async function compressImage(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 700;
+          
+          if (width > maxDim) {
+            height = (height * maxDim) / width;
+            width = maxDim;
           }
-        }
-      } catch (err) {
-        console.error("Failed to load programs:", err);
-        programSelect.innerHTML = '<option value="">Error loading programs</option>';
-      }
+          if (height > maxDim) {
+            width = (width * maxDim) / height;
+            height = maxDim;
+          }
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob(blob => {
+            // Cleanup canvas
+            canvas.width = 0;
+            canvas.height = 0;
+            const processedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.jpg'), { type: 'image/jpeg' });
+            resolve(processedFile);
+          }, 'image/jpeg', 0.75);
+          
+          img.src = '';
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Failed to load image'));
+        };
+        img.src = url;
+      });
     }
     
-    // ========== MEMORY-SAFE IMAGE PROCESSING (NO FILE READER) ==========
+    // Process queue one by one to avoid memory spikes
+    async function processNextImage() {
+      if (isProcessing || imageQueue.length === 0) return;
+      isProcessing = true;
+      const item = imageQueue.shift();
+      const { fileData, index } = item;
+      
+      try {
+        const compressed = await compressImage(fileData.file);
+        fileData.file = compressed;
+        fileData.size = compressed.size;
+        fileData.name = compressed.name;
+        fileData.verified = 'verified';
+        
+        // Create tiny thumbnail for preview (100px)
+        const thumbUrl = URL.createObjectURL(compressed);
+        const thumbImg = new Image();
+        await new Promise((res, rej) => {
+          thumbImg.onload = res;
+          thumbImg.onerror = rej;
+          thumbImg.src = thumbUrl;
+        });
+        const thumbCanvas = document.createElement('canvas');
+        thumbCanvas.width = 80;
+        thumbCanvas.height = 80;
+        const thumbCtx = thumbCanvas.getContext('2d');
+        thumbCtx.drawImage(thumbImg, 0, 0, 80, 80);
+        fileData.thumbnail = thumbCanvas.toDataURL('image/jpeg', 0.5);
+        URL.revokeObjectURL(thumbUrl);
+        thumbCanvas.width = 0;
+        thumbCanvas.height = 0;
+      } catch (err) {
+        console.error('Compression failed', err);
+        fileData.verified = 'invalid';
+      }
+      
+      renderPreviews();
+      isProcessing = false;
+      processNextImage();
+    }
+    
     function handleFiles(files) {
-      const maxFiles = 5; // reduced to 5 for safety
-      const maxSize = 10 * 1024 * 1024;
+      const MAX_FILES = 3;
+      const MAX_SIZE_MB = 4;
+      const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+      
       const newFiles = Array.from(files).filter(f => {
-        if (selectedFiles.length >= maxFiles) {
-          showToast(`Max ${maxFiles} files`, true);
+        if (selectedFiles.length >= MAX_FILES) {
+          showToast(`Maximum ${MAX_FILES} files allowed`, true);
           return false;
         }
-        if (f.size > maxSize) {
-          showToast(`${f.name} >10MB`, true);
+        if (f.size > MAX_SIZE_BYTES) {
+          showToast(`${f.name} exceeds ${MAX_SIZE_MB}MB`, true);
+          return false;
+        }
+        if (!f.type.startsWith('image/')) {
+          showToast('Only images allowed', true);
           return false;
         }
         return true;
@@ -235,143 +304,62 @@
           size: file.size,
           type: file.type,
           thumbnail: null,
-          verified: file.type.startsWith('image/') ? 'checking' : 'verified',
+          verified: 'checking',
           id: Date.now() + Math.random()
         };
         selectedFiles.push(fileData);
-        if (file.type.startsWith('image/')) {
-          pendingImages.push(fileData);
-        }
+        imageQueue.push({ fileData, index: selectedFiles.length - 1 });
       }
-      renderFilePreviews();
+      
+      renderPreviews();
       processNextImage();
     }
     
-    async function processNextImage() {
-      if (processingQueue) return;
-      if (pendingImages.length === 0) return;
-      processingQueue = true;
-      const fileData = pendingImages.shift();
-      try {
-        // Create blob URL and load image
-        const blobUrl = URL.createObjectURL(fileData.file);
-        const img = new Image();
-        await new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
-          img.src = blobUrl;
-        });
-        
-        // Verify aspect ratio (simple check)
-        const aspect = img.width / img.height;
-        const isValid = (aspect > 0.6 && aspect < 1.5) || img.width > 800;
-        fileData.verified = isValid ? 'verified' : 'invalid';
-        
-        // Generate small thumbnail (max 150px)
-        const canvas = document.createElement('canvas');
-        let tw = img.width, th = img.height;
-        const maxDim = 150;
-        if (tw > maxDim) {
-          th = (th * maxDim) / tw;
-          tw = maxDim;
-        }
-        canvas.width = tw;
-        canvas.height = th;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, tw, th);
-        fileData.thumbnail = canvas.toDataURL('image/jpeg', 0.6);
-        
-        // Resize original image to max 1200px using canvas (no FileReader)
-        let width = img.width, height = img.height;
-        const maxWidth = 1200, maxHeight = 1200;
-        if (width > height && width > maxWidth) {
-          height *= maxWidth / width;
-          width = maxWidth;
-        } else if (height > maxHeight) {
-          width *= maxHeight / height;
-          height = maxHeight;
-        }
-        const resizeCanvas = document.createElement('canvas');
-        resizeCanvas.width = width;
-        resizeCanvas.height = height;
-        const resizeCtx = resizeCanvas.getContext('2d');
-        resizeCtx.drawImage(img, 0, 0, width, height);
-        const resizedBlob = await new Promise(resolve => {
-          resizeCanvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.8);
-        });
-        if (resizedBlob) {
-          fileData.file = resizedBlob;
-          fileData.size = resizedBlob.size;
-        }
-        
-        // Cleanup
-        URL.revokeObjectURL(blobUrl);
-        img.src = '';
-      } catch (err) {
-        console.error('Image processing failed', err);
-        fileData.verified = 'invalid';
-      } finally {
-        processingQueue = false;
-        renderFilePreviews();
-        processNextImage(); // process next in queue
-      }
-    }
-    
-    function renderFilePreviews() {
+    function renderPreviews() {
       filePreviewContainer.innerHTML = '';
       selectedFiles.forEach((f, idx) => {
         const div = document.createElement('div');
         div.className = 'file-preview';
-        let thumbHtml = f.thumbnail
-          ? `<img src="${f.thumbnail}" class="file-preview-thumb">`
-          : (f.type?.startsWith('image/')
-            ? `<div class="file-preview-thumb" style="background:#cbd5e1; display:flex;align-items:center;justify-content:center;">⏳</div>`
-            : `<div class="file-preview-thumb" style="background:#e0e7ff; display:flex;align-items:center;justify-content:center;">📄</div>`);
-        let statusClass = '', statusText = '';
-        if (f.type?.startsWith('image/')) {
-          if (f.verified === 'checking') { statusClass = 'status-checking'; statusText = 'Processing...'; }
-          else if (f.verified === 'verified') { statusClass = 'status-verified'; statusText = '✓ Ready'; }
-          else { statusClass = 'status-invalid'; statusText = '✗ Invalid'; }
+        let thumbHtml = '';
+        if (f.thumbnail) {
+          thumbHtml = `<img src="${f.thumbnail}" class="file-preview-thumb">`;
+        } else if (f.verified === 'checking') {
+          thumbHtml = `<div class="file-preview-thumb" style="background:#cbd5e1; display:flex;align-items:center;justify-content:center;">⏳</div>`;
         } else {
-          statusClass = 'status-verified'; statusText = '✓ Ready';
+          thumbHtml = `<div class="file-preview-thumb" style="background:#e0e7ff; display:flex;align-items:center;justify-content:center;">📷</div>`;
         }
-        div.innerHTML = `${thumbHtml}<div class="file-preview-name">${f.name.length > 20 ? f.name.slice(0, 18) + '..' : f.name}</div><div class="status-badge ${statusClass}">${statusText}</div><button class="file-preview-remove" data-idx="${idx}">×</button>`;
+        let statusClass = '', statusText = '';
+        if (f.verified === 'checking') { statusClass = 'status-checking'; statusText = 'Compressing...'; }
+        else if (f.verified === 'verified') { statusClass = 'status-verified'; statusText = '✓ Ready'; }
+        else { statusClass = 'status-invalid'; statusText = '✗ Failed'; }
+        
+        div.innerHTML = `
+          ${thumbHtml}
+          <div class="file-preview-name">${f.name.length > 20 ? f.name.slice(0, 18) + '..' : f.name}</div>
+          <div class="status-badge ${statusClass}">${statusText}</div>
+          <button class="file-preview-remove" data-idx="${idx}">×</button>
+        `;
         filePreviewContainer.appendChild(div);
       });
-      // Attach remove handlers
+      
       document.querySelectorAll('.file-preview-remove').forEach(btn => {
         btn.onclick = (e) => {
           const idx = parseInt(btn.dataset.idx);
           if (!isNaN(idx) && selectedFiles[idx]) {
-            // Remove from pending queue if still there
             const removed = selectedFiles[idx];
-            const pendingIndex = pendingImages.findIndex(p => p.id === removed.id);
-            if (pendingIndex !== -1) pendingImages.splice(pendingIndex, 1);
+            const queueIdx = imageQueue.findIndex(q => q.fileData.id === removed.id);
+            if (queueIdx !== -1) imageQueue.splice(queueIdx, 1);
             selectedFiles.splice(idx, 1);
-            renderFilePreviews();
+            renderPreviews();
           }
         };
       });
+      
       const uploadBtn = document.getElementById('uploadBtn');
       const hasInvalid = selectedFiles.some(f => f.verified === 'invalid');
       const checking = selectedFiles.some(f => f.verified === 'checking');
       uploadBtn.disabled = hasInvalid || checking || selectedFiles.length === 0;
-      uploadBtn.textContent = hasInvalid ? 'Remove invalid images' : (checking ? 'Processing images...' : `Upload ${selectedFiles.length} file(s)`);
-    }
-    
-    function closeModal() {
-      // Cancel any pending processing
-      processingQueue = false;
-      pendingImages = [];
-      // Revoke any blob URLs (none left, but clear references)
-      selectedFiles = [];
-      uploadModal.classList.remove('active');
-      document.getElementById('courseInput').value = '';
-      document.getElementById('midInput').value = '';
-      document.getElementById('semesterInput').value = '';
-      programSelect.value = '';
-      fileInput.value = '';
-      renderFilePreviews();
+      uploadBtn.textContent = hasInvalid ? 'Remove invalid files' : (checking ? 'Compressing...' : `Upload ${selectedFiles.length} file(s)`);
     }
     
     async function uploadPapers() {
@@ -383,25 +371,34 @@
         showToast("All fields required", true);
         return;
       }
-      if (selectedFiles.some(f => f.verified === 'invalid')) {
-        showToast("Remove invalid images", true);
+      if (selectedFiles.some(f => f.verified !== 'verified')) {
+        showToast("Wait for all files to be ready", true);
         return;
       }
+      
       const uploadBtn = document.getElementById('uploadBtn');
       uploadBtn.disabled = true;
       uploadBtn.textContent = `Uploading 0/${selectedFiles.length}...`;
       let success = 0;
+      
       try {
         for (let i = 0; i < selectedFiles.length; i++) {
           const fd = selectedFiles[i];
-          const ext = fd.name.split('.').pop();
-          const fileName = `${Date.now()}_${i}_${fd.name}`;
+          const ext = 'jpg';
+          const fileName = `${Date.now()}_${i}_${fd.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
           const filePath = `${program}/${course}/${semester}/${fileName}`;
+          
           const { error: upErr } = await client.storage.from('past-paper').upload(filePath, fd.file);
           if (upErr) throw upErr;
+          
           const file_url = client.storage.from('past-paper').getPublicUrl(filePath).data.publicUrl;
-          const { error: insErr } = await client.from('past_papers').insert([{ program, course, semester, Mid: mid, file_name: fileName, file_url, file_type: ext, views:0, likes:0 }]);
+          const { error: insErr } = await client.from('past_papers').insert([{ 
+            program, course, semester, Mid: mid, 
+            file_name: fileName, file_url, file_type: ext, 
+            views: 0, likes: 0 
+          }]);
           if (insErr) throw insErr;
+          
           success++;
           uploadBtn.textContent = `Uploading ${success}/${selectedFiles.length}...`;
         }
@@ -416,53 +413,45 @@
       }
     }
     
-    // Camera capture with BACK camera
     async function takePhoto() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: "environment" } }  // back camera
-        });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } });
         const video = document.createElement('video');
         video.srcObject = stream;
         video.setAttribute('playsinline', '');
         await video.play();
         setTimeout(() => {
           const canvas = document.createElement('canvas');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          canvas.getContext('2d').drawImage(video, 0, 0);
+          canvas.width = Math.min(video.videoWidth, 800);
+          canvas.height = Math.min(video.videoHeight, 800);
+          canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
           canvas.toBlob(blob => {
             const file = new File([blob], `camera_${Date.now()}.jpg`, { type: 'image/jpeg' });
             handleFiles([file]);
             stream.getTracks().forEach(track => track.stop());
-          }, 'image/jpeg', 0.8);
-        }, 500);
+            canvas.width = 0;
+            canvas.height = 0;
+          }, 'image/jpeg', 0.7);
+        }, 300);
       } catch (err) {
-        // fallback to default camera if back camera not available
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          const video = document.createElement('video');
-          video.srcObject = stream;
-          video.setAttribute('playsinline', '');
-          await video.play();
-          setTimeout(() => {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            canvas.toBlob(blob => {
-              const file = new File([blob], `camera_${Date.now()}.jpg`, { type: 'image/jpeg' });
-              handleFiles([file]);
-              stream.getTracks().forEach(track => track.stop());
-            }, 'image/jpeg', 0.8);
-          }, 500);
-        } catch(e) {
-          showToast('Camera access denied', true);
-        }
+        showToast('Camera access failed', true);
       }
     }
     
-    // ========== REST OF YOUR EXISTING FUNCTIONS (loadData, renderPrograms, etc.) ==========
+    function closeModal() {
+      isProcessing = false;
+      imageQueue = [];
+      selectedFiles = [];
+      uploadModal.classList.remove('active');
+      document.getElementById('courseInput').value = '';
+      document.getElementById('midInput').value = '';
+      document.getElementById('semesterInput').value = '';
+      programSelect.value = '';
+      fileInput.value = '';
+      renderPreviews();
+    }
+    
+    // Load data from Supabase
     async function loadData(){
       try {
         const { data, error } = await client.from('past_papers').select('*').order('uploaded_at',{ascending:false});
@@ -471,6 +460,24 @@
         renderPrograms();
       } catch(err){
         container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:red;">Error: ${err.message}</div>`;
+      }
+    }
+    
+    async function fetchProgramsDropdown() {
+      const { data, error } = await client.from('programs').select('name').order('name');
+      if (!error && data?.length) {
+        programSelect.innerHTML = '<option value="">-- Select Program --</option>';
+        data.forEach(prog => {
+          const option = document.createElement('option');
+          option.value = prog.name;
+          option.textContent = prog.name;
+          programSelect.appendChild(option);
+        });
+      } else {
+        const { data: papers } = await client.from('past_papers').select('program');
+        const unique = [...new Set(papers?.map(p => p.program).filter(Boolean))];
+        programSelect.innerHTML = '<option value="">-- Select Program --</option>';
+        unique.forEach(p => { const opt = document.createElement('option'); opt.value = p; opt.textContent = p; programSelect.appendChild(opt); });
       }
     }
     
@@ -512,46 +519,42 @@
         const group = groups[course];
         if(!activeThumbs[course]) activeThumbs[course]=0;
         const card = document.createElement('div'); card.className='card'; card.id=`card-${course.replace(/\s/g,'')}`;
-        updateCardElement(card, course, group, idx<2);
+        const activeIdx = activeThumbs[course];
+        const activePaper = group[activeIdx];
+        const isLiked = likedPapers[activePaper.id] || false;
+        const previewImg = createSizedImage(activePaper.file_url, course, 400, 200, 'card-img');
+        let thumbsHtml = '';
+        if(group.length>1){
+          thumbsHtml = `<div class="thumbnails">`;
+          group.forEach((p,idx)=>{
+            const thumbImg = createSizedImage(p.file_url, p.Mid, 52, 52, '');
+            thumbsHtml += `<div class="thumb ${idx===activeIdx?'active':''}" onclick="event.stopPropagation(); window.setActiveThumb('${course}', ${idx})">${thumbImg.outerHTML}<div class="thumb-label">${(p.Mid||'Exam').slice(0,8)}</div></div>`;
+          });
+          thumbsHtml += `</div>`;
+        }
+        card.innerHTML = `
+          <div class="card-preview" onclick="window.open('${activePaper.file_url}','_blank')"><div class="card-badge">${activePaper.Mid||'Exam'}</div>${previewImg.outerHTML}</div>
+          ${thumbsHtml}
+          <div class="card-content">
+            <h3 class="card-title">${course}</h3>
+            <div class="card-meta"><span>${(activePaper.file_type||'file').toUpperCase()}</span><span>•</span><span>${group.length} doc(s)</span></div>
+            <div class="card-actions">
+              <div class="stats"><span>👁️ ${activePaper.views||0}</span>
+                <button class="like-button ${isLiked?'liked':''}" onclick="event.stopPropagation(); window.toggleLike('${activePaper.id}', this)"><span>${isLiked?'❤️':'🤍'}</span> <span id="likes-${activePaper.id}">${activePaper.likes||0}</span></button>
+              </div>
+              <button class="btn-download" onclick="event.stopPropagation(); window.openBatchDownload('${course}', '${program}', '${semester}')">📥 Save</button>
+            </div>
+          </div>
+        `;
         container.appendChild(card);
       });
-    }
-    
-    function updateCardElement(cardEl, course, group, isPriority){
-      const activeIdx = activeThumbs[course];
-      const activePaper = group[activeIdx];
-      const isLiked = likedPapers[activePaper.id] || false;
-      const previewImg = createFastImage(activePaper.file_url, course, 400, 200, 'card-img');
-      let thumbsHtml = '';
-      if(group.length>1){
-        thumbsHtml = `<div class="thumbnails">`;
-        group.forEach((p,idx)=>{
-          const thumbImg = createFastImage(p.file_url, p.Mid, 52, 52, '');
-          thumbsHtml += `<div class="thumb ${idx===activeIdx?'active':''}" onclick="event.stopPropagation(); window.setActiveThumb('${course}', ${idx})">${thumbImg.outerHTML}<div class="thumb-label">${(p.Mid||'Exam').slice(0,8)}</div></div>`;
-        });
-        thumbsHtml += `</div>`;
-      }
-      cardEl.innerHTML = `
-        <div class="card-preview" onclick="window.open('${activePaper.file_url}','_blank')"><div class="card-badge">${activePaper.Mid||'Exam'}</div>${previewImg.outerHTML}</div>
-        ${thumbsHtml}
-        <div class="card-content">
-          <h3 class="card-title">${course}</h3>
-          <div class="card-meta"><span>${(activePaper.file_type||'file').toUpperCase()}</span><span>•</span><span>${group.length} doc(s)</span></div>
-          <div class="card-actions">
-            <div class="stats"><span>👁️ ${activePaper.views||0}</span>
-              <button class="like-button ${isLiked?'liked':''}" onclick="event.stopPropagation(); window.toggleLike('${activePaper.id}', this)"><span>${isLiked?'❤️':'🤍'}</span> <span id="likes-${activePaper.id}">${activePaper.likes||0}</span></button>
-            </div>
-            <button class="btn-download" onclick="event.stopPropagation(); window.openBatchDownload('${course}', '${currentProgram}', '${currentSemester}')">📥 Save</button>
-          </div>
-        </div>
-      `;
     }
     
     window.setActiveThumb = function(course, idx){
       activeThumbs[course]=idx;
       const group = allData.filter(d=>d.program===currentProgram && d.semester===currentSemester && d.course===course);
       const card = document.getElementById(`card-${course.replace(/\s/g,'')}`);
-      if(card) updateCardElement(card, course, group, false);
+      if(card) renderPapers(currentProgram, currentSemester);
     };
     
     window.openBatchDownload = function(course, program, semester) {
@@ -562,10 +565,9 @@
       listContainer.innerHTML = '';
       papers.forEach((paper) => {
         const item = document.createElement('div'); item.className='batch-item';
-        const thumbUrl = getOptimizedImageUrl(paper.file_url, 80, 80);
         item.innerHTML = `
           <input type="checkbox" class="batch-checkbox" data-url="${paper.file_url}" data-name="${paper.file_name || paper.Mid || 'document'}" checked>
-          <img src="${thumbUrl}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2748%27 height=%2748%27%3E%3Crect width=%2748%27 height=%2748%27 fill=%27%23cbd5e1%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 text-anchor=%27middle%27 dy=%27.3em%27%3E📄%3C/text%3E%3C/svg%3E'">
+          <img src="${getOptimizedUrl(paper.file_url, 80, 80)}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2748%27 height=%2748%27%3E%3Crect width=%2748%27 height=%2748%27 fill=%27%23cbd5e1%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 text-anchor=%27middle%27 dy=%27.3em%27%3E📄%3C/text%3E%3C/svg%3E'">
           <div class="batch-item-info"><div class="batch-item-title">${paper.Mid || 'Exam Paper'}</div><div class="batch-item-type">${paper.file_type?.toUpperCase()}</div></div>
         `;
         listContainer.appendChild(item);
@@ -589,16 +591,14 @@
             link.download = item.name || 'pastpaper';
             link.click();
             URL.revokeObjectURL(link.href);
-            await new Promise(r => setTimeout(r, 300));
+            await new Promise(r => setTimeout(r, 200));
           } catch(e){ window.open(item.url, '_blank'); }
         }
         showToast(`✅ ${selected.length} file(s) saved`);
-        closeBatchModal();
+        modal.classList.remove('active');
       };
       modal.classList.add('active');
     };
-    function closeBatchModal(){ document.getElementById('batchModal').classList.remove('active'); }
-    window.closeBatchModal = closeBatchModal;
     
     window.toggleLike = async function(paperId, btn){
       const liked = likedPapers[paperId] || false;
@@ -624,18 +624,15 @@
       }
     };
     
-    function showToast(msg, isError=false, persist=false){
+    function showToast(msg, isError=false){
       toast.textContent = msg;
       toast.className = `toast active ${isError?'error':''}`;
       if(window.toastTimeout) clearTimeout(window.toastTimeout);
-      if(!persist) window.toastTimeout = setTimeout(()=>toast.classList.remove('active'),3000);
+      window.toastTimeout = setTimeout(()=>toast.classList.remove('active'),3000);
     }
     
-    // Event listeners
-    backBtn.onclick = () => {
-      if(currentView === 'papers') renderSemesters(currentProgram);
-      else if(currentView === 'semesters') renderPrograms();
-    };
+    // Event binding
+    backBtn.onclick = () => { if(currentView === 'papers') renderSemesters(currentProgram); else if(currentView === 'semesters') renderPrograms(); };
     searchInput.addEventListener('input', (e)=>{
       searchQuery = e.target.value.toLowerCase();
       if(currentView==='programs') renderPrograms();
@@ -652,12 +649,9 @@
     fileInput.addEventListener('change', e=>handleFiles(e.target.files));
     document.getElementById('uploadBtn').onclick = uploadPapers;
     document.getElementById('cameraBtn').onclick = takePhoto;
-    document.getElementById('closeBatchModalBtn').onclick = closeBatchModal;
-    
-    // Prevent accidental form submission
+    document.getElementById('closeBatchModalBtn').onclick = () => document.getElementById('batchModal').classList.remove('active');
     document.addEventListener('submit', (e) => { if(e.target.closest('#uploadModal')) e.preventDefault(); });
     
-    // Initialize
     fetchProgramsDropdown();
     window.onload = loadData;
   })();
