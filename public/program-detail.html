@@ -1,659 +1,958 @@
+   
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>StudyHub LUANAR | Program Resource Hub</title>
-  <!-- Google Fonts & simple CSS reset -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <!-- Font Awesome 6 (free icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Google Analytics (same as original) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-0LTZS1S9W6');
-  </script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Program Details – StudyHub LUANAR</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    body {
-      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at 10% 20%, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.96)),
-                  url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
-      background-size: cover;
-      background-blend-mode: overlay;
-      color: #f1f5f9;
-      min-height: 100vh;
-      padding-bottom: 60px;
-    }
+  body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(rgba(15, 23, 42, 0), rgba(30, 41, 59, 0)),
+                url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260') no-repeat center center fixed;
+    background-size: cover;
+    color: #ffffff;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
 
-    /* header modern glass */
+  /* Header */
+  header {
+    text-align: center;
+    padding: 30px 20px;
+    background: rgba(37, 180, 32, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  h1 { 
+    margin: 0; 
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #ffffff, #fbfbfc, #f3f5f7);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .program-subtitle {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    font-weight: 400;
+  }
+
+  /* Container */
+  .container { 
+    max-width: 1200px; 
+    margin: 30px auto; 
+    padding: 0 20px; 
+  }
+
+  /* Info Banner */
+  .info-banner {
+    text-align: center;
+    margin: 20px auto 30px;
+    max-width: 700px;
+    background: rgba(59, 130, 246, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    font-size: 0.9rem;
+    color: #ffffff;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .notes-count {
+    display: inline-block;
+    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  /* Search Bar */
+  .search-bar { 
+    max-width: 500px; 
+    margin: 0 auto 30px; 
+    position: relative; 
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 15px 20px 15px 50px;
+    border-radius: 50px;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    outline: none;
+    font-size: 15px;
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .search-bar input:focus {
+    border-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .search-bar input::placeholder {
+    color: #94a3b8;
+  }
+
+  .search-bar::before {
+    content: '🔍';
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    pointer-events: none;
+  }
+
+  /* Notes Grid */
+  #notesList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 0;
+  }
+
+  /* Note Card */
+  .note-card {
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+
+  .note-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .note-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+
+  .note-card:hover::before {
+    opacity: 1;
+  }
+
+  /* File Icon */
+  .file-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    border-radius: 15px;
+    font-size: 30px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  /* File Info */
+  .file-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 12px;
+    word-wrap: break-word;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .file-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+  }
+
+  .file-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .file-meta-item span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  /* Action Buttons - SMALL AND ROUNDED */
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    color: white;
+  }
+
+  .btn-view {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+
+  .btn-view:hover {
+    background: linear-gradient(135deg, #059669, #10b981);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-download {
+    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .btn-download:hover {
+    background: linear-gradient(135deg, #4338ca, #2563eb);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  /* Back Button */
+  .back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #050505, #151616);
+    color: white;
+    text-decoration: none;
+    border-radius: 50%;
+    font-size: 22px;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    z-index: 1000;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .back-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+  }
+
+  /* Profile Button */
+  #youButton {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  #youButton .profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #3b82f6;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+
+  #youButton .profile-picture:hover {
+    transform: scale(1.1);
+  }
+
+  #youButton .btn-label {
+    margin-top: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #60a5fa;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #94a3b8;
+    font-size: 1.1rem;
+  }
+
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+
+  /* Loading State */
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #60a5fa;
+    font-size: 1.1rem;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(59, 130, 246, 0.2);
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Filter/Sort Bar */
+  .filter-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filter-bar select {
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    background: rgba(30, 41, 59, 0.8);
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+
+  .filter-bar select:focus {
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  .filter-bar select option {
+    background: #1e293b;
+    color: #fff;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
     header {
-      text-align: center;
-      padding: 2rem 1.5rem;
-      background: rgba(5, 15, 25, 0.75);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(56, 189, 248, 0.3);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 20px 15px;
     }
 
     h1 {
-      font-size: 2.2rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #FFFFFF, #94a3f8, #38bdf8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: -0.3px;
+      font-size: 1.4rem;
     }
 
     .program-subtitle {
-      margin-top: 8px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #cbd5e6;
-      background: rgba(0,0,0,0.3);
-      display: inline-block;
-      padding: 4px 16px;
-      border-radius: 40px;
-      backdrop-filter: blur(4px);
+      font-size: 0.85rem;
     }
 
-    /* back & profile */
-    .back-btn {
-      position: fixed;
-      top: 22px;
-      left: 24px;
-      width: 46px;
-      height: 46px;
-      background: rgba(15, 25, 45, 0.85);
-      backdrop-filter: blur(10px);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-      text-decoration: none;
-      border: 1px solid rgba(56, 189, 248, 0.5);
-      transition: 0.2s;
-      z-index: 110;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    .container {
+      padding: 0 15px;
+      margin: 20px auto;
     }
-    .back-btn:hover { transform: scale(1.05); background: #0f2b3d; border-color: #38bdf8; }
+
+    .info-banner {
+      font-size: 0.85rem;
+      padding: 12px 15px;
+      margin: 15px auto 25px;
+    }
+
+    .search-bar {
+      margin-bottom: 25px;
+    }
+
+    .search-bar input {
+      padding: 13px 15px 13px 45px;
+      font-size: 14px;
+    }
+
+    .search-bar::before {
+      left: 15px;
+      font-size: 16px;
+    }
+
+    #notesList {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .note-card {
+      padding: 20px;
+    }
+
+    .file-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 25px;
+    }
+
+    .file-name {
+      font-size: 1rem;
+    }
+
+    .filter-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .filter-bar select {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.2rem;
+    }
+
+    .program-subtitle {
+      font-size: 0.8rem;
+    }
+
+    .info-banner {
+      font-size: 0.8rem;
+      padding: 10px 12px;
+    }
+
+    .note-card {
+      padding: 18px;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      top: 12px;
+      left: 12px;
+    }
 
     #youButton {
-      position: fixed;
-      top: 22px;
-      right: 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 110;
-      cursor: pointer;
+      top: 12px;
+      right: 12px;
     }
-    .profile-picture {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2.5px solid #38bdf8;
-      background: #1e293b;
-      transition: 0.2s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+
+    #youButton .profile-picture {
+      width: 40px;
+      height: 40px;
+      border-width: 2px;
     }
-    .btn-label {
+
+    #youButton .btn-label {
       font-size: 10px;
-      font-weight: 600;
-      margin-top: 4px;
-      color: #b9d0f0;
-      text-shadow: 0 1px 2px black;
+    }
+  }
+
+  /* Performance optimizations for mobile */
+  @media (max-width: 768px) {
+    * {
+      animation: none !important;
     }
 
-    /* container */
-    .container {
-      max-width: 1300px;
-      margin: 2rem auto;
-      padding: 0 24px;
+    .note-card,
+    .btn,
+    .back-btn,
+    #youButton .profile-picture {
+      transition: transform 0.15s ease !important;
     }
 
-    /* stats banner */
-    .stats-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 2rem;
-      background: rgba(15, 30, 45, 0.55);
-      backdrop-filter: blur(8px);
-      border-radius: 48px;
-      padding: 12px 24px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
-    }
-    .notes-count-badge {
-      background: linear-gradient(110deg, #1e2a3a, #0f172a);
-      padding: 8px 20px;
-      border-radius: 40px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      border-left: 3px solid #38bdf8;
-    }
-    .filter-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .filter-group select, .search-box input {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid #2d4a6e;
-      padding: 8px 16px;
-      border-radius: 40px;
-      color: white;
-      font-size: 0.85rem;
-      font-weight: 500;
-      outline: none;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .search-box input {
-      width: 250px;
-      padding-left: 36px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="%2394a3b8" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>');
-      background-repeat: no-repeat;
-      background-position: 12px center;
-      background-size: 18px;
-    }
-    .search-box input::placeholder { color: #94a3b8; }
-    .filter-group select:hover, .search-box input:hover { border-color: #38bdf8; }
-
-    /* COURSE CARDS (grouped) */
-    .courses-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 28px;
-      margin-top: 20px;
+    header, 
+    .note-card, 
+    .search-bar, 
+    .info-banner {
+      backdrop-filter: none !important;
+      box-shadow: none !important;
+      border: none !important;
     }
 
-    .course-card {
-      background: rgba(20, 30, 45, 0.85);
-      backdrop-filter: blur(12px);
-      border-radius: 28px;
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      overflow: hidden;
-      transition: all 0.25s ease;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    }
-    .course-card:hover {
-      transform: translateY(-6px);
-      border-color: #38bdf8;
-      box-shadow: 0 20px 30px -10px rgba(56, 189, 248, 0.3);
+    .note-card:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: initial;
     }
 
-    .card-header {
-      padding: 1.2rem 1.5rem 0.8rem;
-      background: linear-gradient(120deg, rgba(56, 189, 248, 0.15), rgba(0,0,0,0.2));
-      border-bottom: 1px dashed rgba(56, 189, 248, 0.4);
-    }
-    .course-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    .course-title span:first-child i { margin-right: 10px; color: #38bdf8; }
-    .file-count-badge {
-      background: #0f212e;
-      padding: 4px 12px;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #bae6fd;
-    }
-    .course-code {
-      font-size: 0.75rem;
-      color: #9ab3d5;
-      margin-top: 8px;
-      letter-spacing: 0.3px;
+    .note-card::before {
+      opacity: 0 !important;
     }
 
-    .card-body {
-      padding: 1.2rem 1.5rem;
-    }
-    .file-list-preview {
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 20px;
-      padding: 6px 12px;
-      margin-bottom: 18px;
-      max-height: 140px;
-      overflow-y: auto;
-      font-size: 0.8rem;
-    }
-    .file-item-mini {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      gap: 8px;
-    }
-    .file-name-mini {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #e2e8f0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .file-size-mini {
-      font-size: 0.7rem;
-      color: #8ca3c0;
-      white-space: nowrap;
+    #youButton .btn-label {
+      text-shadow: none;
     }
 
-    /* download selector area */
-    .download-area {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    body {
+      background: url('https://images.pexels.com/photos/6216870/pexels-photo-6216870.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=400&w=600') no-repeat center center fixed;
+      background-size: cover;
     }
-    .selector-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      background: rgba(0,0,0,0.3);
-      padding: 6px 12px;
-      border-radius: 60px;
-    }
-    .selector-group label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #b9d0f0;
-    }
-    .file-select {
-      flex: 1;
-      background: #0f172ad9;
-      border: 1px solid #2c4f6e;
-      border-radius: 32px;
-      padding: 10px 14px;
-      color: white;
-      font-size: 0.8rem;
-      font-weight: 500;
-      outline: none;
-      cursor: pointer;
-    }
-    .btn-download-course {
-      background: linear-gradient(95deg, #0f3b5c, #1e4b6e);
-      border: none;
-      border-radius: 40px;
-      padding: 10px 20px;
-      font-weight: 700;
-      font-size: 0.8rem;
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      justify-content: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    }
-    .btn-download-course:hover {
-      background: linear-gradient(95deg, #1e6a8f, #2c7eb0);
-      transform: scale(1.01);
-    }
+  }
+</style>
 
-    .empty-state {
-      text-align: center;
-      padding: 70px 20px;
-      background: rgba(0,0,0,0.4);
-      border-radius: 48px;
-    }
 
-    .loading-spinner {
-      text-align: center;
-      padding: 60px;
-    }
 
-    /* scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 10px; }
+ <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LTZS1S9W6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-0LTZS1S9W6');
+  </script>
 
-    @media (max-width: 700px) {
-      .courses-grid { grid-template-columns: 1fr; }
-      .stats-row { flex-direction: column; align-items: stretch; }
-      .search-box input { width: 100%; }
-      .course-title { font-size: 1.2rem; }
-    }
-  </style>
+
 </head>
 <body>
 
-<a href="program.html" class="back-btn" aria-label="Back"><i class="fas fa-arrow-left"></i></a>
+<a href="program.html" class="back-btn" aria-label="Back to Programs">←</a>
 
-<div id="youButton">
+<header>
+  <h1 id="programTitle">Program Details</h1>
+  <div class="program-subtitle" id="programSubtitle"></div>
+</header>
+
+<div class="profile-container" id="youButton">
   <a href="profile.html">
-    <img id="youProfilePic" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Profile" class="profile-picture">
+    <img id="youProfilePic" 
+         src="https://cdn-icons-png.flaticon.com/512/847/847969.png" 
+         alt="Profile Picture" 
+         class="profile-picture">
   </a>
   <div class="btn-label">You</div>
 </div>
 
-<header>
-  <h1 id="programTitle">Program Resource Hub</h1>
-  <div class="program-subtitle" id="programSubtitle">curated notes & materials</div>
-</header>
-
 <div class="container">
-  <div class="stats-row">
-    <div class="notes-count-badge" id="notesCountDisplay"><i class="fas fa-layer-group"></i> Loading...</div>
-    <div class="filter-group">
-      <div class="search-box">
-        <input type="text" id="courseSearchInput" placeholder="Search course name...">
-      </div>
-      <select id="sortBySelect">
-        <option value="nameAsc">Course: A → Z</option>
-        <option value="nameDesc">Course: Z → A</option>
-        <option value="newestFirst">Newest files first</option>
-        <option value="oldestFirst">Oldest files first</option>
-      </select>
-    </div>
+  <div class="info-banner">
+    📚 Browse and download notes for this program
   </div>
 
-  <div id="coursesContainer" class="courses-grid">
-    <!-- dynamic grouped cards -->
+  <div style="text-align: center;">
+    <span class="notes-count" id="notesCount">Loading...</span>
   </div>
+
+  <div class="search-bar">
+    <input type="text" id="notesSearch" placeholder="Search by course name..." autocomplete="off">
+  </div>
+
+  <div class="filter-bar">
+    <select id="sortBy">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+      <option value="name">Name (A-Z)</option>
+      <option value="name-desc">Name (Z-A)</option>
+    </select>
+    <select id="filterByCourse">
+      <option value="all">All Courses</option>
+    </select>
+  </div>
+
+  <div id="notesList"></div>
 </div>
 
 <script>
-  // -------- UTILITIES ----------
-  const urlParams = new URLSearchParams(window.location.search);
-  const programNameFromUrl = urlParams.get('program');
-  let rawFiles = [];           // all original files for this program
-  let groupedCourses = new Map(); // courseName -> { files[], latestTimestamp, courseDisplayName }
+// Get program name from URL
+const urlParams = new URLSearchParams(window.location.search);
+const programName = urlParams.get('program');
 
-  // Helper: normalize text
-  function normalize(str) { return (str || "").trim().toLowerCase(); }
+let allNotes = [];
+let filteredNotes = [];
+let availableCourses = [];
 
-  // Helper: format file size
-  function formatFileSize(bytes) {
-    if (!bytes || bytes === 0) return '? KB';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+// Normalize text for search (case-insensitive)
+function normalizeText(text) {
+  return text.trim().toLowerCase();
+}
+
+// Get file extension
+function getFileExtension(filename) {
+  if (!filename) return 'unknown';
+  const ext = filename.split('.').pop().toLowerCase();
+  return ext || 'unknown';
+}
+
+// Get file icon based on extension
+function getFileIcon(filename) {
+  const ext = getFileExtension(filename);
+  const icons = {
+    pdf: '📕',
+    doc: '📘',
+    docx: '📘',
+    ppt: '📙',
+    pptx: '📙',
+    txt: '📄',
+    rtf: '📄',
+    jpg: '🖼️',
+    jpeg: '🖼️',
+    png: '🖼️',
+    gif: '🖼️',
+    zip: '📦',
+    rar: '📦'
+  };
+  return icons[ext] || '📄';
+}
+
+// Format file size
+function formatFileSize(bytes) {
+  if (!bytes || bytes === 0) return 'Unknown size';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+// Format date
+function formatDate(dateString) {
+  if (!dateString) return 'Unknown date';
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return diffDays + ' days ago';
+    if (diffDays < 30) return Math.floor(diffDays / 7) + ' weeks ago';
+    if (diffDays < 365) return Math.floor(diffDays / 30) + ' months ago';
+
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  } catch (e) {
+    return 'Unknown date';
+  }
+}
+
+// Get unique courses from the selected program
+function updateCourseFilter() {
+  const filterSelect = document.getElementById('filterByCourse');
+  const courses = [...new Set(allNotes.map(note => note.course || note.courseName || note.subject || ''))].filter(c => c);
+  availableCourses = courses.sort();
+
+  filterSelect.innerHTML = '<option value="all">All Courses</option>';
+  availableCourses.forEach(course => {
+    const option = document.createElement('option');
+    option.value = course;
+    option.textContent = course;
+    filterSelect.appendChild(option);
+  });
+}
+
+// Load notes for the program
+async function loadNotes() {
+  if (!programName) {
+    window.location.href = 'programs.html';
+    return;
   }
 
-  // format relative date
-  function formatDateRelative(dateString) {
-    if (!dateString) return 'Unknown';
-    try {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-      if (diffDays === 0) return 'Today';
-      if (diffDays === 1) return 'Yesterday';
-      if (diffDays < 7) return `${diffDays} days ago`;
-      if (diffDays < 30) return `${Math.floor(diffDays/7)} weeks ago`;
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year:'numeric' });
-    } catch(e) { return 'recent'; }
-  }
+  // Update header
+  document.getElementById('programTitle').textContent = programName;
 
-  // get file extension icon
-  function getFileIcon(filename) {
-    const ext = (filename || '').split('.').pop().toLowerCase();
-    if (ext === 'pdf') return '<i class="fas fa-file-pdf" style="color:#f97316"></i>';
-    if (['doc','docx'].includes(ext)) return '<i class="fas fa-file-word" style="color:#3b82f6"></i>';
-    if (['ppt','pptx'].includes(ext)) return '<i class="fas fa-file-powerpoint" style="color:#eab308"></i>';
-    if (['jpg','jpeg','png'].includes(ext)) return '<i class="fas fa-file-image" style="color:#a855f7"></i>';
-    return '<i class="fas fa-file-alt" style="color:#7e8ba3"></i>';
-  }
+  // Show loading state
+  const notesList = document.getElementById('notesList');
+  notesList.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading notes...</p></div>';
 
-  // get best available file url
-  function getFileUrl(fileObj) {
-    return fileObj.fileUrl || fileObj.url || fileObj.downloadUrl || fileObj.link || '#';
-  }
+  try {
+    const res = await fetch('/api/metadata');
+    const data = await res.json();
+    const files = Array.isArray(data) ? data : (data.files || []);
 
-  // -------- FETCH & GROUP LOGIC ----------
-  async function loadProgramData() {
-    if (!programNameFromUrl) {
-      window.location.href = 'programs.html';
-      return;
+    // Filter files for this program (FILTER BY PROGRAM)
+    allNotes = files.filter(f => {
+      if (!f.program) return false;
+      const normalized = normalizeText(f.program);
+      const searchNormalized = normalizeText(programName);
+      return normalized === searchNormalized || normalized.includes(searchNormalized);
+    });
+
+    filteredNotes = [...allNotes];
+
+    // Update count
+    const count = allNotes.length;
+    document.getElementById('notesCount').textContent = count + ' ' + (count === 1 ? 'Note' : 'Notes') + ' Available';
+    document.getElementById('programSubtitle').textContent = count + ' ' + (count === 1 ? 'file' : 'files') + ' shared';
+
+    // Update course filter dropdown
+    updateCourseFilter();
+
+    // Display notes
+    sortAndDisplayNotes();
+  } catch (err) {
+    console.error('Failed to load notes:', err);
+    notesList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><p>Failed to load notes. Please try again later.</p></div>';
+  }
+}
+
+// Sort and display notes
+function sortAndDisplayNotes() {
+  const sortBy = document.getElementById('sortBy').value;
+
+  // Sort
+  filteredNotes.sort((a, b) => {
+    switch (sortBy) {
+      case 'newest':
+        return new Date(b.uploadedAt || 0) - new Date(a.uploadedAt || 0);
+      case 'oldest':
+        return new Date(a.uploadedAt || 0) - new Date(b.uploadedAt || 0);
+      case 'name':
+        return (a.fileName || '').localeCompare(b.fileName || '');
+      case 'name-desc':
+        return (b.fileName || '').localeCompare(a.fileName || '');
+      default:
+        return 0;
     }
-    document.getElementById('programTitle').innerHTML = `<i class="fas fa-graduation-cap"></i> ${escapeHtml(programNameFromUrl)}`;
-    document.getElementById('coursesContainer').innerHTML = `<div class="loading-spinner"><i class="fas fa-spinner fa-pulse fa-2x"></i><p>Loading study resources...</p></div>`;
+  });
 
-    try {
-      const res = await fetch('/api/metadata');
-      const data = await res.json();
-      const filesList = Array.isArray(data) ? data : (data.files || []);
-      
-      // filter by program (case-insensitive match)
-      rawFiles = filesList.filter(f => {
-        if (!f.program) return false;
-        return normalize(f.program) === normalize(programNameFromUrl) || normalize(f.program).includes(normalize(programNameFromUrl));
-      });
+  displayNotes(filteredNotes);
+}
 
-      if (rawFiles.length === 0) {
-        document.getElementById('coursesContainer').innerHTML = `<div class="empty-state"><i class="fas fa-folder-open fa-3x"></i><h3>No materials yet</h3><p>No notes uploaded for ${escapeHtml(programNameFromUrl)} yet.</p></div>`;
-        document.getElementById('notesCountDisplay').innerHTML = `<i class="fas fa-database"></i> 0 files`;
-        document.getElementById('programSubtitle').innerText = '0 resources available';
-        return;
+// Display notes
+function displayNotes(notes) {
+  const container = document.getElementById('notesList');
+  container.innerHTML = '';
+
+  if (!notes.length) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No notes found.<br>Try adjusting your filters.</p></div>';
+    return;
+  }
+
+  notes.forEach(note => {
+    // Handle multiple possible property name variations
+    const fileName = note.fileName || note.filename || note.name || note.title || 'Untitled';
+    const fileUrl = note.fileUrl || note.url || note.fileURL || note.link || note.downloadUrl || note.downloadURL;
+    const course = note.course || note.courseName || note.subject || '';
+    const uploader = note.uploadedBy || note.uploader || note.uploaderName || note.author || '';
+    const uploadDate = note.uploadedAt || note.uploadDate || note.createdAt || note.date || '';
+    const fileSize = note.fileSize || note.size || 0;
+
+    const card = document.createElement('div');
+    card.className = 'note-card';
+
+    const fileIcon = document.createElement('div');
+    fileIcon.className = 'file-icon';
+    fileIcon.textContent = getFileIcon(fileName);
+
+    const fileNameDiv = document.createElement('div');
+    fileNameDiv.className = 'file-name';
+    fileNameDiv.textContent = fileName;
+
+    const typeBadge = document.createElement('div');
+    typeBadge.className = 'badge';
+    typeBadge.textContent = getFileExtension(fileName).toUpperCase();
+
+    const fileMeta = document.createElement('div');
+    fileMeta.className = 'file-meta';
+
+    // Course info
+    if (course) {
+      const courseItem = document.createElement('div');
+      courseItem.className = 'file-meta-item';
+      courseItem.innerHTML = '<span>📚 ' + course + '</span>';
+      fileMeta.appendChild(courseItem);
+    }
+
+    // Uploader info
+    if (uploader) {
+      const uploaderItem = document.createElement('div');
+      uploaderItem.className = 'file-meta-item';
+      uploaderItem.innerHTML = '<span>👤 ' + uploader + '</span>';
+      fileMeta.appendChild(uploaderItem);
+    }
+
+    // Date info
+    const dateItem = document.createElement('div');
+    dateItem.className = 'file-meta-item';
+    dateItem.innerHTML = '<span>📅 ' + formatDate(uploadDate) + '</span>';
+    fileMeta.appendChild(dateItem);
+
+    // Size info
+    if (fileSize) {
+      const sizeItem = document.createElement('div');
+      sizeItem.className = 'file-meta-item';
+      sizeItem.innerHTML = '<span>💾 ' + formatFileSize(fileSize) + '</span>';
+      fileMeta.appendChild(sizeItem);
+    }
+
+ // Action buttons
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+
+    const viewBtn = document.createElement('a');
+    viewBtn.className = 'btn btn-view';
+    viewBtn.innerHTML = '👁️ View';
+    viewBtn.href = fileUrl || '#';
+    viewBtn.target = '_blank';
+    viewBtn.onclick = (e) => {
+      if (!fileUrl || fileUrl === '#') {
+        e.preventDefault();
+        alert('File preview not available');
       }
+    };
 
-      // GROUP BY course name (normalized key, keep original display name)
-      groupedCourses.clear();
-      for (const file of rawFiles) {
-        let courseKeyRaw = file.course || file.courseName || file.subject || 'General Materials';
-        let courseDisplay = courseKeyRaw;
-        let courseNormalized = normalize(courseKeyRaw);
-        if (!groupedCourses.has(courseNormalized)) {
-          groupedCourses.set(courseNormalized, {
-            displayName: courseDisplay,
-            files: [],
-            latestTimestamp: 0,
-            allCoursesKeys: courseDisplay
-          });
-        }
-        const group = groupedCourses.get(courseNormalized);
-        group.files.push(file);
-        // update latest timestamp for sorting (newest file first)
-        const fileTime = new Date(file.uploadedAt || file.uploadDate || file.createdAt || 0).getTime();
-        if (fileTime > group.latestTimestamp) group.latestTimestamp = fileTime;
-        // ensure displayName takes the most complete one (non-empty)
-        if (courseDisplay && courseDisplay.length > group.displayName.length) group.displayName = courseDisplay;
+    const downloadBtn = document.createElement('a');
+    downloadBtn.className = 'btn btn-download';
+    downloadBtn.innerHTML = '⬇️ Download';
+    downloadBtn.href = fileUrl || '#';
+    downloadBtn.download = fileName;
+    downloadBtn.onclick = (e) => {
+      if (!fileUrl || fileUrl === '#') {
+        e.preventDefault();
+        alert('Download not available');
       }
+    };
 
-      // sort groups & render
-      applyFiltersAndRender();
-    } catch (err) {
-      console.error(err);
-      document.getElementById('coursesContainer').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load resources. Please try later.</p></div>`;
-    }
-  }
+    actions.appendChild(viewBtn);
+    actions.appendChild(downloadBtn);
 
-  // sorting & search logic
-  let currentSearchQuery = '';
-  let currentSort = 'nameAsc';
+    card.appendChild(fileIcon);
+    card.appendChild(fileNameDiv);
+    card.appendChild(typeBadge);
+    card.appendChild(fileMeta);
+    card.appendChild(actions);
 
-  function applyFiltersAndRender() {
-    // search filter on course display name
-    let filteredGroups = Array.from(groupedCourses.values());
-    if (currentSearchQuery.trim() !== '') {
-      const query = normalize(currentSearchQuery);
-      filteredGroups = filteredGroups.filter(group => normalize(group.displayName).includes(query));
-    }
+    container.appendChild(card);
+  });
+}
 
-    // sort groups
-    if (currentSort === 'nameAsc') {
-      filteredGroups.sort((a,b) => a.displayName.localeCompare(b.displayName));
-    } else if (currentSort === 'nameDesc') {
-      filteredGroups.sort((a,b) => b.displayName.localeCompare(a.displayName));
-    } else if (currentSort === 'newestFirst') {
-      filteredGroups.sort((a,b) => b.latestTimestamp - a.latestTimestamp);
-    } else if (currentSort === 'oldestFirst') {
-      filteredGroups.sort((a,b) => a.latestTimestamp - b.latestTimestamp);
-    }
+// SEARCH BY COURSE NAME (CASE INSENSITIVE)
+let searchDebounce;
+document.getElementById('notesSearch').addEventListener('input', function() {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(() => {
+    const query = normalizeText(this.value);
+    const selectedCourse = document.getElementById('filterByCourse').value;
 
-    // update total stats
-    const totalFiles = rawFiles.length;
-    document.getElementById('notesCountDisplay').innerHTML = `<i class="fas fa-book-open"></i> ${totalFiles} file${totalFiles !== 1 ? 's' : ''} · ${filteredGroups.length} course${filteredGroups.length !== 1 ? 's' : ''}`;
-    document.getElementById('programSubtitle').innerText = `${totalFiles} materials organized by course`;
-
-    renderCourseCards(filteredGroups);
-  }
-
-  // render each course card with file selector & multi-file support
-  function renderCourseCards(groups) {
-    const container = document.getElementById('coursesContainer');
-    if (!groups.length) {
-      container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><h3>No matching courses</h3><p>Try a different course name.</p></div>`;
-      return;
-    }
-
-    container.innerHTML = '';
-    for (const group of groups) {
-      const files = group.files;
-      // sort files inside: by date (newest first for preview)
-      const sortedFiles = [...files].sort((a,b) => {
-        const da = new Date(a.uploadedAt || a.uploadDate || 0);
-        const db = new Date(b.uploadedAt || b.uploadDate || 0);
-        return db - da;
+    // First filter by course if selected
+    let tempFiltered = allNotes;
+    if (selectedCourse !== 'all') {
+      tempFiltered = allNotes.filter(note => {
+        const noteCourse = note.course || note.courseName || note.subject || '';
+        return noteCourse === selectedCourse;
       });
-
-      const card = document.createElement('div');
-      card.className = 'course-card';
-
-      // Header with course name & file count
-      const fileCount = files.length;
-      const headerHtml = `
-        <div class="card-header">
-          <div class="course-title">
-            <span><i class="fas fa-chalkboard-user"></i> ${escapeHtml(group.displayName)}</span>
-            <span class="file-count-badge"><i class="far fa-copy"></i> ${fileCount} file${fileCount !==1 ? 's' : ''}</span>
-          </div>
-          <div class="course-code"><i class="far fa-calendar-alt"></i> Latest: ${formatDateRelative(group.latestTimestamp ? new Date(group.latestTimestamp) : null)}</div>
-        </div>
-      `;
-
-      // Compact file list preview (max 3 shown)
-      let previewHtml = `<div class="file-list-preview"><div style="font-size:0.7rem; font-weight:600; margin-bottom:6px;"><i class="fas fa-list-ul"></i> Available files</div>`;
-      const filesToShow = sortedFiles.slice(0, 3);
-      filesToShow.forEach(f => {
-        const fname = f.fileName || f.name || 'document';
-        previewHtml += `
-          <div class="file-item-mini">
-            <div class="file-name-mini">
-              ${getFileIcon(fname)} <span style="overflow:hidden; text-overflow:ellipsis;">${escapeHtml(truncate(fname, 38))}</span>
-            </div>
-            <div class="file-size-mini">${formatFileSize(f.fileSize || f.size || 0)}</div>
-          </div>
-        `;
-      });
-      if (files.length > 3) previewHtml += `<div style="font-size:0.7rem; padding:6px 0 2px; color:#8db5e3;">+ ${files.length-3} more files</div>`;
-      previewHtml += `</div>`;
-
-      // Dynamic file selector dropdown
-      let selectOptionsHtml = '';
-      sortedFiles.forEach((file, idx) => {
-        const fname = file.fileName || file.name || `resource_${idx+1}`;
-        const displayName = `${fname} (${formatFileSize(file.fileSize || file.size || 0)})`;
-        selectOptionsHtml += `<option value="${idx}">${escapeHtml(displayName)}</option>`;
-      });
-
-       // We'll store file references in data attribute for download handler
-      card.innerHTML = headerHtml + `
-        <div class="card-body">
-          ${previewHtml}
-          <div class="download-area">
-            <div class="selector-group">
-              <label><i class="fas fa-download"></i> Choose file:</label>
-              <select class="file-select" data-course-key="${escapeHtml(group.displayName)}" data-files='${JSON.stringify(sortedFiles.map(f => ({ 
-                name: f.fileName || f.name || 'file', 
-                url: getFileUrl(f),
-                size: f.fileSize || f.size
-              })))}'>
-                ${selectOptionsHtml}
-              </select>
-              <button class="btn-download-course download-action-btn"><i class="fas fa-cloud-download-alt"></i> Download</button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      container.appendChild(card);
     }
 
-    // attach download events for each card
-    document.querySelectorAll('.course-card').forEach(card => {
-      const selectEl = card.querySelector('.file-select');
-      const downloadBtn = card.querySelector('.download-action-btn');
-      if (selectEl && downloadBtn) {
-        downloadBtn.addEventListener('click', (e) => {
-          const selectedIndex = selectEl.selectedIndex;
-          const rawFilesAttr = selectEl.getAttribute('data-files');
-          if (rawFilesAttr) {
-            try {
-              const fileArray = JSON.parse(rawFilesAttr);
-              const selectedFile = fileArray[selectedIndex];
-              if (selectedFile && selectedFile.url && selectedFile.url !== '#') {
-                // trigger download
-                const link = document.createElement('a');
-                link.href = selectedFile.url;
-                link.download = selectedFile.name;
-                link.target = '_blank';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              } else {
-                alert('❌ Download link not available for this file.');
-              }
-            } catch(err) { alert('Unable to download'); }
-          }
-        });
-      }
+    // Then filter by search query (course name only, case insensitive)
+    if (!query) {
+      filteredNotes = tempFiltered;
+    } else {
+      filteredNotes = tempFiltered.filter(note => {
+        const courseName = normalizeText(note.course || note.courseName || note.subject || '');
+        return courseName.includes(query);
+      });
+    }
+
+    sortAndDisplayNotes();
+  }, 300);
+});
+
+// Sort change
+document.getElementById('sortBy').addEventListener('change', sortAndDisplayNotes);
+
+// FILTER BY COURSE (ACCORDING TO PROGRAM)
+document.getElementById('filterByCourse').addEventListener('change', function() {
+  const selectedCourse = this.value;
+  const searchQuery = normalizeText(document.getElementById('notesSearch').value);
+
+  // Filter by course
+  if (selectedCourse === 'all') {
+    filteredNotes = [...allNotes];
+  } else {
+    filteredNotes = allNotes.filter(note => {
+      const noteCourse = note.course || note.courseName || note.subject || '';
+      return noteCourse === selectedCourse;
     });
   }
 
-  // helpers
-  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-  function truncate(str, len) { if(str.length<=len) return str; return str.slice(0,len-2)+'...'; }
+  // Apply search filter if there's a query
+  if (searchQuery) {
+    filteredNotes = filteredNotes.filter(note => {
+      const courseName = normalizeText(note.course || note.courseName || note.subject || '');
+      return courseName.includes(searchQuery);
+    });
+  }
 
-  // event listeners for search and sorting
-  document.getElementById('courseSearchInput').addEventListener('input', (e) => {
-    currentSearchQuery = e.target.value;
-    applyFiltersAndRender();
-  });
-  document.getElementById('sortBySelect').addEventListener('change', (e) => {
-    currentSort = e.target.value;
-    applyFiltersAndRender();
-  });
+  sortAndDisplayNotes();
+});
 
-  // profile picture from localStorage
-  window.addEventListener('load', () => {
-    const savedPic = localStorage.getItem('userProfilePic');
-    if (savedPic) document.getElementById('youProfilePic').src = savedPic;
-    loadProgramData();
-  });
+// Load saved profile picture
+window.addEventListener('load', () => {
+  const savedPic = localStorage.getItem('userProfilePic');
+  if (savedPic) {
+    document.getElementById('youProfilePic').src = savedPic;
+  }
+});
+
+// Initial load
+loadNotes();
 </script>
+
 </body>
 </html>
