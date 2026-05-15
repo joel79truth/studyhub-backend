@@ -1,16 +1,17 @@
+<br>
+<br>
+<br>
+<br>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>StudyHub LUANAR - Past Papers (Memory Safe)</title>
+  <title>StudyHub LUANAR - Past Papers</title>
   <link rel="preconnect" href="https://qosudbigoxwzbdqkdecz.supabase.co">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <!-- 🔔 Firebase SDK for Push Notifications -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
   <style>
-    /* ========== STYLES (optimized, no changes needed) ========== */
+    /* ========== STYLES (unchanged) ========== */
     :root { --primary: #0c325e; --primary-hover: #1e4a7a; --bg-main: #f8fafc; --bg-card: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0; }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background: var(--bg-main); color: var(--text-main); min-height: 100vh; padding-top: 80px; }
@@ -92,7 +93,6 @@
     .batch-item-title { font-weight: 600; font-size: 14px; }
     .batch-item-type { font-size: 11px; color: var(--text-muted); }
     .select-all { margin-bottom: 12px; padding: 8px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
-    .notif-btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 40px; font-weight: 600; cursor: pointer; margin-left: 12px; font-size: 13px; }
     @media (min-width: 768px) { header { flex-direction: row; align-items: center; justify-content: space-between; padding: 16px 40px; } .search-container { width: 300px; } body { padding-top: 90px; } }
   </style>
 </head>
@@ -101,8 +101,6 @@
 <header>
   <div class="header-top">
     <div class="header-title"><div class="logo">📚</div><h1>Past Papers</h1></div>
-    <!-- 🔔 Button to enable notifications -->
-    <button id="enableNotifBtn" class="notif-btn">🔔 Enable Notifications</button>
   </div>
   <div class="search-container"><span class="search-icon">🔍</span><input type="text" class="search-input" id="searchInput" placeholder="Search courses, exams..."></div>
 </header>
@@ -168,84 +166,7 @@
     let likedPapers = JSON.parse(localStorage.getItem('likedPapers') || '{}');
     const activeThumbs = {};
     
-    // ========== 🔔 FIREBASE PUSH NOTIFICATIONS (FCM v1) ==========
-    // --- Replace with your own Firebase config (from Firebase Console -> Project settings) ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyAtK_FW9fIOihmnECEngkElA2QCsoRYUA0",
-  authDomain: "studyhub-backend.firebaseapp.com",
-  databaseURL: "https://studyhub-backend-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "studyhub-backend",
-  storageBucket: "studyhub-backend.firebasestorage.app",
-  messagingSenderId: "985257842533",
-  appId: "1:985257842533:web:7cc7c9c0f74cc100ad338c",
-  measurementId: "G-2FHPEF5XBQ"
-    };
-    // VAPID key from Firebase Console -> Cloud Messaging -> Web configuration
-    const vapidKey = "BKolFxr4YYRukImWVT8_YPOgyrIDk0y0xPvIS-FIwH6adpzl9fr8bvhLmfie-5KUyONylN7u96fgz4pbyrT5q6A";
-    
-    let messaging = null;
-    let fcmToken = null;
-    
-    // Initialize Firebase
-    try {
-      firebase.initializeApp(firebaseConfig);
-      messaging = firebase.messaging();
-      console.log("Firebase initialized");
-    } catch(e) { console.warn("Firebase init error", e); }
-    
-    // Register token in Supabase fcm_tokens table
-    async function storeToken(token) {
-      try {
-        const { error } = await client.from('fcm_tokens').upsert({ 
-          token: token,
-          user_id: null,   // optional, set if you have user auth
-          created_at: new Date().toISOString()
-        });
-        if (error) throw error;
-        console.log("FCM token stored in Supabase");
-        showToast("Notifications enabled! You'll receive alerts for new papers.");
-      } catch(e) {
-        console.error("Failed to store token:", e);
-        showToast("Could not save notification preference", true);
-      }
-    }
-    
-    // Request permission and get token
-    async function enableNotifications() {
-      if (!messaging) {
-        showToast("Firebase not ready. Check your config.", true);
-        return;
-      }
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          showToast("Notification permission denied", true);
-          return;
-        }
-        const token = await messaging.getToken({ vapidKey: vapidKey });
-        if (token) {
-          fcmToken = token;
-          await storeToken(token);
-        } else {
-          showToast("Could not get FCM token", true);
-        }
-      } catch(e) {
-        console.error("Enable notifications error:", e);
-        showToast("Error enabling notifications: " + e.message, true);
-      }
-    }
-    
-    // Listen for messages while app is in foreground (optional)
-    if (messaging) {
-      messaging.onMessage((payload) => {
-        console.log("Foreground message:", payload);
-        showToast(`🔔 ${payload.notification.title}: ${payload.notification.body}`);
-      });
-    }
-    
-    // 🔔 END NOTIFICATION SECTION
-    
-    // ========== IMAGE PROCESSING (unchanged) ==========
+    // ========== IMAGE PROCESSING ==========
     let isProcessing = false;
     let imageQueue = [];
     
@@ -396,7 +317,7 @@
       else uploadBtn.textContent = 'Upload';
     }
     
-    // 🔔 MODIFIED uploadPapers to send notification after successful upload
+    // 🔔 Upload papers and trigger push notifications via Edge Function
     async function uploadPapers() {
       const program = programSelect.value.trim();
       const course = document.getElementById('courseInput').value.trim();
@@ -698,7 +619,6 @@
     document.getElementById('uploadBtn').onclick = uploadPapers;
     document.getElementById('cameraBtn').onclick = takePhoto;
     document.getElementById('closeBatchModalBtn').onclick = () => document.getElementById('batchModal').classList.remove('active');
-    document.getElementById('enableNotifBtn').onclick = enableNotifications;
     document.addEventListener('submit', (e) => { if(e.target.closest('#uploadModal')) e.preventDefault(); });
     
     // Initialize
@@ -706,69 +626,5 @@
     window.onload = loadData;
   })();
 </script>
-
-<!-- 
-  ========== SUPABASE EDGE FUNCTION CODE (DEPLOY THIS ONCE) ==========
-  Create a new Edge Function named "send-notification" in your Supabase project.
-  Use the JavaScript code below. Replace the placeholder Firebase config with your service account JSON.
-  
-  Steps:
-  1. Go to Supabase Dashboard -> Edge Functions -> Create Function -> name: send-notification
-  2. Paste the code below.
-  3. Set Verify JWT = OFF (or ON if you require authentication).
-  4. Add a secret: FCM_SERVICE_ACCOUNT (value = the entire service account JSON you download from Firebase).
-  5. Deploy.
-
-  ========== EDGE FUNCTION CODE (index.js) ==========
-  
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-  import { JWT } from 'https://esm.sh/google-auth-library@9';
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL');
-  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
-  const serviceAccount = JSON.parse(Deno.env.get('FCM_SERVICE_ACCOUNT'));
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-  Deno.serve(async (req) => {
-    try {
-      const { program, course, examType, semester, fileCount } = await req.json();
-      const { data: tokensData, error: tokensError } = await supabase.from('fcm_tokens').select('token');
-      if (tokensError) throw new Error(`Token fetch failed: ${tokensError.message}`);
-      const tokens = tokensData.map(row => row.token).filter(t => t);
-      if (tokens.length === 0) return new Response(JSON.stringify({ message: 'No tokens' }), { status: 200 });
-
-      const client = new JWT({
-        email: serviceAccount.client_email,
-        key: serviceAccount.private_key,
-        scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
-      });
-      const accessToken = await client.authorize();
-      const token = accessToken.access_token;
-      const projectId = serviceAccount.project_id;
-      const fcmUrl = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
-
-      const results = await Promise.allSettled(tokens.map(async (deviceToken) => {
-        const message = {
-          message: {
-            token: deviceToken,
-            notification: { title: `📚 New Past Paper Uploaded`, body: `${program} | ${course} - ${examType} (${semester})` },
-            data: { program, course, examType, semester, fileCount: String(fileCount) }
-          }
-        };
-        const resp = await fetch(fcmUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(message) });
-        return resp.json();
-      }));
-
-      const invalidTokens = [];
-      results.forEach((res, idx) => { if (res.status === 'rejected' || (res.value?.error?.code === 404)) invalidTokens.push(tokens[idx]); });
-      if (invalidTokens.length) await supabase.from('fcm_tokens').delete().in('token', invalidTokens);
-
-      return new Response(JSON.stringify({ success: true, sent: results.filter(r => r.status === 'fulfilled').length }), { status: 200 });
-    } catch (error) {
-      console.error(error);
-      return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-    }
-  });
--->
 </body>
 </html>
